@@ -1,0 +1,134 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum ContentType {
+  VIDEO
+  TEXT
+  PDF
+  MARKDOWN
+  DOC
+}
+
+enum ProcessingStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  ERROR
+}
+
+enum TrailStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum QuestStatus {
+  LOCKED
+  AVAILABLE
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum QuestionStatus {
+  UNANSWERED
+  ANSWERED
+}
+
+// Models
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  trails    Trail[]
+  badges    Badge[]
+}
+
+model Trail {
+  id                String      @id @default(cuid())
+  title            String
+  status           TrailStatus  @default(DRAFT)
+  estimatedDuration Int // em minutos
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  userId           String
+  user             User         @relation(fields: [userId], references: [id])
+  inputContents    Content[]
+  quests           Quest[]
+  badge            Badge?
+  
+  @@index([userId])
+}
+
+model Content {
+  id               String           @id @default(cuid())
+  type             ContentType
+  url              String?         // para vídeos YouTube
+  fileKey          String?         // para documentos
+  size             Int
+  processingStatus ProcessingStatus @default(PENDING)
+  processedContent String?         // conteúdo extraído/transcrito
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  trailId          String
+  trail            Trail            @relation(fields: [trailId], references: [id], onDelete: Cascade)
+
+  @@index([trailId])
+}
+
+model Quest {
+  id             String      @id @default(cuid())
+  difficultyLevel Int        @default(1)
+  status         QuestStatus @default(LOCKED)
+  attempts       Int         @default(0)
+  generationPrompt String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  trailId        String
+  trail          Trail       @relation(fields: [trailId], references: [id], onDelete: Cascade)
+  questions      Question[]
+
+  @@index([trailId])
+}
+
+model Question {
+  id            String         @id @default(cuid())
+  text          String
+  alternatives  String[]
+  correctAnswer Int
+  status        QuestionStatus @default(UNANSWERED)
+  feedback      String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  questId       String
+  quest         Quest          @relation(fields: [questId], references: [id], onDelete: Cascade)
+
+  @@index([questId])
+}
+
+model Badge {
+  id          String    @id @default(cuid())
+  icon        String    // nome do ícone Lucide
+  title       String
+  description String
+  earnedAt    DateTime?
+  nftData     Json?     // metadados para NFT
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  trailId     String    @unique
+  trail       Trail     @relation(fields: [trailId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+} 

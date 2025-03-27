@@ -20,6 +20,7 @@ const badgeSchema = z.object({
 
 const questSchema = z.object({
     difficultyLevel: z.number().min(1).max(3).describe('Nível de dificuldade do quest (1, 2 ou 3)'),
+    generationPrompt: z.string().describe('Prompt otimizado para gerar as questões deste quest')
 });
 
 const trailGenerationSchema = z.object({
@@ -45,55 +46,58 @@ export async function generateTrail(request: GenerateTrailRequest): Promise<Gene
         // 1. Validar conteúdos
         const validationResult = await validateContents(request);
         if (!validationResult.success) {
-            return { error: validationResult.error || 'Failed to validate contents' };
+            return { error: validationResult.error || 'Falha ao validar conteúdos' };
         }
 
         // 2. Gerar trilha com base no conteúdo validado
         const prompt = `
-            Generate a learning trail based on the following content and theme:
+            Gere uma trilha de aprendizado baseada no seguinte conteúdo e tema:
 
-            Theme: ${validationResult.theme}
-            Content: ${validationResult.content}
+            Tema: ${validationResult.theme}
+            Conteúdo: ${validationResult.content}
 
-            Create an engaging learning experience with:
-            - An attractive title that reflects the content
-            - Estimated duration in minutes
-            - 3 quests with progressive difficulty (1 to 3)
-            - A badge that represents the achievement
+            Crie uma experiência de aprendizado envolvente com:
+            - Um título atraente que reflita o conteúdo
+            - Duração estimada em minutos
+            - 3 quests com dificuldade progressiva (1 a 3)
+            - Um badge que represente a conquista
             
-            The badge should use a Lucide icon name and have an engaging title and description.
+            Considere:
+            - TODO o conteúdo DEVE ser em português do Brasil
+            - Use linguagem clara e acessível
+            - O título deve ser cativante e descritivo
+            - A duração deve ser realista para o conteúdo
+            - Os quests devem ter complexidade crescente
+            - O badge deve usar um ícone do Lucide e ter título e descrição envolventes
+            - Os prompts de geração devem ser otimizados para gerar questões relevantes
         `;
 
         const { object } = await generateObject<TrailGeneration>({
             model: openai('gpt-3.5-turbo'),
             schema: trailGenerationSchema,
             prompt,
-            temperature: 0.7,
+            temperature: 0.4, // Balanceando criatividade com consistência
         });
-
-        const trailId = crypto.randomUUID();
 
         // 3. Gerar questões para cada quest
         const questsWithQuestions = await Promise.all(
             object.quests.map(async (quest) => {
                 const questions = await generateQuestQuestions(
-                    validationResult.contentPrompt,
+                    quest.generationPrompt,
                     quest.difficultyLevel
                 );
 
-                console.log(questions);
-
                 if ('error' in questions) {
-                    console.error(`Failed to generate questions for quest: ${questions.error}`);
+                    console.error(`Falha ao gerar questões para o quest: ${questions.error}`);
                     return {
                         id: crypto.randomUUID(),
                         difficultyLevel: quest.difficultyLevel,
                         status: 'LOCKED' as QuestStatus,
                         attempts: 0,
-                        generationPrompt: validationResult.contentPrompt,
+                        generationPrompt: quest.generationPrompt,
                         createdAt: new Date(),
                         updatedAt: new Date(),
-                        trailId: trailId,
+                        trailId: '', // Será preenchido quando a trilha for salva
                         questions: [] // Quest sem questões em caso de erro
                     };
                 }
@@ -103,10 +107,10 @@ export async function generateTrail(request: GenerateTrailRequest): Promise<Gene
                     difficultyLevel: quest.difficultyLevel,
                     status: 'LOCKED' as QuestStatus,
                     attempts: 0,
-                    generationPrompt: validationResult.contentPrompt,
+                    generationPrompt: quest.generationPrompt,
                     createdAt: new Date(),
                     updatedAt: new Date(),
-                    trailId: trailId,
+                    trailId: '', // Será preenchido quando a trilha for salva
                     questions: questions
                 };
             })
@@ -114,7 +118,7 @@ export async function generateTrail(request: GenerateTrailRequest): Promise<Gene
 
         // 4. Montar objeto da trilha no formato do schema
         const trail: GeneratedTrail = {
-            id: trailId,
+            id: crypto.randomUUID(),
             title: object.title,
             status: 'DRAFT',
             estimatedDuration: object.estimatedDuration,
@@ -129,7 +133,7 @@ export async function generateTrail(request: GenerateTrailRequest): Promise<Gene
                 processedContent: content,
                 createdAt: new Date(),
                 updatedAt: new Date(),
-                trailId: trailId,
+                trailId: '', // Será preenchido quando a trilha for salva
                 url: null,
                 fileKey: null
             })),
@@ -141,7 +145,7 @@ export async function generateTrail(request: GenerateTrailRequest): Promise<Gene
                 nftData: null,
                 createdAt: new Date(),
                 updatedAt: new Date(),
-                trailId: trailId,
+                trailId: '', // Será preenchido quando a trilha for salva
                 userId: '' // Será preenchido quando houver autenticação
             }
         };
@@ -149,7 +153,9 @@ export async function generateTrail(request: GenerateTrailRequest): Promise<Gene
         return trail;
     } catch (error) {
         return {
-            error: error instanceof Error ? error.message : 'Failed to generate trail'
+            error: error instanceof Error 
+                ? error.message 
+                : 'Falha ao gerar a trilha. Tente novamente.'
         };
     }
 } 

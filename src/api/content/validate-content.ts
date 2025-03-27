@@ -17,11 +17,11 @@ interface ValidateContentResponse {
 }
 
 const validationSchema = z.object({
-    coherent: z.boolean().describe('Whether the contents are thematically related'),
-    theme: z.string().nullable().describe('Main theme/topic if coherent, null if not'),
-    reason: z.string().describe('Detailed explanation of why the contents are coherent or not'),
-    unifiedContent: z.string().describe('A unified and organized version of all contents, removing redundancies and organizing in a logical sequence'),
-    optimizedPrompt: z.string().describe('An optimized prompt that captures the essence of the content and can be used to generate questions')
+    coherent: z.boolean().describe('Se os conteúdos são tematicamente relacionados'),
+    theme: z.string().nullable().describe('Tema/tópico principal se coerente, null se não'),
+    reason: z.string().describe('Explicação detalhada do por que os conteúdos são coerentes ou não'),
+    unifiedContent: z.string().describe('Uma versão unificada e organizada de todos os conteúdos, removendo redundâncias e organizando em uma sequência lógica'),
+    optimizedPrompt: z.string().describe('Um prompt otimizado que captura a essência do conteúdo e pode ser usado para gerar questões')
 });
 
 type ValidationResult = z.infer<typeof validationSchema>;
@@ -33,7 +33,7 @@ export async function validateContents(request: ValidateContentRequest): Promise
                 success: false,
                 content: '',
                 contentPrompt: '',
-                error: 'No contents provided'
+                error: 'Nenhum conteúdo fornecido'
             };
         }
 
@@ -42,28 +42,32 @@ export async function validateContents(request: ValidateContentRequest): Promise
                 success: false,
                 content: '',
                 contentPrompt: '',
-                error: 'Maximum of 3 contents allowed'
+                error: 'Máximo de 3 conteúdos permitidos'
             };
         }
 
         const prompt = `
-            Analyze the following contents and determine if they are thematically coherent and related enough to create a meaningful learning trail:
+            Analise os seguintes conteúdos e determine se eles são tematicamente coerentes e relacionados o suficiente para criar uma trilha de aprendizado significativa:
 
-            ${request.contents.map((content, i) => `Content ${i + 1}:\n${content}\n`).join('\n')}
+            ${request.contents.map((content, i) => `Conteúdo ${i + 1}:\n${content}\n`).join('\n')}
 
-            Consider:
-            - Contents should share a common theme or be logically connected
-            - They should build upon each other or complement each other
-            - The combination should make sense for a learning path
-            - If coherent, create a unified version of the content, organizing it logically and removing redundancies
-            - Create an optimized prompt that captures the essence of the content for question generation
+            Considere:
+            - Os conteúdos devem compartilhar um tema comum ou estar logicamente conectados
+            - Eles devem se complementar ou construir um sobre o outro
+            - A combinação deve fazer sentido para um caminho de aprendizado
+            - Se coerente, crie uma versão unificada do conteúdo, organizando logicamente e removendo redundâncias
+            - Crie um prompt otimizado que capture a essência do conteúdo para geração de questões
+            - TODO o conteúdo DEVE ser em português do Brasil
+            - Use linguagem clara e acessível
+            - Mantenha a organização lógica do conteúdo
+            - Preserve os conceitos principais
         `;
 
         const { object } = await generateObject<ValidationResult>({
             model: openai('gpt-3.5-turbo'),
             schema: validationSchema,
             prompt,
-            temperature: 0.1,
+            temperature: 0.3, // Temperatura mais baixa para análise objetiva
         });
 
         return {
@@ -78,7 +82,9 @@ export async function validateContents(request: ValidateContentRequest): Promise
             success: false,
             content: '',
             contentPrompt: '',
-            error: error instanceof Error ? error.message : 'Failed to validate contents'
+            error: error instanceof Error 
+                ? error.message 
+                : 'Falha ao validar conteúdos. Tente novamente.'
         };
     }
 }

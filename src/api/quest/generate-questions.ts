@@ -1,16 +1,19 @@
 import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
 import { z } from 'zod';
-import { Prisma } from '@prisma/client';
+import { Prisma, QuestionStatus } from '@prisma/client';
 
-const questionSchema = z.object({
-    text: z.string().describe('A clear and engaging question about the content'),
-    alternatives: z.array(z.string()).length(4).describe('4 possible answers, with only one being correct'),
-    correctAnswer: z.number().min(0).max(3).describe('Index of the correct answer (0-3)'),
-    feedback: z.string().describe('Detailed explanation of why the correct answer is right and others are wrong')
+// Schema para o array de questões
+const questionsArraySchema = z.object({
+    questions: z.array(z.object({
+        text: z.string().describe('Uma pergunta clara e envolvente sobre o conteúdo em português'),
+        alternatives: z.array(z.string()).length(4).describe('4 alternativas possíveis em português, sendo apenas uma correta'),
+        correctAnswer: z.number().min(0).max(3).describe('Índice da resposta correta (0-3)'),
+        feedback: z.string().describe('Explicação detalhada em português sobre por que a resposta correta está certa e as outras estão erradas')
+    })).min(1).describe('Array de questões únicas, cada uma testando diferentes aspectos do conteúdo')
 });
 
-type QuestionGeneration = z.infer<typeof questionSchema>;
+type QuestionGeneration = z.infer<typeof questionsArraySchema>;
 
 type GeneratedQuestion = Prisma.QuestionGetPayload<{
     select: {
@@ -30,43 +33,79 @@ export async function generateQuestQuestions(
 ): Promise<GeneratedQuestion[] | { error: string }> {
     try {
         const prompt = `
-            Using this optimized content prompt as base knowledge:
+            Use este prompt otimizado como base de conhecimento:
             ${contentPrompt}
 
-            Generate ${questionsCount} questions about this content with difficulty level ${difficultyLevel} (1-3).
+            Gere ${questionsCount} questões ÚNICAS e DIFERENTES sobre este conteúdo com nível de dificuldade ${difficultyLevel} (1-3).
             
-            Consider:
-            - Questions should test understanding, not just memorization
-            - For difficulty 1: Basic comprehension and recall
-            - For difficulty 2: Application and analysis
-            - For difficulty 3: Evaluation and synthesis
-            - Alternatives should be plausible but clearly distinguishable
-            - Feedback should be educational and explain both correct and incorrect options
+            Considere:
+            - TODAS as questões e respostas DEVEM ser em português do Brasil
+            - Cada questão deve ser completamente diferente das outras
+            - Evite repetir o mesmo tópico ou conceito em múltiplas questões
+            - As questões devem testar compreensão, não apenas memorização
+            - Para dificuldade 1: Compreensão básica e recordação
+            - Para dificuldade 2: Aplicação e análise
+            - Para dificuldade 3: Avaliação e síntese
+            - As alternativas devem ser plausíveis mas claramente distinguíveis
+            - O feedback deve ser educativo e explicar tanto a resposta correta quanto as incorretas
+            - Use linguagem clara e acessível
+            - Evite questões ambíguas ou confusas
         `;
 
+        // Gerar todas as questões de uma vez
+        const { object } = await generateObject<QuestionGeneration>({
+            model: openai('gpt-3.5-turbo'),
+            schema: questionsArraySchema,
+            prompt,
+            temperature: 0.3, // Temperatura mais baixa para maior consistência
+        });
+
+        // Verificar duplicatas e processar questões
+        const uniqueQuestions = new Set<string>();
         const questions: GeneratedQuestion[] = [];
 
-        for (let i = 0; i < questionsCount; i++) {
-            const { object } = await generateObject<QuestionGeneration>({
-                model: openai('gpt-3.5-turbo'),
-                schema: questionSchema,
-                prompt,
-            });
+        for (const question of object.questions) {
+            // Normalizar o texto para comparação (remover espaços extras, converter para minúsculas)
+            const normalizedText = question.text.toLowerCase().trim().replace(/\s+/g, ' ');
+            
+            if (!uniqueQuestions.has(normalizedText)) {
+                uniqueQuestions.add(normalizedText);
+                questions.push({
+                    id: crypto.randomUUID(),
+                    text: question.text,
+                    alternatives: question.alternatives,
+                    correctAnswer: question.correctAnswer,
+                    feedback: question.feedback,
+                    status: 'UNANSWERED' as QuestionStatus
+                });
 
-            questions.push({
-                id: crypto.randomUUID(),
-                text: object.text,
-                alternatives: object.alternatives,
-                correctAnswer: object.correctAnswer,
-                feedback: object.feedback,
-                status: 'UNANSWERED'
-            });
+                // Se já temos questões suficientes, podemos parar
+                if (questions.length === questionsCount) {
+                    break;
+                }
+            }
+        }
+
+        // Verificar se conseguimos questões suficientes
+        if (questions.length < questionsCount) {
+            console.warn(`Apenas ${questions.length} questões únicas foram geradas de ${questionsCount} solicitadas`);
+            
+            // Se tivermos pelo menos 3 questões, podemos prosseguir
+            if (questions.length >= 3) {
+                return questions;
+            }
+            
+            return {
+                error: 'Não foi possível gerar questões únicas suficientes. Tente novamente.'
+            };
         }
 
         return questions;
     } catch (error) {
         return {
-            error: error instanceof Error ? error.message : 'Failed to generate questions'
+            error: error instanceof Error 
+                ? error.message 
+                : 'Falha ao gerar as questões. Tente novamente.'
         };
     }
 } 

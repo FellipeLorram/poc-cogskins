@@ -1,5 +1,11 @@
-import pdfParse from "pdf-parse";
 import * as mammoth from "mammoth";
+import * as pdfjsLib from "pdfjs-dist";
+
+// Configure o worker do pdf.js
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url
+).toString();
 
 export type SupportedFileType = "pdf" | "doc" | "docx" | "md" | "txt";
 
@@ -94,10 +100,28 @@ async function extractPdfContent(
   buffer: Buffer
 ): Promise<ExtractContentResult> {
   try {
-    const data = await pdfParse(buffer);
+    // Carrega o documento PDF usando pdf.js
+    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+    let fullText = "";
+
+    // Extrai o texto de todas as páginas
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      const page = await pdf.getPage(pageNum);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items
+        .map((item) => {
+          if ("str" in item) {
+            return item.str;
+          }
+          return "";
+        })
+        .join(" ");
+      fullText += pageText + "\n";
+    }
+
     return {
       success: true,
-      content: data.text,
+      content: fullText.trim(),
     };
   } catch (err) {
     return {

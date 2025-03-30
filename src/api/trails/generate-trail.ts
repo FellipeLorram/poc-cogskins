@@ -4,9 +4,10 @@ import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { z } from "zod";
 import { validateContents } from "@/api/content/validate-content";
-import { Prisma, QuestStatus } from "@prisma/client";
+import { QuestStatus } from "@prisma/client";
 import { generateQuestQuestions } from "@/api/quest/generate-questions";
 import { generateBadgeImage } from "../badge/generate-badge";
+import { GeneratedTrail } from "@/entities/trails";
 
 interface GenerateTrailRequest {
   contents: string[];
@@ -44,15 +45,6 @@ const trailGenerationSchema = z.object({
 });
 
 type TrailGeneration = z.infer<typeof trailGenerationSchema>;
-
-// Tipo que representa uma trilha completa com suas relações
-type GeneratedTrail = Prisma.TrailGetPayload<{
-  include: {
-    inputContents: true;
-    quests: true;
-    badge: true;
-  };
-}>;
 
 interface ErrorResponse {
   error: string;

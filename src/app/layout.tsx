@@ -31,9 +31,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          <TopBar />
-          <SignInDialog />
-          <div className="w-11/12 max-w-3xl mx-auto flex flex-col items-center justify-start h-[calc(100vh-4rem)]">
+          <div className="w-11/12 relative max-w-3xl mx-auto flex flex-col items-center justify-start h-screen">
+            <TopBar />
+            <SignInDialog />
             {children}
           </div>
         </Providers>

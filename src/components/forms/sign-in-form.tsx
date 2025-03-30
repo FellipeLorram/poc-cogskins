@@ -56,6 +56,9 @@ export function SignInForm({ onSuccess }: Props) {
             </FormItem>
           )}
         />
+        <p className="text-sm text-muted-foreground text-center">
+          Um link de acesso será enviado para o email informado.
+        </p>
         <Button type="submit" className="w-full" disabled={isPending}>
           {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
           Entrar

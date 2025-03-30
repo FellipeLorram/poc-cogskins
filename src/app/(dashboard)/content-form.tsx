@@ -10,6 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import { useSaveTrail } from "@/hooks/trails/use-save-trail";
 import { extractContents } from "@/lib/content/extract-content";
 import { useTrailStore } from "@/stores/trail-store";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -46,13 +47,15 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function ContentForm() {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { addTrail } = useTrailStore();
+  const { setGenerating } = useTrailStore();
+  const { mutateAsync: saveTrail } = useSaveTrail();
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: generateTrail,
     onSuccess: (data) => {
       if ("error" in data) return;
-      addTrail(data);
+      saveTrail(data);
+      setGenerating(false);
     },
   });
 
@@ -105,8 +108,9 @@ export function ContentForm() {
   }
 
   function handleMutateWithToast(contents: string[]) {
+    setGenerating(true);
     toast.promise(mutateAsync({ contents }), {
-      loading: "Gerando trilha...",
+      loading: "Gerando trilha. Isso pode levar alguns segundos...",
       success: (data) => {
         if ("error" in data) {
           return {

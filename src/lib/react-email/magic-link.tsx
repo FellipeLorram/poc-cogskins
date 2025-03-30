@@ -16,8 +16,6 @@ interface Props {
   magicLink?: string;
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_URL;
-
 export function MagicLinkEmail({ magicLink }: Props) {
   return (
     <Html>
@@ -26,9 +24,9 @@ export function MagicLinkEmail({ magicLink }: Props) {
         <Preview>Clique aqui para entrar no Cogskins.</Preview>
         <Container style={container}>
           <Img
-            src={`${baseUrl}/cogskins-logo.png`}
+            src="https://i5aee2oj19.ufs.sh/f/VNtBLK6CzQXGhNZUCcz5KQgi9dq3I24POUnMmVDfWBvclz6k"
             width={48}
-            height={48}
+            height="auto"
             alt="Cogskins"
           />
           <Heading style={heading}>🪄 Seu magic link</Heading>
@@ -48,9 +46,9 @@ export function MagicLinkEmail({ magicLink }: Props) {
           </Text>
           <Hr style={hr} />
           <Img
-            src={`${baseUrl}/cogskins-logo.png`}
+            src="https://i5aee2oj19.ufs.sh/f/VNtBLK6CzQXGhNZUCcz5KQgi9dq3I24POUnMmVDfWBvclz6k"
             width={32}
-            height={32}
+            height="auto"
             style={{
               WebkitFilter: "grayscale(100%)",
               filter: "grayscale(100%)",

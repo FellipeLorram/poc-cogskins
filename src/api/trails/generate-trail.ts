@@ -6,6 +6,7 @@ import { z } from "zod";
 import { validateContents } from "@/api/content/validate-content";
 import { Prisma, QuestStatus } from "@prisma/client";
 import { generateQuestQuestions } from "@/api/quest/generate-questions";
+import { generateBadgeImage } from "../badge/generate-badge";
 
 interface GenerateTrailRequest {
   contents: string[];
@@ -13,9 +14,6 @@ interface GenerateTrailRequest {
 
 // Schemas para validação e geração via IA
 const badgeSchema = z.object({
-  icon: z
-    .string()
-    .describe("Nome do ícone do Lucide que melhor representa o tema da trilha"),
   title: z.string().describe("Título curto e atraente para o badge"),
   description: z
     .string()
@@ -93,7 +91,7 @@ export async function generateTrail(
             - O título deve ser cativante e descritivo
             - A duração deve ser realista para o conteúdo
             - Os quests devem ter complexidade crescente
-            - O badge deve usar um ícone do Lucide e ter título e descrição envolventes
+            - O badge deve ter título e descrição envolventes
             - Os prompts de geração devem ser otimizados para gerar questões relevantes
         `;
 
@@ -103,6 +101,18 @@ export async function generateTrail(
       prompt,
       temperature: 0.4, // Balanceando criatividade com consistência
     });
+
+    // Gerar imagem do badge
+    const badgeResult = await generateBadgeImage({
+      theme: validationResult.theme || object.title,
+    });
+
+    if ("error" in badgeResult) {
+      return {
+        error: `Falha ao gerar imagem do badge: ${badgeResult.error}`,
+        errorType: "GENERATION_ERROR",
+      };
+    }
 
     // 3. Gerar questões para cada quest
     const questsWithQuestions = await Promise.all(
@@ -167,7 +177,9 @@ export async function generateTrail(
       quests: questsWithQuestions,
       badge: {
         id: crypto.randomUUID(),
-        ...object.badge,
+        title: object.badge.title,
+        description: object.badge.description,
+        url: badgeResult.url,
         earnedAt: null,
         nftData: null,
         createdAt: new Date(),

@@ -3,7 +3,11 @@ import { Prisma } from "@prisma/client";
 export type GeneratedTrail = Prisma.TrailGetPayload<{
   include: {
     inputContents: true;
-    quests: true;
+    quests: {
+      include: {
+        questions: true;
+      };
+    };
     badge: true;
   };
 }>;

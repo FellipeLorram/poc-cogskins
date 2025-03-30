@@ -166,7 +166,7 @@ export async function generateTrail(
         url: null,
         fileKey: null,
       })),
-      quests: questsWithQuestions,
+      quests: questsWithQuestions as GeneratedTrail["quests"],
       badge: {
         id: crypto.randomUUID(),
         title: object.badge.title,

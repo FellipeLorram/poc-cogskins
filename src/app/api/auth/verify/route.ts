@@ -15,7 +15,6 @@ export async function GET(request: Request) {
       );
     }
 
-    // Verificar token do magic link
     const { payload, expired } = await verifyToken(token);
 
     if (expired || !payload?.email) {

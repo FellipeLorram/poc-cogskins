@@ -46,7 +46,10 @@ enum QuestionStatus {
 
 // Models
 model User {
-  id        String   @id @default(cuid())
+  id    String  @id @default(cuid())
+  name  String?
+  image String?
+
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -56,28 +59,28 @@ model User {
 
 model Trail {
   id                String      @id @default(cuid())
-  title            String
-  status           TrailStatus  @default(DRAFT)
+  title             String
+  status            TrailStatus @default(DRAFT)
   estimatedDuration Int // em minutos
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
-  userId           String
-  user             User         @relation(fields: [userId], references: [id])
-  inputContents    Content[]
-  quests           Quest[]
-  badge            Badge?
-  
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  userId            String
+  user              User        @relation(fields: [userId], references: [id])
+  inputContents     Content[]
+  quests            Quest[]
+  badge             Badge?
+
   @@index([userId])
 }
 
 model Content {
   id               String           @id @default(cuid())
   type             ContentType
-  url              String?         // para vídeos YouTube
-  fileKey          String?         // para documentos
+  url              String? // para vídeos YouTube
+  fileKey          String? // para documentos
   size             Int
   processingStatus ProcessingStatus @default(PENDING)
-  processedContent String?         // conteúdo extraído/transcrito
+  processedContent String? // conteúdo extraído/transcrito
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   trailId          String
@@ -87,16 +90,16 @@ model Content {
 }
 
 model Quest {
-  id             String      @id @default(cuid())
-  difficultyLevel Int        @default(1)
-  status         QuestStatus @default(LOCKED)
-  attempts       Int         @default(0)
+  id               String      @id @default(cuid())
+  difficultyLevel  Int         @default(1)
+  status           QuestStatus @default(LOCKED)
+  attempts         Int         @default(0)
   generationPrompt String?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  trailId        String
-  trail          Trail       @relation(fields: [trailId], references: [id], onDelete: Cascade)
-  questions      Question[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  trailId          String
+  trail            Trail       @relation(fields: [trailId], references: [id], onDelete: Cascade)
+  questions        Question[]
 
   @@index([trailId])
 }
@@ -118,11 +121,11 @@ model Question {
 
 model Badge {
   id          String    @id @default(cuid())
-  icon        String    // nome do ícone Lucide
+  url         String // URL da imagem gerada pelo DALL-E
   title       String
   description String
   earnedAt    DateTime?
-  nftData     Json?     // metadados para NFT
+  nftData     Json? // metadados para NFT
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   trailId     String    @unique
@@ -131,4 +134,4 @@ model Badge {
   user        User      @relation(fields: [userId], references: [id])
 
   @@index([userId])
-} 
+}

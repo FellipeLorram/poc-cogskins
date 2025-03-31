@@ -84,6 +84,7 @@ export async function syncTrails(trails: GeneratedTrail[]) {
               attempts: quest.attempts,
               generationPrompt: quest.generationPrompt,
               trailId: savedTrail.id,
+              description: quest.description,
             },
           });
 

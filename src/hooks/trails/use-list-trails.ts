@@ -4,16 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTrailStore } from "@/stores/trail-store";
 import { useSessionUser } from "@/hooks/auth/use-session-user";
 import { listTrails } from "@/api/trails/list-trails";
-import { Prisma } from "@prisma/client";
-
-// Define a generic trail type that works for both store and API
-type GeneratedTrail = Prisma.TrailGetPayload<{
-  include: {
-    inputContents: true;
-    quests: true;
-    badge: true;
-  };
-}>;
+import { GeneratedTrail } from "@/entities/trails";
 
 export function useListTrails() {
   const { data: user, isLoading: isSessionLoading } = useSessionUser();

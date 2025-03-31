@@ -95,6 +95,7 @@ model Quest {
   status           QuestStatus @default(LOCKED)
   attempts         Int         @default(0)
   generationPrompt String?
+  description      String
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
   trailId          String

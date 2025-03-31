@@ -30,6 +30,9 @@ const questSchema = z.object({
   generationPrompt: z
     .string()
     .describe("Prompt otimizado para gerar as questões deste quest"),
+  description: z
+    .string()
+    .describe("Descrição do quest que explica sobre o que se trata o quest"),
 });
 
 const trailGenerationSchema = z.object({
@@ -85,6 +88,7 @@ export async function generateTrail(
             - Os quests devem ter complexidade crescente
             - O badge deve ter título e descrição envolventes
             - Os prompts de geração devem ser otimizados para gerar questões relevantes
+            - Quest precisa de uma descrição que explique sobre o que se trata o quest
         `;
 
     const { object } = await generateObject<TrailGeneration>({
@@ -137,6 +141,7 @@ export async function generateTrail(
           status: "LOCKED" as QuestStatus,
           attempts: 0,
           generationPrompt: quest.generationPrompt,
+          description: quest.description,
           createdAt: new Date(),
           updatedAt: new Date(),
           trailId: "", // Será preenchido quando a trilha for salva

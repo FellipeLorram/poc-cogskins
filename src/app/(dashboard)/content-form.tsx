@@ -56,6 +56,7 @@ export function ContentForm() {
       if ("error" in data) return;
       saveTrail(data);
       setGenerating(false);
+      form.reset();
     },
   });
 

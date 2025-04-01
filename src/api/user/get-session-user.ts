@@ -6,7 +6,7 @@ import { getSession } from "../auth/get-session";
 export async function getSessionUser() {
   const session = await getSession();
 
-  if (!session?.userId) {
+  if (!session || !session.userId) {
     return null;
   }
 

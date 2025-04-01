@@ -1,8 +1,8 @@
 "use server";
 
 import { prisma } from "@/lib/prisma-client";
-import { verifySession } from "../auth/verify-session";
 import { Prisma } from "@prisma/client";
+import { getSessionUser } from "../user/get-session-user";
 
 type GeneratedTrail = Prisma.TrailGetPayload<{
   include: {
@@ -18,7 +18,12 @@ type GeneratedTrail = Prisma.TrailGetPayload<{
 
 export async function syncTrails(trails: GeneratedTrail[]) {
   try {
-    const { userId } = await verifySession();
+    const user = await getSessionUser();
+
+    if (!user) {
+      throw new Error("Usuário não encontrado");
+    }
+
     const results = [];
 
     // Processar cada trilha
@@ -26,7 +31,7 @@ export async function syncTrails(trails: GeneratedTrail[]) {
       // Verificar se essa trilha já existe no banco
       const existingTrail = await prisma.trail.findFirst({
         where: {
-          userId,
+          userId: user.id,
           title: trail.title,
         },
       });
@@ -38,7 +43,7 @@ export async function syncTrails(trails: GeneratedTrail[]) {
             title: trail.title,
             status: trail.status,
             estimatedDuration: trail.estimatedDuration,
-            userId,
+            userId: user.id,
 
             ...(trail.badge
               ? {
@@ -47,7 +52,7 @@ export async function syncTrails(trails: GeneratedTrail[]) {
                       title: trail.badge.title,
                       description: trail.badge.description,
                       url: trail.badge.url,
-                      userId,
+                      userId: user.id,
                     },
                   },
                 }

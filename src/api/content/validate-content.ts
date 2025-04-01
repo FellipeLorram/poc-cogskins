@@ -4,9 +4,11 @@ import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { z } from "zod";
 
-interface ValidateContentRequest {
-  contents: string[];
-}
+const validateContentRequestSchema = z.object({
+  contents: z.array(z.string()).min(1).max(3),
+});
+
+type ValidateContentRequest = z.infer<typeof validateContentRequestSchema>;
 
 interface ValidateContentResponse {
   success: boolean;
@@ -47,28 +49,12 @@ export async function validateContents(
   request: ValidateContentRequest
 ): Promise<ValidateContentResponse> {
   try {
-    if (!request.contents.length) {
-      return {
-        success: false,
-        content: "",
-        contentPrompt: "",
-        error: "Nenhum conteúdo fornecido",
-      };
-    }
-
-    if (request.contents.length > 3) {
-      return {
-        success: false,
-        content: "",
-        contentPrompt: "",
-        error: "Máximo de 3 conteúdos permitidos",
-      };
-    }
+    const { contents } = validateContentRequestSchema.parse(request);
 
     const prompt = `
             Analise os seguintes conteúdos e determine se eles são tematicamente coerentes e relacionados o suficiente para criar uma trilha de aprendizado significativa:
 
-            ${request.contents
+            ${contents
               .map((content, i) => `Conteúdo ${i + 1}:\n${content}\n`)
               .join("\n")}
 
@@ -82,13 +68,14 @@ export async function validateContents(
             - Use linguagem clara e acessível
             - Mantenha a organização lógica do conteúdo
             - Preserve os conceitos principais
+            - O conteúdo pode ser uma frase com uma ideia, não precisa ser um texto longo (exemplo: "Imperio Romano", "Guerra Fria", "Celeiro de Cereais")
         `;
 
     const { object } = await generateObject<ValidationResult>({
       model: openai("gpt-3.5-turbo"),
       schema: validationSchema,
       prompt,
-      temperature: 0.3, // Temperatura mais baixa para análise objetiva
+      temperature: 0.3,
     });
 
     return {

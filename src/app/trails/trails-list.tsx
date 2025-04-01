@@ -9,7 +9,7 @@ import Link from "next/link";
 export function TrailsList() {
   const { data: trails, isPending } = useListTrails();
 
-  if (isPending) return <div>Loading...</div>;
+  if (isPending || !trails) return <div>Loading...</div>;
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-3">

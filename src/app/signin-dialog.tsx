@@ -4,15 +4,15 @@ import { SignInForm } from "@/components/forms/sign-in-form";
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import Image from "next/image";
 import Link from "next/link";
 import { parseAsBoolean, useQueryState } from "nuqs";
-import { Suspense } from "react";
+import { toast } from "sonner";
 
-function SignInDialogContent() {
+export function SignInDialog() {
   const [isOpen, setIsOpen] = useQueryState(
     "signin-dialog",
     parseAsBoolean.withDefault(false)
@@ -49,17 +49,10 @@ function SignInDialogContent() {
         <SignInForm
           onSuccess={() => {
             setIsOpen(false);
+            toast.success("Enviamos um link de acesso para o seu email.");
           }}
         />
       </DialogContent>
     </Dialog>
-  );
-}
-
-export function SignInDialog() {
-  return (
-    <Suspense>
-      <SignInDialogContent />
-    </Suspense>
   );
 }

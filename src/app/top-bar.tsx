@@ -17,6 +17,7 @@ import { LogOut, User as UserIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { parseAsBoolean, useQueryState } from "nuqs";
+import { Suspense } from "react";
 
 export function TopBar() {
   return (
@@ -47,7 +48,9 @@ export function TopBar() {
               Trilhas
             </Link>
           </div>
-          <UserMenu />
+          <Suspense>
+            <UserMenu />
+          </Suspense>
         </div>
       </div>
     </div>

@@ -68,16 +68,16 @@ function TrailCardSkeleton() {
   return (
     <div className="flex flex-col gap-6 w-full h-32">
       <h1 className="text-sm font-medium">Recentes</h1>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {Array.from({ length: 3 }).map((_, index) => (
           <div
             key={index}
-            className="bg-background flex gap-2 shadow-sm relative border rounded-md p-2"
+            className="bg-background flex gap-2 shadow-sm relative border rounded-md p-2 h-24"
           >
             <Skeleton className="w-16 h-16" />
             <div className="flex flex-col">
               <Skeleton className="w-24 h-4" />
-              <Skeleton className="w-16 h-4" />
+              <Skeleton className="w-16 h-2 mt-2" />
             </div>
           </div>
         ))}

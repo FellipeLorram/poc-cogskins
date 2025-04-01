@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import { Providers } from "./providers";
-import { TopBar } from "./top-bar";
 import { SignInDialog } from "./signin-dialog";
+import { TopBar } from "./top-bar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,14 +27,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
           <div className="w-11/12 relative max-w-6xl mx-auto flex flex-col items-center justify-start h-screen">
             <TopBar />
-            <SignInDialog />
+            <Suspense>
+              <SignInDialog />
+            </Suspense>
             {children}
           </div>
         </Providers>

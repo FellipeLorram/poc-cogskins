@@ -1,6 +1,6 @@
 "use client";
 
-import { generateTrail } from "@/api/trails/generate-trail";
+import { generateTrailTask } from "@/api/trails/generate-trail-task";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,14 +13,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { useSaveTrail } from "@/hooks/trails/use-save-trail";
 import { extractContents } from "@/lib/content/extract-content";
 import { useTrailStore } from "@/stores/trail-store";
+import { generateTrailTask as generateTrailTaskTrigger } from "@/trigger/trails";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useRealtimeRun } from "@trigger.dev/react-hooks";
 import { Send, Upload, X } from "lucide-react";
 import { useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { clearRunCookies } from "./actions";
 
 const formSchema = z
   .object({
@@ -45,20 +47,35 @@ const formSchema = z
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function ContentForm() {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const { setGenerating } = useTrailStore();
-  const { mutateAsync: saveTrail } = useSaveTrail();
+interface ContentFormProps {
+  runId: string | undefined;
+  accessToken: string | undefined;
+}
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: generateTrail,
-    onSuccess: (data) => {
-      if ("error" in data) return;
-      saveTrail(data);
+export function ContentForm({ runId, accessToken }: ContentFormProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useRealtimeRun<typeof generateTrailTaskTrigger>(runId, {
+    accessToken: accessToken,
+    enabled: !!runId && !!accessToken,
+    onComplete(run) {
+      if (!run.output) {
+        toast.error("Não foi possível gerar o conteúdo");
+        return;
+      }
+
+      if ("error" in run.output.trail) {
+        return;
+      }
+
+      saveTrail(run.output.trail);
       setGenerating(false);
-      form.reset();
+      clearRunCookies();
     },
   });
+
+  const { setGenerating, isGenerating } = useTrailStore();
+  const { mutateAsync: saveTrail } = useSaveTrail();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -81,7 +98,7 @@ export function ContentForm() {
 
   const files = form.watch("files");
   const contents = form.watch("topic");
-  const isDisabled = isPending || (!contents && !files);
+  const isDisabled = (!contents && !files) || isGenerating;
 
   function handleRemoveFile(file: File) {
     form.setValue(
@@ -105,32 +122,10 @@ export function ContentForm() {
       }
     }
 
-    handleMutateWithToast(contents);
-  }
-
-  function handleMutateWithToast(contents: string[]) {
+    form.reset();
     setGenerating(true);
-    toast.promise(mutateAsync({ contents }), {
-      loading: "Gerando trilha. Isso pode levar alguns segundos...",
-      success: (data) => {
-        if ("error" in data) {
-          return {
-            message: data.error,
-            icon: null,
-            action: {
-              label: "Tentar novamente",
-              onClick: () => handleMutateWithToast(contents),
-            },
-            duration: 15000,
-          };
-        }
 
-        return {
-          message: "Trilha gerada com sucesso!",
-        };
-      },
-      error: "Erro ao gerar trilha",
-    });
+    await generateTrailTask({ contents });
   }
 
   return (
@@ -147,7 +142,6 @@ export function ContentForm() {
               <FormControl>
                 <div className="relative flex items-start gap-2 w-full border rounded-md p-2 shadow">
                   <Textarea
-                    disabled={isPending}
                     placeholder="Qual conteúdo vamos validar hoje?"
                     className={`[&::-webkit-resizer]:hidden [&::-webkit-scrollbar]:hidden min-h-[40px] max-h-[200px] border-none focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none ${
                       field.value ? "resize-y" : "resize-none"
@@ -160,7 +154,6 @@ export function ContentForm() {
                       variant="ghost"
                       size="icon"
                       type="button"
-                      disabled={isPending}
                       onClick={() => inputRef.current?.click()}
                       className="cursor-pointer"
                     >
@@ -194,7 +187,6 @@ export function ContentForm() {
               <button
                 type="button"
                 onClick={() => handleRemoveFile(file)}
-                disabled={isPending}
                 className="text-muted-foreground hover:text-foreground cursor-pointer pr-1 duration-200 h-6"
               >
                 <X className="w-4 h-4" />

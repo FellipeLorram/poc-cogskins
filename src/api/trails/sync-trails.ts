@@ -29,7 +29,6 @@ export async function syncTrails(trails: GeneratedTrail[]) {
         where: {
           userId,
           title: trail.title,
-          // Você pode adicionar mais campos para identificação única
         },
       });
 

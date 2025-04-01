@@ -11,7 +11,6 @@ export function RecentTrails() {
   const { data: trails, isPending } = useListTrails();
 
   if (isPending) return <TrailCardSkeleton />;
-
   if (!trails || trails.length === 0) return <div className="h-32" />;
 
   const recentTrails = trails?.slice(0, 6);

@@ -1,7 +1,12 @@
+import { cookies } from "next/headers";
 import { ContentForm } from "./content-form";
 import { RecentTrails } from "./recent-trails";
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = await cookies();
+  const runId = cookieStore.get("run-task-id")?.value;
+  const accessToken = cookieStore.get("run-task-access-token")?.value;
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center w-full gap-12">
       <div className="flex flex-col gap-8 w-full">
@@ -13,7 +18,7 @@ export default function Home() {
             exclusivos.
           </p>
         </div>
-        <ContentForm />
+        <ContentForm runId={runId} accessToken={accessToken} />
       </div>
       <RecentTrails />
     </div>

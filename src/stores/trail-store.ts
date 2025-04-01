@@ -4,20 +4,19 @@ import { QuestStatus } from "@prisma/client";
 import { StateCreator } from "zustand/vanilla";
 import { GeneratedTrail } from "@/entities/trails";
 
-// Tipo para os dados do NFT (compatível com Prisma.JsonValue)
+// data do nft
 type NFTData = {
   [key: string]: string | number | boolean | null | NFTData | NFTData[];
 };
 
-// Interface da store
 interface TrailStore {
-  // Estado
+  // state
   trails: GeneratedTrail[];
   currentTrail: GeneratedTrail | null;
   isGenerating: boolean;
   error: string | null;
 
-  // Ações
+  // actions
   addTrail: (trail: GeneratedTrail) => void;
   removeTrail: (trailId: string) => void;
   setCurrentTrail: (trail: GeneratedTrail | null) => void;
@@ -25,7 +24,7 @@ interface TrailStore {
   setGenerating: (isGenerating: boolean) => void;
   setError: (error: string | null) => void;
 
-  // Ações específicas dos quests
+  // actions specific to quests
   updateQuestStatus: (
     trailId: string,
     questId: string,
@@ -37,7 +36,7 @@ interface TrailStore {
     attempts: number
   ) => void;
 
-  // Ações do badge
+  // actions for badge
   updateBadgeEarned: (trailId: string, earnedAt: Date) => void;
   updateBadgeNFTData: (trailId: string, nftData: NFTData) => void;
 }
@@ -49,17 +48,16 @@ type TrailStorePersist = StateCreator<
   TrailStore
 >;
 
-// Criação da store com persistência
 export const useTrailStore = create<TrailStore>()(
   persist(
     ((set) => ({
-      // Estado inicial
+      // initial state
       trails: [],
       currentTrail: null,
       isGenerating: false,
       error: null,
 
-      // Implementação das ações
+      // implementation of actions
       addTrail: (trail: GeneratedTrail) =>
         set((state: TrailStore) => ({
           trails: [...state.trails, trail],
@@ -192,11 +190,11 @@ export const useTrailStore = create<TrailStore>()(
         })),
     })) as TrailStorePersist,
     {
-      name: "trail-storage", // nome da chave no localStorage
+      name: "trail-storage", // name of the key in localStorage
       partialize: (state) => ({
         trails: state.trails,
         currentTrail: state.currentTrail,
-      }), // apenas estes estados serão persistidos
+      }), // only these states will be persisted
     }
   )
 );

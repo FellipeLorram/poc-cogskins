@@ -10,8 +10,9 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { parseAsBoolean, useQueryState } from "nuqs";
+import { Suspense } from "react";
 
-export function SignInDialog() {
+function SignInDialogContent() {
   const [isOpen, setIsOpen] = useQueryState(
     "signin-dialog",
     parseAsBoolean.withDefault(false)
@@ -52,5 +53,13 @@ export function SignInDialog() {
         />
       </DialogContent>
     </Dialog>
+  );
+}
+
+export function SignInDialog() {
+  return (
+    <Suspense>
+      <SignInDialogContent />
+    </Suspense>
   );
 }

@@ -5,12 +5,18 @@ export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
 
-const protectedRoutes = ["/trails"];
+const protectedRoutes = ["/trails", "/badges"];
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
   const isProtectedRoute = protectedRoutes.includes(path);
+
+  if (isProtectedRoute) {
+    const url = new URL(req.nextUrl.origin);
+    url.searchParams.set("signin-dialog", "true");
+    return NextResponse.redirect(url);
+  }
 
   const cookie = await cookies();
   const session = cookie.get("session")?.value;

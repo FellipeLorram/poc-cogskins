@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, TrailStatus } from "@prisma/client";
 
 export type GeneratedTrail = Prisma.TrailGetPayload<{
   include: {
@@ -11,3 +11,9 @@ export type GeneratedTrail = Prisma.TrailGetPayload<{
     badge: true;
   };
 }>;
+
+export const TrailStatusMap: Record<TrailStatus, string> = {
+  DRAFT: "Rascunho",
+  COMPLETED: "Concluído",
+  IN_PROGRESS: "Em andamento",
+};

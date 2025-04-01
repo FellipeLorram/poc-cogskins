@@ -1,12 +1,11 @@
 "use client";
 
-import { useListTrails } from "@/hooks/trails/use-list-trails";
-import { GeneratedTrail } from "@/entities/trails";
-import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { TrailStatus } from "@prisma/client";
-import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GeneratedTrail, TrailStatusMap } from "@/entities/trails";
+import { useListTrails } from "@/hooks/trails/use-list-trails";
+import Image from "next/image";
+import Link from "next/link";
 
 export function RecentTrails() {
   const { data: trails, isPending } = useListTrails();
@@ -18,7 +17,7 @@ export function RecentTrails() {
   const recentTrails = trails?.slice(0, 6);
 
   return (
-    <div className="flex flex-col gap-6 w-full h-32">
+    <div className="flex flex-col gap-6 h-32 w-full">
       <h1 className="text-sm font-medium">Recentes</h1>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {recentTrails?.map((trail) => (
@@ -28,12 +27,6 @@ export function RecentTrails() {
     </div>
   );
 }
-
-const TrailStatusMap: Record<TrailStatus, string> = {
-  DRAFT: "Rascunho",
-  COMPLETED: "Concluído",
-  IN_PROGRESS: "Em andamento",
-};
 
 function TrailCard({ trail }: { trail: GeneratedTrail }) {
   return (

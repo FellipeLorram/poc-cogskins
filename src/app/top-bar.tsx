@@ -28,18 +28,31 @@ export function TopBar() {
   return (
     <div className="fixed top-0 left-0 w-screen">
       <div className="w-11/12 max-w-6xl mx-auto flex justify-between items-center h-16">
-        <Image
-          src="/cogskins-logo.png"
-          alt="CogSkins Logo"
-          className="w-16 h-auto"
-          width={409}
-          height={270}
-        />
+        <Link href="/">
+          <Image
+            src="/cogskins-logo.png"
+            alt="CogSkins Logo"
+            className="w-16 h-auto"
+            width={409}
+            height={270}
+          />
+        </Link>
 
         <div className="flex gap-4">
-          <Link className={buttonVariants({ variant: "ghost" })} href="/trails">
-            Trilhas
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              className={buttonVariants({ variant: "ghost" })}
+              href="/badges"
+            >
+              Badges
+            </Link>
+            <Link
+              className={buttonVariants({ variant: "ghost" })}
+              href="/trails"
+            >
+              Trilhas
+            </Link>
+          </div>
           {!user ? (
             <Button
               variant="outline"
@@ -81,7 +94,7 @@ function UserMenu({ user }: UserMenuProps) {
         <AvatarWithFallback
           src={user.image}
           fallback={fallback}
-          className="w-8 h-8"
+          className="w-8 h-8 cursor-pointer border border-transparent hover:border-border duration-200"
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent>

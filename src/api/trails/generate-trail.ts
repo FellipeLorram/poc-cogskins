@@ -58,7 +58,7 @@ export async function generateTrail(
   request: GenerateTrailRequest
 ): Promise<GeneratedTrail | ErrorResponse> {
   try {
-    // 1. Validar conteúdos
+    // Validate contents
     const validationResult = await validateContents(request);
     if (!validationResult.success) {
       return {
@@ -67,7 +67,7 @@ export async function generateTrail(
       };
     }
 
-    // 2. Gerar trilha com base no conteúdo validado
+    // Generate trail based on validated content
     const prompt = `
             Gere uma trilha de aprendizado baseada no seguinte conteúdo e tema:
 
@@ -110,7 +110,7 @@ export async function generateTrail(
       };
     }
 
-    // 3. Gerar questões para cada quest
+    // Generate questions for each quest
     const questsWithQuestions = await Promise.all(
       object.quests.map(async (quest) => {
         const questions = await generateQuestQuestions(
@@ -130,8 +130,8 @@ export async function generateTrail(
             generationPrompt: quest.generationPrompt,
             createdAt: new Date(),
             updatedAt: new Date(),
-            trailId: "", // Será preenchido quando a trilha for salva
-            questions: [], // Quest sem questões em caso de erro
+            trailId: "", // Will be filled when the trail is saved
+            questions: [], // Quest without questions in case of error
           };
         }
 
@@ -144,13 +144,13 @@ export async function generateTrail(
           description: quest.description,
           createdAt: new Date(),
           updatedAt: new Date(),
-          trailId: "", // Será preenchido quando a trilha for salva
+          trailId: "", // Will be filled when the trail is saved
           questions: questions,
         };
       })
     );
 
-    // 4. Montar objeto da trilha no formato do schema
+    // Build trail object in the format of the schema
     const trail: GeneratedTrail = {
       id: crypto.randomUUID(),
       title: object.title,
@@ -158,7 +158,7 @@ export async function generateTrail(
       estimatedDuration: object.estimatedDuration,
       createdAt: new Date(),
       updatedAt: new Date(),
-      userId: "", // Será preenchido quando houver autenticação
+      userId: "", // Will be filled when there is authentication
       inputContents: request.contents.map((content) => ({
         id: crypto.randomUUID(),
         type: "TEXT",
@@ -167,7 +167,7 @@ export async function generateTrail(
         processedContent: content,
         createdAt: new Date(),
         updatedAt: new Date(),
-        trailId: "", // Será preenchido quando a trilha for salva
+        trailId: "", // Will be filled when the trail is saved
         url: null,
         fileKey: null,
       })),
@@ -181,8 +181,8 @@ export async function generateTrail(
         nftData: null,
         createdAt: new Date(),
         updatedAt: new Date(),
-        trailId: "", // Será preenchido quando a trilha for salva
-        userId: "", // Será preenchido quando houver autenticação
+        trailId: "", // Will be filled when the trail is saved
+        userId: "", // Will be filled when there is authentication
       },
     };
 

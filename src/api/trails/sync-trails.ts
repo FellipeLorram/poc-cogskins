@@ -1,4 +1,3 @@
-// src/api/trails/sync-trails.ts
 "use server";
 
 import { prisma } from "@/lib/prisma-client";

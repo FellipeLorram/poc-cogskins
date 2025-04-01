@@ -20,7 +20,6 @@ import { Send, Upload, X } from "lucide-react";
 import { useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { z } from "zod";
 import { clearRunCookies } from "./actions";
 
@@ -55,27 +54,33 @@ interface ContentFormProps {
 export function ContentForm({ runId, accessToken }: ContentFormProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const { isGenerating, setGeneratingTrailContents, setError, setGenerating } =
+    useTrailStore();
+  const { mutateAsync: saveTrail } = useSaveTrail();
+
   useRealtimeRun<typeof generateTrailTaskTrigger>(runId, {
     accessToken: accessToken,
     enabled: !!runId && !!accessToken,
-    onComplete(run) {
-      if (!run.output) {
-        toast.error("Não foi possível gerar o conteúdo");
+    onComplete(run, err) {
+      if (err || !run.output) {
+        setGenerating(false);
+        setError(err?.message || "Não foi possível gerar o conteúdo");
+        clearRunCookies();
         return;
       }
 
       if ("error" in run.output.trail) {
+        setError(run.output.trail.error);
         return;
       }
 
       saveTrail(run.output.trail);
       setGenerating(false);
+      setError(null);
+      setGeneratingTrailContents([]);
       clearRunCookies();
     },
   });
-
-  const { setGenerating, isGenerating } = useTrailStore();
-  const { mutateAsync: saveTrail } = useSaveTrail();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -98,7 +103,7 @@ export function ContentForm({ runId, accessToken }: ContentFormProps) {
 
   const files = form.watch("files");
   const contents = form.watch("topic");
-  const isDisabled = (!contents && !files) || isGenerating;
+  const submitDisabled = (!contents && !files) || isGenerating;
 
   function handleRemoveFile(file: File) {
     form.setValue(
@@ -124,8 +129,8 @@ export function ContentForm({ runId, accessToken }: ContentFormProps) {
 
     form.reset();
     setGenerating(true);
-
-    await generateTrailTask({ contents });
+    setGeneratingTrailContents(contents);
+    generateTrailTask({ contents });
   }
 
   return (
@@ -142,6 +147,7 @@ export function ContentForm({ runId, accessToken }: ContentFormProps) {
               <FormControl>
                 <div className="relative flex items-start gap-2 w-full border rounded-md p-2 shadow">
                   <Textarea
+                    disabled={isGenerating}
                     placeholder="Qual conteúdo vamos validar hoje?"
                     className={`[&::-webkit-resizer]:hidden [&::-webkit-scrollbar]:hidden min-h-[40px] max-h-[200px] border-none focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none ${
                       field.value ? "resize-y" : "resize-none"
@@ -154,6 +160,7 @@ export function ContentForm({ runId, accessToken }: ContentFormProps) {
                       variant="ghost"
                       size="icon"
                       type="button"
+                      disabled={isGenerating}
                       onClick={() => inputRef.current?.click()}
                       className="cursor-pointer"
                     >
@@ -163,7 +170,7 @@ export function ContentForm({ runId, accessToken }: ContentFormProps) {
                       variant="ghost"
                       size="icon"
                       type="submit"
-                      disabled={isDisabled}
+                      disabled={submitDisabled}
                       className="cursor-pointer"
                     >
                       <Send />

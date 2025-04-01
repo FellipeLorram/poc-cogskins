@@ -15,6 +15,7 @@ interface TrailStore {
   currentTrail: GeneratedTrail | null;
   isGenerating: boolean;
   error: string | null;
+  generatingTrailContents: string[];
 
   // actions
   addTrail: (trail: GeneratedTrail) => void;
@@ -23,6 +24,7 @@ interface TrailStore {
   clearTrails: () => void;
   setGenerating: (isGenerating: boolean) => void;
   setError: (error: string | null) => void;
+  setGeneratingTrailContents: (contents: string[]) => void;
 
   // actions specific to quests
   updateQuestStatus: (
@@ -56,8 +58,14 @@ export const useTrailStore = create<TrailStore>()(
       currentTrail: null,
       isGenerating: false,
       error: null,
+      generatingTrailContents: [],
 
       // implementation of actions
+      setGeneratingTrailContents: (contents: string[]) =>
+        set({
+          generatingTrailContents: contents,
+        }),
+
       addTrail: (trail: GeneratedTrail) =>
         set((state: TrailStore) => ({
           trails: [...state.trails, trail],
@@ -194,6 +202,9 @@ export const useTrailStore = create<TrailStore>()(
       partialize: (state) => ({
         trails: state.trails,
         currentTrail: state.currentTrail,
+        isGenerating: state.isGenerating,
+        error: state.error,
+        generatingTrailContents: state.generatingTrailContents,
       }), // only these states will be persisted
     }
   )

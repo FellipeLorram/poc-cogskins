@@ -1,6 +1,6 @@
 "use client";
 
-import { generateTrailTask } from "@/api/trails/generate-trail-task";
+import { generateTrailTaskTrigger } from "@/api/trails/generate-trail-task";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -31,8 +31,8 @@ export function RecentTrails() {
     <div className="flex flex-col gap-6 h-32 w-full">
       {showTitle && <h1 className="text-sm font-medium">Recentes</h1>}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {isGenerating && <GeneratingTrailCard />}
-        {error && <ErrorTrailCard />}
+        <GeneratingTrailCard />
+        <ErrorTrailCard />
         {recentTrails?.map((trail) => (
           <TrailCard key={trail.id} trail={trail} />
         ))}
@@ -87,6 +87,10 @@ function TrailCardSkeleton() {
 }
 
 function GeneratingTrailCard() {
+  const { isGenerating } = useTrailStore();
+
+  if (!isGenerating) return null;
+
   return (
     <div className="bg-accent animate-pulse flex items-center justify-center gap-2 h-24 shadow-sm relative border rounded-md p-2">
       <Loader2 className="w-4 h-4 animate-spin" />
@@ -109,7 +113,7 @@ function ErrorTrailCard() {
   function handleTryAgain() {
     setError(null);
     setGenerating(true);
-    generateTrailTask({ contents: generatingTrailContents });
+    generateTrailTaskTrigger({ contents: generatingTrailContents });
   }
 
   function handleDelete() {
@@ -117,6 +121,8 @@ function ErrorTrailCard() {
     setGenerating(false);
     setGeneratingTrailContents([]);
   }
+
+  if (!error || !generatingTrailContents.length) return null;
 
   return (
     <div className="bg-red-500/5 border-red-300 flex flex-col items-center justify-center gap-2 h-24 shadow-sm relative border rounded-md p-2">

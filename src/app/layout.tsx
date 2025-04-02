@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { cookies } from "next/headers";
 import { Suspense } from "react";
+import { TopBar } from "../components/top-bar/top-bar";
 import "./globals.css";
 import { Providers } from "./providers";
 import { SignInDialog } from "./signin-dialog";
-import { TopBar } from "../components/top-bar/top-bar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,13 +27,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const runId = cookieStore.get("run-task-id")?.value;
+  const accessToken = cookieStore.get("run-task-access-token")?.value;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>
-          <div className="w-11/12 relative max-w-6xl mx-auto flex flex-col items-center justify-start h-screen">
+        <Providers runId={runId} accessToken={accessToken}>
+          <div className="w-11/12 relative max-w-6xl mx-auto flex flex-col items-center justify-start min-h-screen">
             <TopBar />
             <Suspense>
               <SignInDialog />

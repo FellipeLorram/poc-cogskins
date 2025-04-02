@@ -8,7 +8,7 @@ import { UserMenu } from "./user-menu";
 
 export function TopBar() {
   return (
-    <div className="fixed top-0 left-0 w-screen">
+    <div className="fixed top-0 left-0 w-screen backdrop-blur-sm">
       <div className="w-11/12 max-w-6xl mx-auto flex justify-between items-center h-16">
         <Link href="/">
           <Image

@@ -1,14 +1,14 @@
 "use server";
 
-import { generateTrailTask as generateTrailTaskTrigger } from "@/trigger/trails";
+import { generateTrailTask } from "@/trigger/trails";
 import { cookies } from "next/headers";
 
 interface GenerateTrailRequest {
   contents: string[];
 }
 
-export async function generateTrailTask(payload: GenerateTrailRequest) {
-  const run = await generateTrailTaskTrigger.trigger(payload);
+export async function generateTrailTaskTrigger(payload: GenerateTrailRequest) {
+  const run = await generateTrailTask.trigger(payload);
 
   const accessToken = run.publicAccessToken;
 

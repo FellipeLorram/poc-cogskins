@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import { Providers } from "./providers";
 import { SignInDialog } from "./signin-dialog";
-import { TopBar } from "./top-bar";
+import { TopBar } from "../components/top-bar/top-bar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   description: "Que tal validar seu conhecimento em um novo assunto?",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

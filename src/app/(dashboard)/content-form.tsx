@@ -1,6 +1,6 @@
 "use client";
 
-import { generateTrailTask } from "@/api/trails/generate-trail-task";
+import { generateTrailTaskTrigger } from "@/api/trails/generate-trail-task";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useSaveTrail } from "@/hooks/trails/use-save-trail";
 import { extractContents } from "@/lib/content/extract-content";
 import { useTrailStore } from "@/stores/trail-store";
-import { generateTrailTask as generateTrailTaskTrigger } from "@/trigger/trails";
+import { generateTrailTask } from "@/trigger/trails";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRealtimeRun } from "@trigger.dev/react-hooks";
 import { Send, Upload, X } from "lucide-react";
@@ -58,7 +58,7 @@ export function ContentForm({ runId, accessToken }: ContentFormProps) {
     useTrailStore();
   const { mutateAsync: saveTrail } = useSaveTrail();
 
-  useRealtimeRun<typeof generateTrailTaskTrigger>(runId, {
+  useRealtimeRun<typeof generateTrailTask>(runId, {
     accessToken: accessToken,
     enabled: !!runId && !!accessToken,
     onComplete(run, err) {
@@ -130,7 +130,7 @@ export function ContentForm({ runId, accessToken }: ContentFormProps) {
     form.reset();
     setGenerating(true);
     setGeneratingTrailContents(contents);
-    generateTrailTask({ contents });
+    generateTrailTaskTrigger({ contents });
   }
 
   return (

@@ -3,7 +3,7 @@ import { logger, schemaTask } from "@trigger.dev/sdk/v3";
 import { z } from "zod";
 
 const generateTrailSchema = z.object({
-  contents: z.array(z.string()).min(1).max(4),
+  contents: z.array(z.string()).min(1).max(3),
 });
 
 export const generateTrailTask = schemaTask({

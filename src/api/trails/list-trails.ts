@@ -1,8 +1,8 @@
 "use server";
 
 import { prisma } from "@/lib/prisma-client";
-import { verifySession } from "../auth/verify-session";
 import { Prisma } from "@prisma/client";
+import { getSessionUser } from "../user/get-session-user";
 
 export type TrailWithRelations = Prisma.TrailGetPayload<{
   include: {
@@ -17,30 +17,27 @@ export type TrailWithRelations = Prisma.TrailGetPayload<{
 }>;
 
 export async function listTrails(): Promise<TrailWithRelations[]> {
-  try {
-    const { userId } = await verifySession();
+  const user = await getSessionUser();
 
-    const trails = await prisma.trail.findMany({
-      where: {
-        userId,
-      },
-      include: {
-        badge: true,
-        inputContents: true,
-        quests: {
-          include: {
-            questions: true,
-          },
+  if (!user) return [];
+
+  const trails = await prisma.trail.findMany({
+    where: {
+      userId: user.id,
+    },
+    include: {
+      badge: true,
+      inputContents: true,
+      quests: {
+        include: {
+          questions: true,
         },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 
-    return trails;
-  } catch (error) {
-    console.error("Error listing trails:", error);
-    throw new Error("Falha ao buscar trilhas do banco de dados");
-  }
+  return trails;
 }

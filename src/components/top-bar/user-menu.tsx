@@ -2,67 +2,31 @@
 
 import { signOut } from "@/api/auth/sign-out";
 import { AvatarWithFallback } from "@/components/ui/avatar-with-fallback";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useSessionUser } from "@/hooks/auth/use-session-user";
 import { useInvalidateQuery } from "@/hooks/use-invalidate-query";
+import { User } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
 import { LogOut, User as UserIcon } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { parseAsBoolean, useQueryState } from "nuqs";
-import { Suspense } from "react";
+import { use } from "react";
 
-export function TopBar() {
-  return (
-    <div className="fixed top-0 left-0 w-screen">
-      <div className="w-11/12 max-w-6xl mx-auto flex justify-between items-center h-16">
-        <Link href="/">
-          <Image
-            src="/cogskins-logo.png"
-            alt="CogSkins Logo"
-            className="w-16 h-auto"
-            width={409}
-            height={270}
-          />
-        </Link>
-
-        <div className="flex gap-4">
-          <div className="flex gap-2">
-            <Link
-              className={buttonVariants({ variant: "ghost" })}
-              href="/badges"
-            >
-              Badges
-            </Link>
-            <Link
-              className={buttonVariants({ variant: "ghost" })}
-              href="/trails"
-            >
-              Trilhas
-            </Link>
-          </div>
-          <Suspense>
-            <UserMenu />
-          </Suspense>
-        </div>
-      </div>
-    </div>
-  );
+interface Props {
+  getUserPromise: Promise<User | null>;
 }
 
-function UserMenu() {
+export function UserMenu({ getUserPromise }: Props) {
+  const user = use(getUserPromise);
   const [, setIsOpen] = useQueryState(
     "signin-dialog",
     parseAsBoolean.withDefault(false)
   );
-  const { data: user, isPending } = useSessionUser();
 
   const { invalidate } = useInvalidateQuery({
     queryKey: ["session-user"],
@@ -74,8 +38,6 @@ function UserMenu() {
       invalidate();
     },
   });
-
-  if (isPending) return <Skeleton className="w-20 h-9" />;
 
   if (!user) {
     return (

@@ -38,7 +38,9 @@ const questSchema = z.object({
 const trailGenerationSchema = z.object({
   title: z
     .string()
-    .describe("Título atraente e descritivo para a trilha de aprendizado"),
+    .describe(
+      "Título atraente e descritivo para a trilha de aprendizado, somente o titulo"
+    ),
   estimatedDuration: z.number().describe("Duração estimada em minutos"),
   badge: badgeSchema,
   quests: z

@@ -18,7 +18,7 @@ export async function generateBadgeImage({
 > {
   try {
     const model = openai.image("dall-e-3");
-    const prompt = `Create a modern, minimalist achievement badge representing the theme: ${theme}. The badge should be simple, elegant, and suitable as an achievement icon. Use a clean design with subtle details.`;
+    const prompt = `Create a modern, minimalist achievement badge representing the theme: ${theme}. The badge should be simple, elegant, and suitable as an achievement icon in a cartoon style. Use a clean design with subtle details.`;
 
     const result = await model.doGenerate({
       prompt,

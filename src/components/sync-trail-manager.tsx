@@ -6,7 +6,7 @@ import { useSyncTrails } from "@/hooks/trails/use-sync-trails";
 import { useTrailStore } from "@/stores/trail-store";
 
 export function TrailSyncManager() {
-  const { data: user, isLoading } = useSessionUser();
+  const { data: user, isPending: isUserPending } = useSessionUser();
   const { mutate: syncTrails, isPending } = useSyncTrails();
   const { trails } = useTrailStore();
 
@@ -18,7 +18,7 @@ export function TrailSyncManager() {
     // existem trilhas para sincronizar e ainda não sincronizamos
     if (
       user &&
-      !isLoading &&
+      !isUserPending &&
       trails.length > 0 &&
       !hasSynced.current &&
       !isPending
@@ -31,10 +31,10 @@ export function TrailSyncManager() {
     }
 
     // Se o usuário deslogar, resetamos o estado
-    if (!user && !isLoading) {
+    if (!user && !isUserPending) {
       hasSynced.current = false;
     }
-  }, [user, isLoading, trails.length, syncTrails, isPending]);
+  }, [user, isUserPending, trails.length, syncTrails, isPending]);
 
   // Componente não renderiza nada visualmente
   return null;

@@ -12,7 +12,7 @@ export async function getSessionUser() {
 
   const user = await prisma.user.findUnique({
     where: {
-      id: session?.userId,
+      id: session.userId,
     },
   });
 

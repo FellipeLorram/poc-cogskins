@@ -62,7 +62,7 @@ export function Trail({ trailId }: Props) {
 
   return (
     <div className="w-full space-y-12">
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-start justify-between w-full">
         <div>
           <h1 className="text-3xl">{trail.title}</h1>
           <div className="flex items-center w-fit gap-2 mt-1">

@@ -1,6 +1,7 @@
 import { buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { UserMenu } from "./user-menu";
 
 export function TopBar() {
@@ -32,7 +33,9 @@ export function TopBar() {
               Trilhas
             </Link>
           </div>
-          <UserMenu />
+          <Suspense>
+            <UserMenu />
+          </Suspense>
         </div>
       </div>
     </div>

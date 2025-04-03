@@ -5,7 +5,7 @@ import { useGetQuest } from "@/hooks/quests/use-get-quest";
 import { useUpdateQuest } from "@/hooks/quests/use-update-quest";
 import { useUpdateTrail } from "@/hooks/trails/use-update-trail";
 import { QuestStatus, TrailStatus } from "@prisma/client";
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo, useEffect } from "react";
 import { QuestionForm, QuestionFormSchema } from "./question-form";
 import { useQuestionStore } from "./question-store";
 
@@ -102,6 +102,13 @@ export function Quest({ trailId, questId }: Props) {
     return map;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questions, answeredQuestions]);
+
+  useEffect(() => {
+    if (questions?.length && !currentQuestion) {
+      setCurrentQuestion(questions[0].id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questions, currentQuestion]);
 
   return currentQuestion && questionsMap.get(currentQuestion);
 }

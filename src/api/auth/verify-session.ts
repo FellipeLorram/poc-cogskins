@@ -1,3 +1,5 @@
+"use server";
+
 import { getSession } from "./get-session";
 
 export async function verifySession() {

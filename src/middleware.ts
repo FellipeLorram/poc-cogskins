@@ -14,12 +14,6 @@ export default async function middleware(req: NextRequest) {
   const cookie = await cookies();
   const session = cookie.get("session")?.value;
 
-  if (isProtectedRoute && !session) {
-    const url = new URL(req.nextUrl.origin);
-    url.searchParams.set("signin-dialog", "true");
-    return NextResponse.redirect(url);
-  }
-
   if (!session && isProtectedRoute) {
     const url = new URL(req.nextUrl.origin);
     url.searchParams.set("signin-dialog", "true");

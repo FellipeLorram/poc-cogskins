@@ -1,5 +1,13 @@
-import React from "react";
+import { Trail } from "./trail";
 
-export default function Page() {
-  return <div></div>;
+interface Props {
+  params: Promise<{
+    trailId: string;
+  }>;
+}
+
+export default async function Page({ params }: Props) {
+  const { trailId } = await params;
+
+  return <Trail trailId={trailId} />;
 }

@@ -35,7 +35,7 @@ export function RecentTrails() {
       setAccessToken(null);
     },
   });
-  console.log("trails", trails);
+
   const recentTrails =
     isGenerating || error ? trails?.slice(0, 5) : trails?.slice(0, 6);
 
@@ -114,9 +114,7 @@ function GeneratingTrailCard() {
   return (
     <div className="bg-accent animate-pulse flex items-center justify-center gap-2 h-24 shadow-sm relative border rounded-md p-2">
       <Loader2 className="w-4 h-4 animate-spin" />
-      <p className="text-xs w-fit">
-        Gerando trilha, isso pode levar alguns segundos...
-      </p>
+      <p className="text-xs w-fit">Gerando trilha...</p>
     </div>
   );
 }

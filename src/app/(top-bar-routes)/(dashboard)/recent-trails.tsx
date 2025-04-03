@@ -17,14 +17,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useTrailRunnerStore } from "./trail-runner-store";
-import { useRealtimeRunner } from "./use-realtime-runner";
+import { useRealtimeTrailTaskRunner } from "./use-realtime-trail-task-runner";
 
 export function RecentTrails() {
   const { data: trails, isPending } = useListTrails();
   const { runId, accessToken, setRunId, setAccessToken } =
     useTrailRunnerStore();
 
-  const { isGenerating, error, trail } = useRealtimeRunner({
+  const { isGenerating, error, trail } = useRealtimeTrailTaskRunner({
     accessToken: accessToken ?? undefined,
     runId: runId ?? undefined,
   });

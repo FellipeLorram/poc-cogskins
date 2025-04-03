@@ -1,11 +1,11 @@
-import { GeneratedTrail } from "@/entities/trails";
-import { generateTrailTask } from "@/trigger/trails";
+import { PersonalizedFeedback } from "@/api/quest/generate-feedback";
+import { generateFeedbackTask } from "@/trigger/feedback";
 import { useRealtimeRun } from "@trigger.dev/react-hooks";
 
 interface Response {
   isGenerating: boolean;
   error: string | null;
-  trail: GeneratedTrail | null;
+  feedback: PersonalizedFeedback | null;
 }
 
 interface Props {
@@ -13,8 +13,11 @@ interface Props {
   runId?: string;
 }
 
-export function useRealtimeRunner({ accessToken, runId }: Props): Response {
-  const { run } = useRealtimeRun<typeof generateTrailTask>(runId, {
+export function useRealtimeFeedbackTaskRunner({
+  accessToken,
+  runId,
+}: Props): Response {
+  const { run } = useRealtimeRun<typeof generateFeedbackTask>(runId, {
     accessToken: accessToken,
     enabled: !!runId && !!accessToken,
   });
@@ -23,7 +26,7 @@ export function useRealtimeRunner({ accessToken, runId }: Props): Response {
     return {
       isGenerating: false,
       error: null,
-      trail: run?.output?.trail ?? null,
+      feedback: run?.output?.feedback ?? null,
     };
   }
 
@@ -35,6 +38,6 @@ export function useRealtimeRunner({ accessToken, runId }: Props): Response {
   return {
     isGenerating,
     error: run?.error?.message ?? null,
-    trail: run?.output?.trail ?? null,
+    feedback: run?.output?.feedback ?? null,
   };
 }

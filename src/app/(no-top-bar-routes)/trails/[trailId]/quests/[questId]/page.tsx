@@ -1,4 +1,4 @@
-import React from "react";
+import { Quest } from "./quest";
 
 interface Props {
   params: Promise<{
@@ -10,9 +10,5 @@ interface Props {
 export default async function Page({ params }: Props) {
   const { trailId, questId } = await params;
 
-  return (
-    <div>
-      {trailId} - {questId}
-    </div>
-  );
+  return <Quest trailId={trailId} questId={questId} />;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { generateTrailTaskTrigger } from "@/api/trails/generate-trail-task";
-import { useTrailRunnerStore } from "@/app/(dashboard)/trail-runner-store";
+import { useTrailRunnerStore } from "./trail-runner-store";
 import { Button } from "@/components/ui/button";
 import {
   Form,

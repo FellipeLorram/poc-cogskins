@@ -1,30 +1,50 @@
-import { openai } from '@ai-sdk/openai';
-import { generateObject } from 'ai';
-import { z } from 'zod';
+"use server";
+
+import { openai } from "@ai-sdk/openai";
+import { generateObject } from "ai";
+import { z } from "zod";
 
 const feedbackSchema = z.object({
-    encouragement: z.string().describe('Mensagem motivacional baseada no desempenho'),
-    conceptualFeedback: z.string().describe('Feedback sobre a compreensão dos conceitos principais'),
-    improvementAreas: z.array(z.object({
-        concept: z.string().describe('Conceito que precisa de mais atenção'),
-        suggestion: z.string().describe('Sugestão específica para melhorar'),
-        resources: z.array(z.string()).describe('Recursos adicionais para estudo')
-    })).describe('Áreas específicas para melhoria com sugestões'),
-    nextStepHints: z.array(z.string()).describe('Dicas sobre o que focar em seguida')
+  encouragement: z
+    .string()
+    .describe("Mensagem motivacional baseada no desempenho"),
+  conceptualFeedback: z
+    .string()
+    .describe("Feedback sobre a compreensão dos conceitos principais"),
+  improvementAreas: z
+    .array(
+      z.object({
+        concept: z.string().describe("Conceito que precisa de mais atenção"),
+        suggestion: z.string().describe("Sugestão específica para melhorar"),
+        resources: z
+          .array(z.string())
+          .describe("Recursos adicionais para estudo"),
+      })
+    )
+    .describe("Áreas específicas para melhoria com sugestões"),
+  nextStepHints: z
+    .array(z.string())
+    .describe("Dicas sobre o que focar em seguida"),
 });
 
-type PersonalizedFeedback = z.infer<typeof feedbackSchema>;
+export type PersonalizedFeedback = z.infer<typeof feedbackSchema>;
 
-export async function generatePersonalizedFeedback(
-    contentPrompt: string,
-    questionsAnswered: number,
-    correctAnswers: number,
-    difficultyLevel: number
-): Promise<PersonalizedFeedback | { error: string }> {
-    try {
-        const performance = (correctAnswers / questionsAnswered) * 100;
-        
-        const prompt = `
+interface GenerateFeedbackRequest {
+  contentPrompt: string;
+  questionsAnswered: number;
+  correctAnswers: number;
+  difficultyLevel: number;
+}
+
+export async function generatePersonalizedFeedback({
+  contentPrompt,
+  questionsAnswered,
+  correctAnswers,
+  difficultyLevel,
+}: GenerateFeedbackRequest): Promise<PersonalizedFeedback> {
+  const performance = (correctAnswers / questionsAnswered) * 100;
+
+  const prompt = `
             Use este prompt otimizado como base de conhecimento:
             ${contentPrompt}
 
@@ -44,19 +64,12 @@ export async function generatePersonalizedFeedback(
             - Sugira recursos em português quando possível
         `;
 
-        const { object } = await generateObject<PersonalizedFeedback>({
-            model: openai('gpt-3.5-turbo'),
-            schema: feedbackSchema,
-            prompt,
-            temperature: 0.5, // Balanceando consistência com personalização
-        });
+  const { object } = await generateObject<PersonalizedFeedback>({
+    model: openai("gpt-3.5-turbo"),
+    schema: feedbackSchema,
+    prompt,
+    temperature: 0.5, // Balanceando consistência com personalização
+  });
 
-        return object;
-    } catch (error) {
-        return {
-            error: error instanceof Error 
-                ? error.message 
-                : 'Falha ao gerar feedback personalizado. Tente novamente.'
-        };
-    }
-} 
+  return object;
+}

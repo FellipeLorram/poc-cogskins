@@ -2,6 +2,7 @@
 
 import { Badge, badgeVariants } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
@@ -58,7 +59,7 @@ export function Trail({ trailId }: Props) {
     URL.revokeObjectURL(url);
   };
 
-  if (isPending || !trail) return <div>Loading...</div>;
+  if (isPending || !trail) return <Loading />;
 
   return (
     <div className="w-full space-y-12">
@@ -161,6 +162,48 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
             <ChevronRight className="w-4 h-4" />
           )}
         </Button>
+      </div>
+    </div>
+  );
+}
+
+function Loading() {
+  return (
+    <div className="w-full space-y-12">
+      <div className="flex items-start justify-between w-full">
+        <div>
+          <Skeleton className="w-64 h-8" />
+
+          <div className="flex items-center w-fit gap-2 mt-1">
+            <Skeleton className="w-16 h-4" />
+            <Skeleton className="w-24 h-4" />
+          </div>
+        </div>
+
+        <div className="h-fit flex items-center gap-2">
+          <Skeleton className="w-9 h-9" />
+          <Skeleton className="w-9 h-9" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-4">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div
+            key={index}
+            className="flex items-center justify-between gap-2 border rounded-md px-4 h-24"
+          >
+            <div className="flex flex-col gap-2">
+              <Skeleton className="w-64 h-4" />
+              <div className="flex items-center gap-2">
+                <Skeleton className="w-16 h-4" />
+                <Skeleton className="w-16 h-4" />
+                <Skeleton className="w-16 h-4" />
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Skeleton className="w-16 h-9" />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
-import { TopBar } from "../components/top-bar/top-bar";
 import "./globals.css";
 import { Providers } from "./providers";
 import { SignInDialog } from "./signin-dialog";
@@ -33,7 +32,6 @@ export default async function RootLayout({
       >
         <Providers>
           <div className="w-11/12 relative max-w-6xl mx-auto flex flex-col items-center justify-start min-h-screen">
-            <TopBar />
             <Suspense>
               <SignInDialog />
             </Suspense>

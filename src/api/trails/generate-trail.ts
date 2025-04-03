@@ -32,14 +32,16 @@ const questSchema = z.object({
     .describe("Prompt otimizado para gerar as questões deste quest"),
   description: z
     .string()
-    .describe("Descrição do quest que explica sobre o que se trata o quest"),
+    .describe(
+      "Descrição do quest que explica sobre o que se trata o quest, remetendo ao aprendizado do usuário, não precisa incluir a palavra 'quest'"
+    ),
 });
 
 const trailGenerationSchema = z.object({
   title: z
     .string()
     .describe(
-      "Título atraente e descritivo para a trilha de aprendizado, somente o titulo"
+      "Título atraente e descritivo para a trilha de aprendizado, não incluir a palavra 'Trilha' no título"
     ),
   estimatedDuration: z.number().describe("Duração estimada em minutos"),
   badge: badgeSchema,
@@ -105,6 +107,7 @@ export async function generateTrail(
         console.error(
           `Falha ao gerar questões para o quest: ${questions.error}`
         );
+
         return {
           id: crypto.randomUUID(),
           difficultyLevel: quest.difficultyLevel,
@@ -118,10 +121,12 @@ export async function generateTrail(
         };
       }
 
+      const status = quest.difficultyLevel === 1 ? "AVAILABLE" : "LOCKED";
+
       return {
         id: crypto.randomUUID(),
         difficultyLevel: quest.difficultyLevel,
-        status: "LOCKED" as QuestStatus,
+        status: status as QuestStatus,
         attempts: 0,
         generationPrompt: quest.generationPrompt,
         description: quest.description,

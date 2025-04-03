@@ -19,7 +19,7 @@ export function useRealtimeRunner({ accessToken, runId }: Props): Response {
     enabled: !!runId && !!accessToken,
   });
 
-  if (!accessToken || !runId || run?.status === "COMPLETED") {
+  if (!accessToken || !runId) {
     return {
       isGenerating: false,
       error: null,

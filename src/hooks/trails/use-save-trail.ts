@@ -7,7 +7,11 @@ import { saveTrail } from "@/api/trails/save-trail";
 import { GeneratedTrail } from "@/entities/trails";
 import { useInvalidateQuery } from "../use-invalidate-query";
 
-export function useSaveTrail() {
+interface Props {
+  onSuccess?: () => void;
+}
+
+export function useSaveTrail({ onSuccess }: Props) {
   const { invalidate } = useInvalidateQuery({
     queryKey: ["trails"],
   });
@@ -21,6 +25,7 @@ export function useSaveTrail() {
     },
     onSuccess: () => {
       invalidate();
+      onSuccess?.();
     },
   });
 }

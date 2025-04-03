@@ -14,7 +14,7 @@ export function useListTrails() {
     queryKey: ["trails"],
     queryFn: async () => {
       if (user) return (await listTrails()) as GeneratedTrail[];
-      return [];
+      return trails;
     },
     enabled: !isSessionLoading,
   });

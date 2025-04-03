@@ -3,6 +3,7 @@
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { z } from "zod";
+import { ContentValidationError } from "../errors/content-validation-error";
 
 const validateContentRequestSchema = z.object({
   contents: z.array(z.string()).min(1).max(3),
@@ -11,10 +12,8 @@ const validateContentRequestSchema = z.object({
 type ValidateContentRequest = z.infer<typeof validateContentRequestSchema>;
 
 interface ValidateContentResponse {
-  success: boolean;
   content: string;
   contentPrompt: string;
-  error?: string;
   theme?: string;
 }
 
@@ -78,22 +77,20 @@ export async function validateContents(
       temperature: 0.3,
     });
 
+    if (!object.coherent) {
+      throw new ContentValidationError(object.reason);
+    }
+
     return {
-      success: object.coherent,
       content: object.unifiedContent,
       contentPrompt: object.optimizedPrompt,
-      error: object.coherent ? undefined : object.reason,
       theme: object.coherent ? object.theme || undefined : undefined,
     };
   } catch (error) {
-    return {
-      success: false,
-      content: "",
-      contentPrompt: "",
-      error:
-        error instanceof Error
-          ? error.message
-          : "Falha ao validar conteúdos. Tente novamente.",
-    };
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Falha ao validar conteúdos. Tente novamente.";
+    throw new ContentValidationError(message);
   }
 }

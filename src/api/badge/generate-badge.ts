@@ -2,6 +2,7 @@
 
 import { openai } from "@ai-sdk/openai";
 import { uploadFiles } from "../ut-api";
+import { BadgeGenerationError } from "../errors/badge-generation-error";
 
 interface GenerateBadgeImageRequest {
   theme: string;
@@ -13,9 +14,7 @@ interface GenerateBadgeImageResponse {
 
 export async function generateBadgeImage({
   theme,
-}: GenerateBadgeImageRequest): Promise<
-  GenerateBadgeImageResponse | { error: string }
-> {
+}: GenerateBadgeImageRequest): Promise<GenerateBadgeImageResponse> {
   try {
     const model = openai.image("dall-e-3");
     const prompt = `Create a modern, minimalist achievement badge representing the theme: ${theme}. The badge should be simple, elegant, and suitable as an achievement icon in a cartoon style. Use a clean design with subtle details.`;
@@ -37,17 +36,18 @@ export async function generateBadgeImage({
     const url = uploadResult[0].data?.ufsUrl;
 
     if (!url) {
-      throw new Error("Falha ao gerar imagem");
+      throw new BadgeGenerationError("Falha ao gerar imagem");
     }
 
     return {
       url,
     };
   } catch (error) {
-    console.error("Erro ao gerar imagem:", error);
-    return {
-      error: error instanceof Error ? error.message : "Falha ao gerar imagem",
-    };
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Falha ao gerar imagem. Tente novamente.";
+    throw new BadgeGenerationError(message);
   }
 }
 

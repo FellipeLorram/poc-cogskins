@@ -1,13 +1,13 @@
 "use server";
 
+import { validateContents } from "@/api/content/validate-content";
+import { generateQuestQuestions } from "@/api/quest/generate-questions";
+import { GeneratedTrail } from "@/entities/trails";
 import { openai } from "@ai-sdk/openai";
+import { QuestStatus } from "@prisma/client";
 import { generateObject } from "ai";
 import { z } from "zod";
-import { validateContents } from "@/api/content/validate-content";
-import { QuestStatus } from "@prisma/client";
-import { generateQuestQuestions } from "@/api/quest/generate-questions";
 import { generateBadgeImage } from "../badge/generate-badge";
-import { GeneratedTrail } from "@/entities/trails";
 
 interface GenerateTrailRequest {
   contents: string[];
@@ -51,26 +51,14 @@ const trailGenerationSchema = z.object({
 
 type TrailGeneration = z.infer<typeof trailGenerationSchema>;
 
-interface ErrorResponse {
-  error: string;
-  errorType: "VALIDATION_ERROR" | "GENERATION_ERROR";
-}
-
 export async function generateTrail(
   request: GenerateTrailRequest
-): Promise<GeneratedTrail | ErrorResponse> {
-  try {
-    // Validate contents
-    const validationResult = await validateContents(request);
-    if (!validationResult.success) {
-      return {
-        error: validationResult.error || "Falha ao validar conteúdos",
-        errorType: "VALIDATION_ERROR",
-      };
-    }
+): Promise<GeneratedTrail> {
+  // Validate contents
+  const validationResult = await validateContents(request);
 
-    // Generate trail based on validated content
-    const prompt = `
+  // Generate trail based on validated content
+  const prompt = `
             Gere uma trilha de aprendizado baseada no seguinte conteúdo e tema:
 
             Tema: ${validationResult.theme}
@@ -93,109 +81,93 @@ export async function generateTrail(
             - Quest precisa de uma descrição que explique sobre o que se trata o quest
         `;
 
-    const { object } = await generateObject<TrailGeneration>({
-      model: openai("gpt-3.5-turbo"),
-      schema: trailGenerationSchema,
-      prompt,
-      temperature: 0.4, // Balanceando criatividade com consistência
-    });
+  const { object } = await generateObject<TrailGeneration>({
+    model: openai("gpt-3.5-turbo"),
+    schema: trailGenerationSchema,
+    prompt,
+    temperature: 0.4, // Balanceando criatividade com consistência
+  });
 
-    // Gerar imagem do badge
-    const badgeResult = await generateBadgeImage({
-      theme: validationResult.theme || object.title,
-    });
+  // Gerar imagem do badge
+  const badgeResult = await generateBadgeImage({
+    theme: validationResult.theme || object.title,
+  });
 
-    if ("error" in badgeResult) {
-      return {
-        error: `Falha ao gerar imagem do badge: ${badgeResult.error}`,
-        errorType: "GENERATION_ERROR",
-      };
-    }
+  // Generate questions for each quest
+  const questsWithQuestions = await Promise.all(
+    object.quests.map(async (quest) => {
+      const questions = await generateQuestQuestions(
+        quest.generationPrompt,
+        quest.difficultyLevel
+      );
 
-    // Generate questions for each quest
-    const questsWithQuestions = await Promise.all(
-      object.quests.map(async (quest) => {
-        const questions = await generateQuestQuestions(
-          quest.generationPrompt,
-          quest.difficultyLevel
+      if ("error" in questions) {
+        console.error(
+          `Falha ao gerar questões para o quest: ${questions.error}`
         );
-
-        if ("error" in questions) {
-          console.error(
-            `Falha ao gerar questões para o quest: ${questions.error}`
-          );
-          return {
-            id: crypto.randomUUID(),
-            difficultyLevel: quest.difficultyLevel,
-            status: "LOCKED" as QuestStatus,
-            attempts: 0,
-            generationPrompt: quest.generationPrompt,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            trailId: "", // Will be filled when the trail is saved
-            questions: [], // Quest without questions in case of error
-          };
-        }
-
         return {
           id: crypto.randomUUID(),
           difficultyLevel: quest.difficultyLevel,
           status: "LOCKED" as QuestStatus,
           attempts: 0,
           generationPrompt: quest.generationPrompt,
-          description: quest.description,
           createdAt: new Date(),
           updatedAt: new Date(),
           trailId: "", // Will be filled when the trail is saved
-          questions: questions,
+          questions: [], // Quest without questions in case of error
         };
-      })
-    );
+      }
 
-    // Build trail object in the format of the schema
-    const trail: GeneratedTrail = {
+      return {
+        id: crypto.randomUUID(),
+        difficultyLevel: quest.difficultyLevel,
+        status: "LOCKED" as QuestStatus,
+        attempts: 0,
+        generationPrompt: quest.generationPrompt,
+        description: quest.description,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        trailId: "", // Will be filled when the trail is saved
+        questions: questions,
+      };
+    })
+  );
+
+  // Build trail object in the format of the schema
+  const trail: GeneratedTrail = {
+    id: crypto.randomUUID(),
+    title: object.title,
+    status: "DRAFT",
+    estimatedDuration: object.estimatedDuration,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    userId: "", // Will be filled when there is authentication
+    inputContents: request.contents.map((content) => ({
       id: crypto.randomUUID(),
-      title: object.title,
-      status: "DRAFT",
-      estimatedDuration: object.estimatedDuration,
+      type: "TEXT",
+      size: content.length,
+      processingStatus: "COMPLETED",
+      processedContent: content,
       createdAt: new Date(),
       updatedAt: new Date(),
+      trailId: "", // Will be filled when the trail is saved
+      url: null,
+      fileKey: null,
+    })),
+    quests: questsWithQuestions as GeneratedTrail["quests"],
+    badge: {
+      id: crypto.randomUUID(),
+      title: object.badge.title,
+      description: object.badge.description,
+      url: badgeResult.url,
+      earnedAt: null,
+      nftData: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      trailId: "", // Will be filled when the trail is saved
       userId: "", // Will be filled when there is authentication
-      inputContents: request.contents.map((content) => ({
-        id: crypto.randomUUID(),
-        type: "TEXT",
-        size: content.length,
-        processingStatus: "COMPLETED",
-        processedContent: content,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        trailId: "", // Will be filled when the trail is saved
-        url: null,
-        fileKey: null,
-      })),
-      quests: questsWithQuestions as GeneratedTrail["quests"],
-      badge: {
-        id: crypto.randomUUID(),
-        title: object.badge.title,
-        description: object.badge.description,
-        url: badgeResult.url,
-        earnedAt: null,
-        nftData: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        trailId: "", // Will be filled when the trail is saved
-        userId: "", // Will be filled when there is authentication
-      },
-    };
+    },
+  };
 
-    return trail;
-  } catch (error) {
-    return {
-      error:
-        error instanceof Error
-          ? error.message
-          : "Falha ao gerar a trilha. Tente novamente.",
-      errorType: "GENERATION_ERROR",
-    };
-  }
+  return trail;
 }

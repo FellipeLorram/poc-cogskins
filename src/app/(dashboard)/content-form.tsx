@@ -1,6 +1,7 @@
 "use client";
 
 import { generateTrailTaskTrigger } from "@/api/trails/generate-trail-task";
+import { useTrailRunnerStore } from "@/app/(dashboard)/trail-runner-store";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,7 +12,6 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { extractContents } from "@/lib/content/extract-content";
-import { useTrailStore } from "@/stores/trail-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Send, Upload, X } from "lucide-react";
 import { useRef } from "react";
@@ -45,11 +45,14 @@ type FormValues = z.infer<typeof formSchema>;
 export function ContentForm() {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { isGenerating, setGeneratingTrailContents, setGenerating } =
-    useTrailStore();
+  const { setContents, setRunId, setAccessToken } = useTrailRunnerStore();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      topic: "",
+      files: [],
+    },
   });
 
   const { getInputProps } = useDropzone({
@@ -69,7 +72,7 @@ export function ContentForm() {
 
   const files = form.watch("files");
   const contents = form.watch("topic");
-  const submitDisabled = (!contents && !files) || isGenerating;
+  const submitDisabled = !contents && !files;
 
   function handleRemoveFile(file: File) {
     form.setValue(
@@ -93,10 +96,17 @@ export function ContentForm() {
       }
     }
 
-    form.reset();
-    setGenerating(true);
-    setGeneratingTrailContents(contents);
-    generateTrailTaskTrigger({ contents });
+    form.reset({
+      topic: "",
+      files: [],
+    });
+    setContents(contents);
+    const { accessToken, runId } = await generateTrailTaskTrigger({
+      contents,
+    });
+
+    setAccessToken(accessToken);
+    setRunId(runId);
   }
 
   return (
@@ -113,7 +123,6 @@ export function ContentForm() {
               <FormControl>
                 <div className="relative flex items-start gap-2 w-full border rounded-md p-2 shadow">
                   <Textarea
-                    disabled={isGenerating}
                     placeholder="Qual conteúdo vamos validar hoje?"
                     className={`[&::-webkit-resizer]:hidden [&::-webkit-scrollbar]:hidden min-h-[40px] max-h-[200px] border-none focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none ${
                       field.value ? "resize-y" : "resize-none"
@@ -126,7 +135,6 @@ export function ContentForm() {
                       variant="ghost"
                       size="icon"
                       type="button"
-                      disabled={isGenerating}
                       onClick={() => inputRef.current?.click()}
                       className="cursor-pointer"
                     >

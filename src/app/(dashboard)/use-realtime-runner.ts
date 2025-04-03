@@ -23,7 +23,7 @@ export function useRealtimeRunner({ accessToken, runId }: Props): Response {
     return {
       isGenerating: false,
       error: null,
-      trail: null,
+      trail: run?.output?.trail ?? null,
     };
   }
 

@@ -13,6 +13,7 @@ import { useGetTrail } from "@/hooks/trails/use-get-trail";
 import { QuestStatus } from "@prisma/client";
 import { VariantProps } from "class-variance-authority";
 import { ChevronRight, Lock, Share, Download } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Props {
   trailId: string;
@@ -107,7 +108,7 @@ export function Trail({ trailId }: Props) {
       </div>
       <div className="flex flex-col gap-4">
         {trail.quests.map((quest) => (
-          <QuestCard key={quest.id} quest={quest} />
+          <QuestCard key={quest.id} quest={quest} trailId={trailId} />
         ))}
       </div>
     </div>
@@ -116,9 +117,11 @@ export function Trail({ trailId }: Props) {
 
 interface QuestCardProps {
   quest: GeneratedQuest;
+  trailId: string;
 }
 
-function QuestCard({ quest }: QuestCardProps) {
+function QuestCard({ quest, trailId }: QuestCardProps) {
+  const router = useRouter();
   const isLocked = quest.status === QuestStatus.LOCKED;
   const attempts = quest.attempts;
   let badgeVariant: VariantProps<typeof badgeVariants>["variant"] = "outline";
@@ -145,7 +148,12 @@ function QuestCard({ quest }: QuestCardProps) {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Button disabled={isLocked} variant="outline">
+        <Button
+          disabled={isLocked}
+          variant="outline"
+          className="cursor-pointer"
+          onClick={() => router.push(`/trails/${trailId}/quests/${quest.id}`)}
+        >
           {!isLocked && attempts > 0 ? "Tentar novamente" : "Iniciar"}
           {isLocked ? (
             <Lock className="w-4 h-4" />

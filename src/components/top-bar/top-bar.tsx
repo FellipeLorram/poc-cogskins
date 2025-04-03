@@ -1,9 +1,6 @@
-import { getSessionUser } from "@/api/user/get-session-user";
 import { buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense } from "react";
-import { Skeleton } from "../ui/skeleton";
 import { UserMenu } from "./user-menu";
 
 export function TopBar() {
@@ -35,9 +32,7 @@ export function TopBar() {
               Trilhas
             </Link>
           </div>
-          <Suspense fallback={<Skeleton className="w-20 h-9" />}>
-            <UserMenu getUserPromise={getSessionUser()} />
-          </Suspense>
+          <UserMenu />
         </div>
       </div>
     </div>

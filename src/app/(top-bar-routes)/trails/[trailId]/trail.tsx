@@ -133,6 +133,8 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
     badgeVariant = "success";
   }
 
+  const firstQuestion = quest.questions[0];
+
   return (
     <div
       data-locked={isLocked}
@@ -153,7 +155,11 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
           disabled={isLocked}
           variant="outline"
           className="cursor-pointer"
-          onClick={() => router.push(`/trails/${trailId}/quests/${quest.id}`)}
+          onClick={() =>
+            router.push(
+              `/trails/${trailId}/quests/${quest.id}?questionId=${firstQuestion.id}`
+            )
+          }
         >
           {!isLocked && attempts > 0 ? "Tentar novamente" : "Iniciar"}
           {isLocked ? (

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { UserMenu } from "./user-menu";
+import { getSessionUser } from "@/api/user/get-session-user";
 
 export function TopBar() {
   return (
@@ -35,7 +36,7 @@ export function TopBar() {
             </Link>
           </div>
           <Suspense fallback={<Skeleton className="w-20 h-9" />}>
-            <UserMenu />
+            <UserMenu getUserPromise={getSessionUser()} />
           </Suspense>
         </div>
       </div>

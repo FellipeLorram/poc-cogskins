@@ -12,11 +12,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Loader2 } from "lucide-react";
 
 interface Props {
   question: Question;
   onSubmit: (data: QuestionFormSchema) => void;
   isLastQuestion: boolean;
+  isPending: boolean;
 }
 
 const questionSchema = z.object({
@@ -29,7 +31,12 @@ const questionSchema = z.object({
 
 export type QuestionFormSchema = z.infer<typeof questionSchema>;
 
-export function QuestionForm({ question, onSubmit, isLastQuestion }: Props) {
+export function QuestionForm({
+  question,
+  onSubmit,
+  isLastQuestion,
+  isPending,
+}: Props) {
   const form = useForm<QuestionFormSchema>({
     resolver: zodResolver(questionSchema),
     defaultValues: {
@@ -77,7 +84,8 @@ export function QuestionForm({ question, onSubmit, isLastQuestion }: Props) {
           )}
         />
         <div className="flex justify-end">
-          <Button type="submit" disabled={disabled}>
+          <Button type="submit" disabled={disabled || isPending}>
+            {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             {isLastQuestion ? "Finalizar" : "Próxima"}
           </Button>
         </div>

@@ -17,7 +17,7 @@ export function useRealtimeTrailTaskRunner({
   accessToken,
   runId,
 }: Props): Response {
-  const { run } = useRealtimeRun<typeof generateTrailTask>(runId, {
+  const { run, error } = useRealtimeRun<typeof generateTrailTask>(runId, {
     accessToken: accessToken,
     enabled: !!runId && !!accessToken,
   });
@@ -37,7 +37,7 @@ export function useRealtimeTrailTaskRunner({
 
   return {
     isGenerating,
-    error: run?.error?.message ?? null,
+    error: error?.message ?? null,
     trail: run?.output?.trail ?? null,
   };
 }

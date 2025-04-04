@@ -103,24 +103,6 @@ export async function generateTrail(
         quest.difficultyLevel
       );
 
-      if ("error" in questions) {
-        console.error(
-          `Falha ao gerar questões para o quest: ${questions.error}`
-        );
-
-        return {
-          id: crypto.randomUUID(),
-          difficultyLevel: quest.difficultyLevel,
-          status: "LOCKED" as QuestStatus,
-          attempts: 0,
-          generationPrompt: quest.generationPrompt,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          trailId: "", // Will be filled when the trail is saved
-          questions: [], // Quest without questions in case of error
-        };
-      }
-
       const status = quest.difficultyLevel === 1 ? "AVAILABLE" : "LOCKED";
 
       return {

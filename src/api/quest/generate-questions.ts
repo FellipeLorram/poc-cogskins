@@ -1,9 +1,10 @@
 "use server";
 
 import { openai } from "@ai-sdk/openai";
+import { Prisma, QuestionStatus } from "@prisma/client";
 import { generateObject } from "ai";
 import { z } from "zod";
-import { Prisma, QuestionStatus } from "@prisma/client";
+import { GenerationError } from "../errors/generation-error";
 
 // Schema para o array de questões
 const questionsArraySchema = z.object({
@@ -56,13 +57,18 @@ export async function generateQuestQuestions(
   contentPrompt: string,
   difficultyLevel: number,
   questionsCount: number = 5
-): Promise<GeneratedQuestion[] | { error: string }> {
-  try {
+): Promise<GeneratedQuestion[]> {
+  const uniqueQuestions = new Set<string>();
+  const questions: GeneratedQuestion[] = [];
+  const maxAttempts = 3; // Limite de tentativas para evitar loop infinito
+  let currentAttempt = 0;
+
+  while (questions.length < questionsCount && currentAttempt < maxAttempts) {
     const prompt = `
             Use este prompt otimizado como base de conhecimento:
             ${contentPrompt}
 
-            Gere ${questionsCount} questões ÚNICAS e DIFERENTES sobre este conteúdo com nível de dificuldade ${difficultyLevel} (1-3).
+            Gere ${questionsCount - questions.length} questões ÚNICAS e DIFERENTES sobre este conteúdo com nível de dificuldade ${difficultyLevel} (1-3).
             
             Considere:
             - TODAS as questões e respostas DEVEM ser em português do Brasil
@@ -76,6 +82,13 @@ export async function generateQuestQuestions(
             - O feedback deve ser educativo e explicar tanto a resposta correta quanto as incorretas
             - Use linguagem clara e acessível
             - Evite questões ambíguas ou confusas
+            ${
+              questions.length > 0
+                ? `
+            IMPORTANTE: Não gere questões similares às seguintes questões já existentes:
+            ${questions.map((q) => q.text).join("\n")}`
+                : ""
+            }
         `;
 
     // Generate questions
@@ -83,15 +96,11 @@ export async function generateQuestQuestions(
       model: openai("gpt-3.5-turbo"),
       schema: questionsArraySchema,
       prompt,
-      temperature: 0.3, // Lower temperature for greater consistency
+      temperature: 0.3 + currentAttempt * 0.2, // Aumenta a temperatura a cada tentativa para maior variação
     });
 
-    // Check for duplicates and process questions
-    const uniqueQuestions = new Set<string>();
-    const questions: GeneratedQuestion[] = [];
-
+    // Process new questions
     for (const question of object.questions) {
-      // Normalize text for comparison (remove extra spaces, convert to lowercase)
       const normalizedText = question.text
         .toLowerCase()
         .trim()
@@ -108,37 +117,21 @@ export async function generateQuestQuestions(
           status: "UNANSWERED" as QuestionStatus,
         });
 
-        // If we have enough questions, we can stop
         if (questions.length === questionsCount) {
           break;
         }
       }
     }
 
-    // Check if we have enough questions
-    if (questions.length < questionsCount) {
-      console.warn(
-        `Only ${questions.length} unique questions were generated of ${questionsCount} requested`
-      );
-
-      // If we have at least 3 questions, we can proceed
-      if (questions.length >= 3) {
-        return questions;
-      }
-
-      return {
-        error:
-          "Não foi possível gerar questões únicas suficientes. Tente novamente.",
-      };
-    }
-
-    return questions;
-  } catch (error) {
-    return {
-      error:
-        error instanceof Error
-          ? error.message
-          : "Falha ao gerar as questões. Tente novamente.",
-    };
+    currentAttempt++;
   }
+
+  // Se após todas as tentativas ainda não tivermos questões suficientes
+  if (questions.length < 3)
+    throw new GenerationError(
+      "Não foi possível gerar questões únicas suficientes após múltiplas tentativas. Tente novamente."
+    );
+
+  // Retorna as questões mesmo se não atingiu o número ideal, desde que tenha pelo menos 3
+  return questions;
 }

@@ -10,15 +10,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useInvalidateQuery } from "@/hooks/use-invalidate-query";
-import { useSessionUser } from "@/hooks/auth/use-session-user";
+import { User } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
 import { LogOut, User as UserIcon } from "lucide-react";
 import Link from "next/link";
 import { parseAsBoolean, useQueryState } from "nuqs";
-import { Skeleton } from "../ui/skeleton";
+import { use } from "react";
 
-export function UserMenu() {
-  const { data: user, isPending } = useSessionUser();
+interface Props {
+  getUserPromise: Promise<User | null>;
+}
+
+export function UserMenu({ getUserPromise }: Props) {
+  const user = use(getUserPromise);
   const [, setIsOpen] = useQueryState(
     "signin-dialog",
     parseAsBoolean.withDefault(false)
@@ -34,10 +38,6 @@ export function UserMenu() {
       invalidate();
     },
   });
-
-  if (isPending) {
-    return <Skeleton className="w-20 h-9" />;
-  }
 
   if (!user) {
     return (

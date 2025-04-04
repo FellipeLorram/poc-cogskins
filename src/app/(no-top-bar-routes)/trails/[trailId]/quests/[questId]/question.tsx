@@ -39,7 +39,11 @@ export function Question({ trailId, questId, questionId }: Props) {
   async function onSubmit(data: QuestionFormSchema) {
     addAnsweredQuestion(data);
 
-    if (!isLastQuestion) return router.push(nextQuestion?.id);
+    if (!isLastQuestion) {
+      return router.push(
+        `/trails/${trailId}/quests/${questId}?questionId=${nextQuestion?.id}`
+      );
+    }
 
     let correctQuestions = 0;
     answeredQuestions.forEach((answeredQuestion) => {

@@ -29,7 +29,7 @@ export function Wrapper({ trailId, questId, children }: Props) {
 
   return (
     <div className="mt-16 text-left w-full">
-      <GoBackDialog />
+      <GoBackDialog trailId={trailId} />
       <div className="space-y-2 pb-8 border-b border-border mb-8 mt-4">
         <h1 className="text-3xl font-medium">{trail?.title}</h1>
         <p className="text-muted-foreground">{quest?.description}</p>
@@ -39,7 +39,7 @@ export function Wrapper({ trailId, questId, children }: Props) {
   );
 }
 
-function GoBackDialog() {
+function GoBackDialog({ trailId }: { trailId: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
@@ -48,7 +48,7 @@ function GoBackDialog() {
   if (!answeredQuestions.length)
     return (
       <button
-        onClick={() => router.back()}
+        onClick={() => router.push(`/trails/${trailId}`)}
         type="button"
         className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer hover:text-primary duration-200"
       >

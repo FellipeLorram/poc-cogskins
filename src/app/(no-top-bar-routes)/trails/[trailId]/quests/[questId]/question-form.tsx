@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 interface Props {
   question: Question;
@@ -48,6 +49,13 @@ export function QuestionForm({
   const answer = form.watch("answer");
   const disabled = !answer;
 
+  useEffect(() => {
+    form.reset({
+      questionId: question.id,
+      answer: 0,
+    });
+  }, [question.id, form]);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className=" space-y-6">
@@ -63,6 +71,7 @@ export function QuestionForm({
                 <RadioGroup
                   onValueChange={field.onChange}
                   className="flex flex-col space-y-1"
+                  key={question.id}
                 >
                   {question.alternatives.map((alternative, index) => (
                     <FormItem

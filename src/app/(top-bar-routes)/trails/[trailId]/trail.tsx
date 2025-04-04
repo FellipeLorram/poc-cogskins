@@ -13,7 +13,14 @@ import { TrailStatusMap } from "@/entities/trails";
 import { useGetTrail } from "@/hooks/trails/use-get-trail";
 import { QuestStatus } from "@prisma/client";
 import { VariantProps } from "class-variance-authority";
-import { ChevronRight, Lock, Share, Download } from "lucide-react";
+import {
+  ChevronRight,
+  Lock,
+  Share,
+  Download,
+  RefreshCcw,
+  Eye,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -124,6 +131,7 @@ interface QuestCardProps {
 function QuestCard({ quest, trailId }: QuestCardProps) {
   const router = useRouter();
   const isLocked = quest.status === QuestStatus.LOCKED;
+  const isCompleted = quest.status === QuestStatus.COMPLETED;
   const attempts = quest.attempts;
   let badgeVariant: VariantProps<typeof badgeVariants>["variant"] = "outline";
 
@@ -135,10 +143,36 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
 
   const firstQuestion = quest.questions[0];
 
+  function handleStartQuest() {
+    if (isLocked) return;
+
+    if (isCompleted) {
+      return router.push(`/trails/${trailId}/quests/${quest.id}/completed`);
+    }
+
+    router.push(
+      `/trails/${trailId}/quests/${quest.id}?questionId=${firstQuestion.id}`
+    );
+  }
+
+  let buttonText = "Iniciar";
+  let buttonIcon = <ChevronRight className="w-4 h-4" />;
+
+  if (isLocked) {
+    buttonText = "";
+    buttonIcon = <Lock className="w-4 h-4" />;
+  } else if (isCompleted) {
+    buttonText = "Ver resultado";
+    buttonIcon = <Eye className="w-4 h-4" />;
+  } else if (attempts > 0) {
+    buttonText = "Tentar novamente";
+    buttonIcon = <RefreshCcw className="w-4 h-4" />;
+  }
+
   return (
     <div
       data-locked={isLocked}
-      className="flex items-center justify-between gap-2 border rounded-md px-4 h-24 shadow data-[locked=true]:opacity-50 data-[locked=true]:shadow-none"
+      className="flex items-center justify-between gap-2 border rounded-md px-4 h-24 shadow data-[locked=true]:opacity-70 data-[locked=true]:shadow-none"
     >
       <div className="flex flex-col gap-2">
         <p>{quest.description}</p>
@@ -155,18 +189,10 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
           disabled={isLocked}
           variant="outline"
           className="cursor-pointer"
-          onClick={() =>
-            router.push(
-              `/trails/${trailId}/quests/${quest.id}?questionId=${firstQuestion.id}`
-            )
-          }
+          onClick={handleStartQuest}
         >
-          {!isLocked && attempts > 0 ? "Tentar novamente" : "Iniciar"}
-          {isLocked ? (
-            <Lock className="w-4 h-4" />
-          ) : (
-            <ChevronRight className="w-4 h-4" />
-          )}
+          {buttonText}
+          {buttonIcon}
         </Button>
       </div>
     </div>

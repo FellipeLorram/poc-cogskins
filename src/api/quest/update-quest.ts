@@ -7,7 +7,7 @@ import { QuestStatus } from "@prisma/client";
 interface Props {
   questId: string;
   status: QuestStatus;
-  attempts: number;
+  attempts?: number;
 }
 
 export async function updateQuest({ questId, status, attempts }: Props) {

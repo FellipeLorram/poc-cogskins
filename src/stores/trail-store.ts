@@ -14,6 +14,10 @@ interface TrailStore {
   clearTrails: () => void;
   getTrail: (trailId: string) => GeneratedTrail | null;
   getQuest: (trailId: string, questId: string) => GeneratedQuest | null;
+  getQuestByDifficulty: (
+    trailId: string,
+    difficulty: number
+  ) => GeneratedQuest | null;
   updateQuest: (
     trailId: string,
     questId: string,
@@ -91,6 +95,12 @@ export const useTrailStore = create<TrailStore>()(
         get()
           .trails.find((trail) => trail.id === trailId)
           ?.quests.find((quest) => quest.id === questId) ?? null,
+
+      getQuestByDifficulty: (trailId: string, difficulty: number) =>
+        get()
+          .trails.find((trail) => trail.id === trailId)
+          ?.quests.find((quest) => quest.difficultyLevel === difficulty) ??
+        null,
     })) as TrailStorePersist,
     {
       name: "trail-storage", // name of the key in localStorage

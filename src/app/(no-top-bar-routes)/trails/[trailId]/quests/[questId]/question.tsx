@@ -8,6 +8,7 @@ import { QuestStatus, TrailStatus } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { QuestionForm, QuestionFormSchema } from "./question-form";
 import { useQuestionStore } from "./question-store";
+import { useGetQuestByDifficulty } from "@/hooks/quests/use-get-quest-by-difficulty";
 
 interface Props {
   trailId: string;
@@ -23,6 +24,12 @@ export function Question({ trailId, questId, questionId }: Props) {
   });
   const { mutate: updateQuest, isPending: isUpdatingQuest } = useUpdateQuest();
   const { mutate: updateTrail, isPending: isUpdatingTrail } = useUpdateTrail();
+  const { data: nextQuest } = useGetQuestByDifficulty({
+    trailId,
+    difficulty: quest?.difficultyLevel ? quest.difficultyLevel + 1 : 0,
+    enabled:
+      quest?.difficultyLevel !== undefined && quest.difficultyLevel + 1 > 3,
+  });
   const { answeredQuestions, addAnsweredQuestion, setCorrectQuestions } =
     useQuestionStore();
 
@@ -66,6 +73,15 @@ export function Question({ trailId, questId, questionId }: Props) {
         : QuestStatus.IN_PROGRESS,
       attempts: quest?.attempts ? quest.attempts + 1 : 1,
     });
+
+    if (nextQuest) {
+      updateQuest({
+        trailId,
+        questId: nextQuest.id,
+        status: QuestStatus.AVAILABLE,
+        attempts: 0,
+      });
+    }
 
     updateTrail({
       trailId,

@@ -2,12 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import { useSessionUser } from "@/hooks/auth/use-session-user";
-import { useSyncTrails } from "@/hooks/trails/use-sync-trails";
+import { useSyncContents } from "@/hooks/trails/use-sync-trails";
 import { useTrailStore } from "@/stores/trail-store";
 
-export function TrailSyncManager() {
+export function SyncContentsManager() {
   const { data: user, isPending: isUserPending } = useSessionUser();
-  const { mutate: syncTrails, isPending } = useSyncTrails();
+  const { mutate: syncContents, isPending } = useSyncContents();
   const { trails } = useTrailStore();
 
   // Referência para controlar se já sincronizamos
@@ -27,14 +27,14 @@ export function TrailSyncManager() {
       hasSynced.current = true;
 
       // Executar a sincronização
-      syncTrails();
+      syncContents();
     }
 
     // Se o usuário deslogar, resetamos o estado
     if (!user && !isUserPending) {
       hasSynced.current = false;
     }
-  }, [user, isUserPending, trails.length, syncTrails, isPending]);
+  }, [user, isUserPending, trails.length, syncContents, isPending]);
 
   // Componente não renderiza nada visualmente
   return null;

@@ -1,6 +1,6 @@
 import { GeneratedQuest } from "@/entities/quest";
 import { GeneratedTrail } from "@/entities/trails";
-import { QuestStatus, TrailStatus } from "@prisma/client";
+import { Badge, QuestStatus, TrailStatus } from "@prisma/client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { StateCreator } from "zustand/vanilla";
@@ -9,6 +9,7 @@ interface TrailStore {
   // state
   trails: GeneratedTrail[];
 
+  badges: string[];
   // actions
   addTrail: (trail: GeneratedTrail) => void;
   clearTrails: () => void;
@@ -25,6 +26,10 @@ interface TrailStore {
     attempts: number
   ) => void;
   updateTrail: (trailId: string, status: TrailStatus) => void;
+
+  addBadge: (badgeId: string) => void;
+  getBadgeByTrailId: (trailId: string) => Badge | null;
+  clearBadges: () => void;
 }
 
 type TrailStorePersist = StateCreator<
@@ -39,8 +44,21 @@ export const useTrailStore = create<TrailStore>()(
     ((set, get) => ({
       // initial state
       trails: [],
+      badges: [],
 
       // implementation of actions
+      addBadge: (badgeId: string) =>
+        set((state: TrailStore) => ({
+          badges: [...state.badges, badgeId],
+        })),
+
+      getBadgeByTrailId: (trailId: string) =>
+        get().trails.find((trail) => trail.id === trailId)?.badge ?? null,
+
+      clearBadges: () =>
+        set({
+          badges: [],
+        }),
 
       updateQuest:
         (

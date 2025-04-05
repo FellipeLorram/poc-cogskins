@@ -1,6 +1,6 @@
 "use client";
 
-import { TrailSyncManager } from "@/components/sync-trail-manager";
+import { SyncContentsManager } from "@/components/sync-contents-manager";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -19,7 +19,7 @@ export function Providers({ children }: Props) {
         <TooltipProvider>
           {children}
           <Toaster />
-          <TrailSyncManager />
+          <SyncContentsManager />
         </TooltipProvider>
       </NuqsAdapter>
     </QueryClientProvider>

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { useGetTrail } from "@/hooks/trails/use-get-trail";
 import { ChevronLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 import { useQuestionStore } from "./question-store";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -42,12 +42,13 @@ export function Wrapper({ trailId, questId, children }: Props) {
 }
 
 function GoBackDialog({ trailId }: { trailId: string }) {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
   const { answeredQuestions, reset } = useQuestionStore();
 
-  if (!answeredQuestions.length)
+  if (answeredQuestions.length === 0 || pathname.includes("feedback"))
     return (
       <button
         onClick={() => {

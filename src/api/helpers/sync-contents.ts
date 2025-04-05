@@ -16,7 +16,12 @@ type GeneratedTrail = Prisma.TrailGetPayload<{
   };
 }>;
 
-export async function syncTrails(trails: GeneratedTrail[]) {
+interface Props {
+  trails: GeneratedTrail[];
+  badges: string[];
+}
+
+export async function syncContents({ trails, badges }: Props) {
   try {
     const user = await getSessionUser();
 
@@ -111,6 +116,13 @@ export async function syncTrails(trails: GeneratedTrail[]) {
 
         results.push(savedTrail);
       }
+    }
+
+    for (const badge of badges) {
+      await prisma.badge.update({
+        where: { id: badge },
+        data: { userId: user.id },
+      });
     }
 
     return {

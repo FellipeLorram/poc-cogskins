@@ -18,6 +18,6 @@ export async function addBadgeToUser({ userId, badgeId }: Props) {
 
   await prisma.badge.update({
     where: { id: badgeId },
-    data: { userId },
+    data: { userId, earnedAt: new Date() },
   });
 }

@@ -52,7 +52,6 @@ export async function saveTrail(trail: GeneratedTrail) {
                 title: trail.badge.title,
                 description: trail.badge.description,
                 url: trail.badge.url,
-                userId,
               },
             },
           }

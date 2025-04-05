@@ -33,9 +33,15 @@ interface Props {
   percentage: number;
   trailId: string;
   questId: string;
+  firstQuestionId: string;
 }
 
-export function SomeIsCorrectFeedback({ percentage, trailId, questId }: Props) {
+export function SomeIsCorrectFeedback({
+  percentage,
+  trailId,
+  questId,
+  firstQuestionId,
+}: Props) {
   const { reset } = useQuestionStore();
   const router = useRouter();
   const message =
@@ -43,7 +49,14 @@ export function SomeIsCorrectFeedback({ percentage, trailId, questId }: Props) {
 
   function handleTryAgain() {
     reset();
-    router.push(`/trails/${trailId}/quests/${questId}`);
+    router.push(
+      `/trails/${trailId}/quests/${questId}?questionId=${firstQuestionId}`
+    );
+  }
+
+  function handleGoBack() {
+    reset();
+    router.push(`/trails/${trailId}`);
   }
 
   return (
@@ -87,7 +100,7 @@ export function SomeIsCorrectFeedback({ percentage, trailId, questId }: Props) {
         <Button
           variant="outline"
           className="cursor-pointer"
-          onClick={() => router.push(`/trails/${trailId}`)}
+          onClick={handleGoBack}
         >
           Voltar para o início
         </Button>

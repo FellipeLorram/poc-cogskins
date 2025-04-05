@@ -28,7 +28,7 @@ export const useQuestionStore = create<QuestionStore>()(
         })),
       reset: () =>
         set({
-          currentQuestion: get().answeredQuestions[0].questionId,
+          currentQuestion: get().answeredQuestions[0]?.questionId || "",
           answeredQuestions: [],
           correctQuestions: 0,
         }),

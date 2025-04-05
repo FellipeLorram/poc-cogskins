@@ -55,7 +55,7 @@ export function UserMenu({ getUserPromise }: Props) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger>
         <AvatarWithFallback
           src={user?.image ?? null}
           fallback={fallback}

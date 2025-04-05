@@ -24,17 +24,29 @@ export function Feedback({ trailId, questId, accessToken, runId }: Props) {
   const percentage = (correctQuestions / questions?.length) * 100;
   const isAllQuestionsCorrect = percentage === 100;
 
+  if (isAllQuestionsCorrect) {
+    return (
+      <div className="flex flex-col gap-16 mt-16">
+        <div className="mx-auto">
+          <IsAllCorrectFeedback
+            currentQuestDifficulty={quest.difficultyLevel}
+            questions={questions}
+            trailId={trailId}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-16 mt-16">
       <div className="mx-auto">
-        {isAllQuestionsCorrect && <IsAllCorrectFeedback />}
-        {!isAllQuestionsCorrect && (
-          <SomeIsCorrectFeedback
-            percentage={percentage}
-            trailId={trailId}
-            questId={questId}
-          />
-        )}
+        <SomeIsCorrectFeedback
+          percentage={percentage}
+          trailId={trailId}
+          questId={questId}
+          firstQuestionId={questions?.[0]?.id}
+        />
       </div>
       <PersonalizedFeedback accessToken={accessToken} runId={runId} />
     </div>

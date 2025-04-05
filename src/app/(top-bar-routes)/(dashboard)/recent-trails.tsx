@@ -66,25 +66,35 @@ export function RecentTrails() {
 }
 
 function TrailCard({ trail }: { trail: GeneratedTrail }) {
+  const title =
+    trail.title.length > 30 ? trail.title.slice(0, 30) + "..." : trail.title;
+
   return (
-    <Link
-      href={`/trails/${trail.id}`}
-      className="bg-background flex gap-2 h-24 shadow-sm relative border rounded-md p-2"
-    >
-      <Image
-        src={trail.badge?.url ?? ""}
-        alt={trail.badge?.title ?? ""}
-        width={1024}
-        height={1024}
-        className="w-16 h-16"
-      />
-      <Badge variant="outline" className="absolute bottom-2 right-2">
-        {TrailStatusMap[trail.status]}
-      </Badge>
-      <div className="flex flex-col">
-        <h2 className="text-sm font-medium">{trail.title}</h2>
-      </div>
-    </Link>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Link
+          href={`/trails/${trail.id}`}
+          className="bg-background flex gap-2 h-24 shadow-sm relative border rounded-md p-2"
+        >
+          <Image
+            src={trail.badge?.url ?? ""}
+            alt={trail.badge?.title ?? ""}
+            width={1024}
+            height={1024}
+            className="w-16 h-16"
+          />
+          <div className="flex flex-col overflow-hidden text-ellipsis">
+            <h2 className="text-sm font-medium">{title}</h2>
+          </div>
+          <Badge variant="outline" className="absolute bottom-2 right-2">
+            {TrailStatusMap[trail.status]}
+          </Badge>
+        </Link>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{trail.title}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 

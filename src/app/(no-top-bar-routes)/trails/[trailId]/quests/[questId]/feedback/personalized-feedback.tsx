@@ -26,7 +26,7 @@ export function PersonalizedFeedback({ accessToken, runId }: Props) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Dicas para melhorar</CardTitle>
+          <CardTitle>Dicas</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="list-disc list-inside">
@@ -42,7 +42,7 @@ export function PersonalizedFeedback({ accessToken, runId }: Props) {
         <CardContent className="space-y-8">
           {feedback?.improvementAreas.map((area) => (
             <div key={area.concept}>
-              <h2 className="text-lg font-medium">{area.concept}</h2>
+              <h2 className="text-lg font-medium mb-1">{area.concept}</h2>
               <p>{area.suggestion}</p>
               <div className="space-y-2 p-4 border rounded-md mt-4 bg-accent">
                 <p className="text-sm font-medium">Recursos:</p>

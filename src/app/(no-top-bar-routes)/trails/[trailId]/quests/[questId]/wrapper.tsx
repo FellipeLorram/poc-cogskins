@@ -10,12 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useGetQuest } from "@/hooks/quests/use-get-quest";
 import { useGetTrail } from "@/hooks/trails/use-get-trail";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useQuestionStore } from "./question-store";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {
   trailId: string;
@@ -24,8 +24,10 @@ interface Props {
 }
 
 export function Wrapper({ trailId, questId, children }: Props) {
-  const { data: trail } = useGetTrail({ trailId });
-  const { data: quest } = useGetQuest({ trailId, questId });
+  const { data: trail, isPending: isPendingTrail } = useGetTrail({ trailId });
+  const quest = trail?.quests.find((quest) => quest.id === questId);
+
+  if (isPendingTrail) return <Loading>{children}</Loading>;
 
   return (
     <div className="mt-16 text-left w-full">
@@ -48,9 +50,12 @@ function GoBackDialog({ trailId }: { trailId: string }) {
   if (!answeredQuestions.length)
     return (
       <button
-        onClick={() => router.push(`/trails/${trailId}`)}
+        onClick={() => {
+          router.push(`/trails/${trailId}`);
+          reset();
+        }}
         type="button"
-        className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer hover:text-primary duration-200"
+        className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer hover:text-primary duration-200 h-6"
       >
         <ChevronLeft className="w-4 h-4" />
         Voltar
@@ -60,7 +65,7 @@ function GoBackDialog({ trailId }: { trailId: string }) {
   function handleGoBack() {
     setIsOpen(true);
     reset();
-    router.back();
+    router.push(`/trails/${trailId}`);
   }
 
   return (
@@ -69,7 +74,7 @@ function GoBackDialog({ trailId }: { trailId: string }) {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer hover:text-primary duration-200"
+          className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer hover:text-primary duration-200 h-6"
         >
           <ChevronLeft className="w-4 h-4" />
           Voltar
@@ -97,5 +102,18 @@ function GoBackDialog({ trailId }: { trailId: string }) {
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function Loading({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mt-16 text-left w-full">
+      <Skeleton className="h-6 w-12" />
+      <div className="space-y-2 pb-8 border-b border-border mb-8 mt-4">
+        <Skeleton className="h-12 w-1/2" />
+        <Skeleton className="h-6 w-1/3" />
+      </div>
+      {children}
+    </div>
   );
 }

@@ -9,14 +9,19 @@ import { useRouter } from "next/navigation";
 import { QuestionForm, QuestionFormSchema } from "./question-form";
 import { useQuestionStore } from "./question-store";
 import { useGetQuestByDifficulty } from "@/hooks/quests/use-get-quest-by-difficulty";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface Props {
+interface QuestionProps {
   trailId: string;
   questId: string;
   questionId: string;
 }
 
-export function Question({ trailId, questId, questionId }: Props) {
+function useQuestionLogic(
+  trailId: string,
+  questId: string,
+  questionId: string
+) {
   const router = useRouter();
   const { data: quest, isPending: isPendingQuest } = useGetQuest({
     trailId,
@@ -24,27 +29,58 @@ export function Question({ trailId, questId, questionId }: Props) {
   });
   const { mutate: updateQuest, isPending: isUpdatingQuest } = useUpdateQuest();
   const { mutate: updateTrail, isPending: isUpdatingTrail } = useUpdateTrail();
+  const { answeredQuestions, addAnsweredQuestion, setCorrectQuestions } =
+    useQuestionStore();
   const { data: nextQuest } = useGetQuestByDifficulty({
     trailId,
     difficulty: quest?.difficultyLevel ? quest.difficultyLevel + 1 : 0,
     enabled:
       quest?.difficultyLevel !== undefined && quest.difficultyLevel + 1 > 3,
   });
-  const { answeredQuestions, addAnsweredQuestion, setCorrectQuestions } =
-    useQuestionStore();
 
   const questions = quest?.questions;
   const currentQuestion = questions?.find((q) => q.id === questionId);
 
-  if (isPendingQuest || !currentQuestion || !questions) return null;
+  const getQuestionNavigation = () => {
+    if (!questions) return {};
+    const currentIndex = questions.findIndex((q) => q.id === questionId);
+    const nextQuestion = questions[currentIndex + 1];
+    const lastQuestion = questions[questions.length - 1];
+    const isLastQuestion = currentQuestion?.id === lastQuestion?.id;
 
-  const currentIndex = questions.findIndex((q) => q.id === questionId);
-  const nextQuestion = questions[currentIndex + 1];
-  const lastQuestion = questions[questions.length - 1];
-  const isLastQuestion = currentQuestion?.id === lastQuestion?.id;
+    return { nextQuestion, isLastQuestion };
+  };
 
-  async function onSubmit(data: QuestionFormSchema) {
+  const calculateCorrectAnswers = (newAnswer: QuestionFormSchema) => {
+    let correctCount = 0;
+    [...answeredQuestions, newAnswer].forEach((answered) => {
+      const question = questions?.find((q) => q.id === answered.questionId);
+      if (question?.correctAnswer === answered.answer) correctCount++;
+    });
+    return correctCount;
+  };
+
+  const handleQuestCompletion = async (isAllCorrect: boolean) => {
+    const isLastQuest = !nextQuest;
+
+    await updateQuest({
+      trailId,
+      questId,
+      status: isAllCorrect ? QuestStatus.COMPLETED : QuestStatus.IN_PROGRESS,
+      attempts: (quest?.attempts ?? 0) + 1,
+    });
+
+    await updateTrail({
+      trailId,
+      status: isLastQuest ? TrailStatus.COMPLETED : TrailStatus.IN_PROGRESS,
+    });
+
+    return isLastQuest;
+  };
+
+  const handleSubmit = async (data: QuestionFormSchema) => {
     addAnsweredQuestion(data);
+    const { nextQuestion, isLastQuestion } = getQuestionNavigation();
 
     if (!isLastQuestion) {
       return router.push(
@@ -52,60 +88,82 @@ export function Question({ trailId, questId, questionId }: Props) {
       );
     }
 
-    let correctQuestions = 0;
-    answeredQuestions.forEach((answeredQuestion) => {
-      const question = questions?.find(
-        (q) => q.id === answeredQuestion.questionId
-      );
+    const correctAnswers = calculateCorrectAnswers(data);
+    setCorrectQuestions(correctAnswers);
+    const isAllCorrect = correctAnswers === questions?.length;
 
-      if (question?.correctAnswer === answeredQuestion.answer) {
-        correctQuestions++;
-      }
-    });
+    const isLastQuest = await handleQuestCompletion(isAllCorrect);
 
-    const isAllQuestionCorrect = correctQuestions === questions?.length;
-
-    updateQuest({
-      trailId,
-      questId,
-      status: isAllQuestionCorrect
-        ? QuestStatus.COMPLETED
-        : QuestStatus.IN_PROGRESS,
-      attempts: quest?.attempts ? quest.attempts + 1 : 1,
-    });
-
-    if (nextQuest) {
-      updateQuest({
+    if (!isAllCorrect) {
+      await generateFeedbackTaskTrigger({
         trailId,
-        questId: nextQuest.id,
+        questId,
+        contentPrompt: quest?.generationPrompt || "",
+        questionsAnswered: questions?.length || 0,
+        correctAnswers: isAllCorrect ? questions?.length : 0,
+        difficultyLevel: quest?.difficultyLevel || 0,
+      });
+
+      return;
+    }
+
+    if (!isLastQuest) {
+      await updateQuest({
+        trailId,
+        questId: nextQuest?.id ?? "",
         status: QuestStatus.AVAILABLE,
         attempts: 0,
       });
+      router.push(`/trails/${trailId}/quests/${questId}/feedback`);
+      return;
     }
+  };
 
-    updateTrail({
-      trailId,
-      status: TrailStatus.IN_PROGRESS,
-    });
+  return {
+    currentQuestion: currentQuestion,
+    isPending: isPendingQuest || isUpdatingQuest || isUpdatingTrail,
+    isLastQuestion: getQuestionNavigation().isLastQuestion ?? false,
+    handleSubmit,
+    isLoading: !currentQuestion || !questions,
+  };
+}
 
-    setCorrectQuestions(correctQuestions);
+export function Question({ trailId, questId, questionId }: QuestionProps) {
+  const {
+    currentQuestion,
+    isPending,
+    isLastQuestion,
+    handleSubmit,
+    isLoading,
+  } = useQuestionLogic(trailId, questId, questionId);
 
-    await generateFeedbackTaskTrigger({
-      trailId,
-      questId,
-      contentPrompt: quest?.generationPrompt || "",
-      questionsAnswered: questions?.length || 0,
-      correctAnswers: isAllQuestionCorrect ? questions?.length : 0,
-      difficultyLevel: quest?.difficultyLevel || 0,
-    });
-  }
+  if (isLoading || !currentQuestion) return <Loading />;
 
   return (
     <QuestionForm
       isLastQuestion={isLastQuestion}
       question={currentQuestion}
-      onSubmit={onSubmit}
-      isPending={isUpdatingQuest || isUpdatingTrail}
+      onSubmit={handleSubmit}
+      isPending={isPending}
     />
+  );
+}
+
+function Loading() {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-3">
+        <Skeleton className="h-9 w-1/2" />
+        <div className="space-y-4">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </div>
+      </div>
+      <div className="flex justify-end">
+        <Skeleton className="h-9 w-24" />
+      </div>
+    </div>
   );
 }

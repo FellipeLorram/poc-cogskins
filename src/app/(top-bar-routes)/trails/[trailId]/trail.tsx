@@ -130,6 +130,7 @@ interface QuestCardProps {
 
 function QuestCard({ quest, trailId }: QuestCardProps) {
   const router = useRouter();
+
   const isLocked = quest.status === QuestStatus.LOCKED;
   const isCompleted = quest.status === QuestStatus.COMPLETED;
   const attempts = quest.attempts;

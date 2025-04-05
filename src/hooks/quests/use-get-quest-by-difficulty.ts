@@ -1,6 +1,6 @@
 import { useTrailStore } from "@/stores/trail-store";
 import { useQuery } from "@tanstack/react-query";
-import { getQuestByDifficulty as getQuestServer } from "@/api/quest/get-quest-by-difficulty";
+import { getQuestByDifficulty as getQuestByDifficultyServer } from "@/api/quest/get-quest-by-difficulty";
 
 interface Props {
   trailId: string;
@@ -18,7 +18,7 @@ export function useGetQuestByDifficulty({
   return useQuery({
     queryKey: ["quest", trailId, difficulty.toString()],
     queryFn: async () => {
-      const { quest } = await getQuestServer({
+      const { quest } = await getQuestByDifficultyServer({
         trailId,
         difficulty,
       });

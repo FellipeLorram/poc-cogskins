@@ -141,7 +141,9 @@ export async function generateTrail(
       url: null,
       fileKey: null,
     })),
-    quests: questsWithQuestions as GeneratedTrail["quests"],
+    quests: questsWithQuestions.sort(
+      (a, b) => a.difficultyLevel - b.difficultyLevel
+    ) as GeneratedTrail["quests"],
     badge: {
       id: crypto.randomUUID(),
       title: object.badge.title,
@@ -150,6 +152,7 @@ export async function generateTrail(
       earnedAt: null,
       nftData: null,
       createdAt: new Date(),
+      level: 1,
       updatedAt: new Date(),
       trailId: "", // Will be filled when the trail is saved
       userId: "", // Will be filled when there is authentication

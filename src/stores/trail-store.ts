@@ -30,6 +30,7 @@ interface TrailStore {
   addBadge: (badgeId: string) => void;
   getBadgeByTrailId: (trailId: string) => Badge | null;
   clearBadges: () => void;
+  listBadges: () => Badge[];
 }
 
 type TrailStorePersist = StateCreator<
@@ -47,6 +48,15 @@ export const useTrailStore = create<TrailStore>()(
       badges: [],
 
       // implementation of actions
+
+      listBadges: () => {
+        const trailBadges = get().trails.map((trail) => trail.badge);
+        const earnedBadgesIds = get().badges;
+        const earnedBadges = trailBadges.filter((badge) =>
+          earnedBadgesIds.includes(badge?.id ?? "")
+        );
+        return earnedBadges.filter((badge) => badge !== null);
+      },
       addBadge: (badgeId: string) =>
         set((state: TrailStore) => ({
           badges: [...state.badges, badgeId],

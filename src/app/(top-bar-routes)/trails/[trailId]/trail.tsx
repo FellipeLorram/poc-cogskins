@@ -34,6 +34,9 @@ export function Trail({ trailId }: Props) {
     trailId,
   });
   const { badges } = useTrailStore();
+
+  if (isPending || !trail) return <Loading />;
+
   const isBadgeUnlocked =
     badges.some((badgeId) => badgeId === trail?.badge?.id) ||
     trail?.badge?.userId !== null;
@@ -71,8 +74,6 @@ export function Trail({ trailId }: Props) {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
-
-  if (isPending || !trail) return <Loading />;
 
   return (
     <div className="w-full space-y-12">
@@ -136,9 +137,11 @@ export function Trail({ trailId }: Props) {
             data-unlocked={isBadgeUnlocked}
             className="p-6 bg-muted rounded-md w-96 max-w-full space-y-4 text-center border shadow data-[unlocked=false]:shadow-none data-[unlocked=false]:opacity-50 data-[unlocked=true]:border-green-500"
           >
-            <p>
-              Conquistou {trail.badge?.title} nível {trail.badge?.level}
-            </p>
+            {isBadgeUnlocked && (
+              <p>
+                Conquistou {trail.badge?.title} nível {trail.badge?.level}
+              </p>
+            )}
             <Image
               src={trail.badge?.url ?? ""}
               alt="Badge"
@@ -206,7 +209,7 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
   return (
     <div
       data-locked={isLocked}
-      className="flex items-center justify-between gap-2 border rounded-md px-4 h-24 shadow data-[locked=true]:opacity-70 data-[locked=true]:shadow-none"
+      className="w-full flex items-center justify-between gap-2 border rounded-md px-4 h-24 shadow data-[locked=true]:opacity-70 data-[locked=true]:shadow-none"
     >
       <div className="flex flex-col gap-2">
         <p>{quest.description}</p>

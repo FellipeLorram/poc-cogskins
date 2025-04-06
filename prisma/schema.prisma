@@ -128,7 +128,7 @@ model Badge {
   title       String
   description String
   earnedAt    DateTime?
-  level       Int       @default(1)
+  level       Int       @default(0)
   nftData     Json? // metadados para NFT
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

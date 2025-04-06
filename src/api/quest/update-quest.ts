@@ -20,6 +20,7 @@ export async function updateQuest({ questId, status, attempts }: Props) {
     data: {
       status,
       attempts,
+      completedAt: status === QuestStatus.COMPLETED ? new Date() : null,
     },
   });
 

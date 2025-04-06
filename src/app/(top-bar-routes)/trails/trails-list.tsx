@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { GeneratedTrail, TrailStatusMap } from "@/entities/trails";
+import { GeneratedTrail } from "@/entities/trails";
 import { useListTrails } from "@/hooks/trails/use-list-trails";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,7 +12,7 @@ export function TrailsList() {
   if (isPending || !trails) return <div>Loading...</div>;
 
   return (
-    <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
       {trails?.map((trail) => <TrailCard key={trail.id} trail={trail} />)}
     </div>
   );
@@ -31,10 +31,10 @@ function TrailCard({ trail }: { trail: GeneratedTrail }) {
         height={1024}
         className="w-full h-auto"
       />
-      <div className="flex gap-2 flex-1">
+      <div className="flex gap-2 flex-1 justify-between">
         <h2 className="text-lg font-medium">{trail.title}</h2>
         <Badge variant="outline" className="h-fit">
-          {TrailStatusMap[trail.status]}
+          Nível {trail.badge?.level}
         </Badge>
       </div>
       <div className="text-sm text-muted-foreground">

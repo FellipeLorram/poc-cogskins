@@ -102,6 +102,7 @@ model Quest {
   trailId          String
   trail            Trail       @relation(fields: [trailId], references: [id], onDelete: Cascade)
   questions        Question[]
+  completedAt      DateTime?
 
   @@index([trailId])
 }

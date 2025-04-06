@@ -41,7 +41,7 @@ const trailGenerationSchema = z.object({
   title: z
     .string()
     .describe(
-      "Título atraente e descritivo para a trilha de aprendizado, não incluir a palavra 'Trilha' no título"
+      "Título curto e atraente para a trilha de aprendizado, não incluir a palavra 'Trilha' no título. Deve ser um título que seja fácil de entender e lembrar. Curto e direto."
     ),
   estimatedDuration: z.number().describe("Duração estimada em minutos"),
   badge: badgeSchema,

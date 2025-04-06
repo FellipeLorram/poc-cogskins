@@ -76,6 +76,8 @@ export const useTrailStore = create<TrailStore>()(
 
           quest.status = status;
           quest.attempts = attempts;
+          quest.completedAt =
+            status === QuestStatus.COMPLETED ? new Date() : null;
 
           trail.quests = trail.quests.map((q) =>
             q.id === questId ? quest : q

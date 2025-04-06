@@ -11,6 +11,7 @@ import {
 import { GeneratedQuest, QuestStatusMap } from "@/entities/quest";
 import { TrailStatusMap } from "@/entities/trails";
 import { useGetTrail } from "@/hooks/trails/use-get-trail";
+import { useTrailStore } from "@/stores/trail-store";
 import { QuestStatus } from "@prisma/client";
 import { VariantProps } from "class-variance-authority";
 import {
@@ -21,6 +22,7 @@ import {
   RefreshCcw,
   Eye,
 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -31,6 +33,10 @@ export function Trail({ trailId }: Props) {
   const { data: trail, isPending } = useGetTrail({
     trailId,
   });
+  const { badges } = useTrailStore();
+  const isBadgeUnlocked =
+    badges.some((badgeId) => badgeId === trail?.badge?.id) ||
+    trail?.badge?.userId !== null;
 
   const handleDownload = () => {
     if (!trail) return;
@@ -116,8 +122,35 @@ export function Trail({ trailId }: Props) {
       </div>
       <div className="flex flex-col gap-4">
         {trail.quests.map((quest) => (
-          <QuestCard key={quest.id} quest={quest} trailId={trailId} />
+          <div
+            className="w-full flex flex-col gap-4 items-center justify-center"
+            key={quest.id}
+          >
+            <QuestCard quest={quest} trailId={trailId} />
+            <div className="h-8 border-r border-dashed" />
+          </div>
         ))}
+
+        <div className="w-full flex items-center justify-center">
+          <div
+            data-unlocked={isBadgeUnlocked}
+            className="p-6 bg-muted rounded-md w-96 max-w-full space-y-4 text-center border shadow data-[unlocked=false]:shadow-none data-[unlocked=false]:opacity-50 data-[unlocked=true]:border-green-500"
+          >
+            <p>
+              Conquistou {trail.badge?.title} nível {trail.badge?.level}
+            </p>
+            <Image
+              src={trail.badge?.url ?? ""}
+              alt="Badge"
+              width={1024}
+              height={1024}
+              className="w-full h-auto object-contain rounded-md"
+            />
+            <p className="text-sm text-muted-foreground">
+              {trail.badge?.description ?? ""}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -178,7 +211,14 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
       <div className="flex flex-col gap-2">
         <p>{quest.description}</p>
         <div className="flex items-center gap-2">
-          <Badge variant={badgeVariant}>{QuestStatusMap[quest.status]}</Badge>
+          <Badge variant={badgeVariant}>
+            {QuestStatusMap[quest.status]}
+            {quest.completedAt && (
+              <span className="text-xs text-muted-foreground">
+                {quest.completedAt.toLocaleDateString()}
+              </span>
+            )}
+          </Badge>
           <p className="text-sm text-muted-foreground">
             {quest.questions.length} questões
           </p>
@@ -218,23 +258,26 @@ function Loading() {
           <Skeleton className="w-9 h-9" />
         </div>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 w-full">
         {Array.from({ length: 3 }).map((_, index) => (
           <div
             key={index}
-            className="flex items-center justify-between gap-2 border rounded-md px-4 h-24"
+            className="w-full flex flex-col gap-4 items-center justify-center"
           >
-            <div className="flex flex-col gap-2">
-              <Skeleton className="w-64 h-4" />
+            <div className="flex items-center justify-between gap-2 border rounded-md px-4 h-24 w-full">
+              <div className="flex flex-col gap-2">
+                <Skeleton className="w-64 h-4" />
+                <div className="flex items-center gap-2">
+                  <Skeleton className="w-16 h-4" />
+                  <Skeleton className="w-16 h-4" />
+                  <Skeleton className="w-16 h-4" />
+                </div>
+              </div>
               <div className="flex items-center gap-2">
-                <Skeleton className="w-16 h-4" />
-                <Skeleton className="w-16 h-4" />
-                <Skeleton className="w-16 h-4" />
+                <Skeleton className="w-16 h-9" />
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Skeleton className="w-16 h-9" />
-            </div>
+            <div className="h-8 border-r border-dashed" />
           </div>
         ))}
       </div>

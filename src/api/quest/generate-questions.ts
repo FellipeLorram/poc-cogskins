@@ -34,7 +34,7 @@ const questionsArraySchema = z.object({
           ),
       })
     )
-    .min(1)
+    .min(3)
     .describe(
       "Array de questões únicas, cada uma testando diferentes aspectos do conteúdo"
     ),
@@ -78,9 +78,17 @@ export async function generateQuestQuestions(
             - Para dificuldade 1: Compreensão básica e recordação
             - Para dificuldade 2: Aplicação e análise
             - Para dificuldade 3: Avaliação e síntese
+            - As questões devem seguir a Taxonomia de Bloom
+              - Cada questão deve ter 4 alternativas (A-D):
+                * 1 correta (não óbvia)
+                * 2 erradas plausíveis (erros comuns)
+                * 1 claramente incorreta
+
             - As alternativas devem ser plausíveis mas claramente distinguíveis
             - O feedback deve ser educativo e explicar tanto a resposta correta quanto as incorretas
-            - Use linguagem clara e acessível
+            - Use linguagem clara e acessível (nível ensino médio)
+            - A dificuldade deve aumentar gradualmente da questão 1 (mais fácil) até a questão 5 (mais difícil)
+            
             - Evite questões ambíguas ou confusas
             ${
               questions.length > 0

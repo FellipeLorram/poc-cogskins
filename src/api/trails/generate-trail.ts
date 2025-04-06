@@ -129,6 +129,7 @@ export async function generateTrail(
     createdAt: new Date(),
     updatedAt: new Date(),
     userId: "", // Will be filled when there is authentication
+    flag: "",
     inputContents: request.contents.map((content) => ({
       id: crypto.randomUUID(),
       type: "TEXT",

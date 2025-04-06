@@ -35,8 +35,6 @@ export function useQuestionLogic({ trailId, questId, questionId }: Props) {
   const { data: nextQuest } = useGetQuestByDifficulty({
     trailId,
     difficulty: quest?.difficultyLevel ? quest.difficultyLevel + 1 : 0,
-    enabled:
-      quest?.difficultyLevel !== undefined && quest.difficultyLevel + 1 > 3,
   });
 
   // store

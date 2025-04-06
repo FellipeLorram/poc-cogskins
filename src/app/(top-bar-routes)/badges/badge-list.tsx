@@ -35,7 +35,7 @@ export function BadgeList() {
     <div className="flex flex-col gap-4">
       <div className="flex gap-2">
         <Input
-          placeholder="Pesquisar trilha"
+          placeholder="Buscar badge"
           value={filters.search}
           onChange={(e) => setFilters({ ...filters, search: e.target.value })}
         />

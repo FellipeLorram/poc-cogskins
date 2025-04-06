@@ -41,6 +41,8 @@ export function Wrapper({ trailId, questId, children }: Props) {
   );
 }
 
+const goBackRoutes = ["feedback", "completed"];
+
 function GoBackDialog({ trailId }: { trailId: string }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -48,7 +50,10 @@ function GoBackDialog({ trailId }: { trailId: string }) {
 
   const { answeredQuestions, reset } = useQuestionStore();
 
-  if (answeredQuestions.length === 0 || pathname.includes("feedback"))
+  if (
+    answeredQuestions.length === 0 ||
+    goBackRoutes.some((route) => pathname.includes(route))
+  )
     return (
       <button
         onClick={() => {

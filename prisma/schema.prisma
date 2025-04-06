@@ -70,6 +70,7 @@ model Trail {
   inputContents     Content[]
   quests            Quest[]
   badge             Badge?
+  flag              String?
 
   @@index([userId])
 }

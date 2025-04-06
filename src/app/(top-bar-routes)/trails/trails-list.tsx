@@ -30,11 +30,7 @@ export function TrailsList() {
 
   const filteredTrails = trails
     .filter((trail) => {
-      return (
-        trail.title.toLowerCase().includes(filters.search.toLowerCase()) &&
-        (filters.level > 0 ? trail.badge?.level === filters.level : true) &&
-        (filters.status ? trail.status === filters.status : true)
-      );
+      return trail.title.toLowerCase().includes(filters.search.toLowerCase());
     })
     .sort((a, b) => (b.badge?.level ?? 0) - (a.badge?.level ?? 0));
 
@@ -42,7 +38,7 @@ export function TrailsList() {
     <div className="flex flex-col gap-4">
       <div className="flex gap-2">
         <Input
-          placeholder="Pesquisar trilha"
+          placeholder="Buscar trilha"
           value={filters.search}
           onChange={(e) => setFilters({ ...filters, search: e.target.value })}
         />
@@ -76,6 +72,10 @@ function TrailCard({ trail }: { trail: GeneratedTrail }) {
     BadgeTitle = `Nível ${trail.badge?.level}`;
   }
 
+  if (trail.flag === "web-summit-2025") {
+    BadgeTitle = "Web Summit 2025";
+  }
+
   return (
     <Link
       href={`/trails/${trail.id}`}
@@ -89,7 +89,11 @@ function TrailCard({ trail }: { trail: GeneratedTrail }) {
         data-unlocked={isBadgeUnlocked}
         className="w-full h-auto border rounded-md data-[unlocked=true]:border-green-500"
       />
-      <Badge variant={BadgeVariant} className="h-fit absolute top-2 right-2">
+      <Badge
+        data-flag={trail.flag}
+        variant={BadgeVariant}
+        className="h-fit absolute top-2 right-2 data-[flag=web-summit-2025]:bg-[#ff4b07] data-[flag=web-summit-2025]:text-white"
+      >
         {BadgeTitle}
       </Badge>
       <div className="flex gap-2 flex-1 justify-between">

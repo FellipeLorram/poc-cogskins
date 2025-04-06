@@ -3,14 +3,7 @@
 import { prisma } from "@/lib/prisma-client";
 import { Prisma, QuestionStatus } from "@prisma/client";
 import { verifySession } from "../auth/verify-session";
-
-type GeneratedTrail = Prisma.TrailGetPayload<{
-  include: {
-    inputContents: true;
-    quests: true;
-    badge: true;
-  };
-}>;
+import { GeneratedTrail } from "@/entities/trails";
 
 type GeneratedQuest = Prisma.QuestGetPayload<{
   include: {

@@ -217,7 +217,7 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
           <Badge variant={badgeVariant}>
             {QuestStatusMap[quest.status]}
             {quest.completedAt && (
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs">
                 {quest.completedAt.toLocaleDateString()}
               </span>
             )}

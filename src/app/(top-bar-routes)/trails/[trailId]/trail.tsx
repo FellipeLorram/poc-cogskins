@@ -39,7 +39,7 @@ export function Trail({ trailId }: Props) {
 
   const isBadgeUnlocked =
     badges.some((badgeId) => badgeId === trail?.badge?.id) ||
-    trail?.badge?.userId !== null;
+    trail?.badge?.userId !== "";
 
   const handleDownload = () => {
     if (!trail) return;

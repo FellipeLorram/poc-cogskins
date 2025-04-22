@@ -34,7 +34,7 @@ function TrailCard({ trail }: { trail: GeneratedTrail }) {
         <CardDescription>{trail.description}</CardDescription>
       </CardHeader>
       <CardFooter>
-        <Link href={`/trails/${trail.id}`}>
+        <Link href={`/trails/${trail.id}?flag=web-summit-2025`}>
           <Button>Start</Button>
         </Link>
       </CardFooter>

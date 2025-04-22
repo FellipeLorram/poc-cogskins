@@ -4,15 +4,16 @@ import { getTrail as getTrailServer } from "@/api/trails/get-trail";
 
 interface Props {
   trailId: string;
+  flag?: string;
 }
 
-export function useGetTrail({ trailId }: Props) {
+export function useGetTrail({ trailId, flag }: Props) {
   const { getTrail } = useTrailStore();
 
   return useQuery({
     queryKey: ["trail", trailId],
     queryFn: async () => {
-      const { trail } = await getTrailServer({ trailId });
+      const { trail } = await getTrailServer({ trailId, flag });
 
       if (!trail) return getTrail(trailId);
 

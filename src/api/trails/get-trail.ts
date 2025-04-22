@@ -6,6 +6,7 @@ import { GeneratedTrail } from "@/entities/trails";
 
 interface GetTrailRequest {
   trailId: string;
+  flag?: string;
 }
 
 interface GetTrailResponse {
@@ -14,7 +15,25 @@ interface GetTrailResponse {
 
 export async function getTrail({
   trailId,
+  flag,
 }: GetTrailRequest): Promise<GetTrailResponse> {
+  if (flag) {
+    const trail = await prisma.trail.findUnique({
+      where: { id: trailId },
+      include: {
+        inputContents: true,
+        quests: {
+          include: {
+            questions: true,
+          },
+        },
+        badge: true,
+      },
+    });
+
+    return { trail };
+  }
+
   const user = await getSessionUser();
 
   if (!user) return { trail: null };

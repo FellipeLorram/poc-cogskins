@@ -244,6 +244,7 @@ async function generateSingleRwsTrail(
   const trail: GeneratedTrail = {
     id: crypto.randomUUID(),
     title: trailData.title,
+    description: trailData.description,
     status: "DRAFT",
     estimatedDuration: 30, // Estimativa padrão: 30 minutos
     createdAt: new Date(),
@@ -277,6 +278,8 @@ async function generateSingleRwsTrail(
       updatedAt: new Date(),
       trailId: "", // Will be filled when the trail is saved
       userId: null, // Will be filled when there is authentication
+      status: "LOCKED",
+      unLockedAt: null,
     },
   };
 

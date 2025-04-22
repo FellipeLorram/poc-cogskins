@@ -97,38 +97,56 @@ export async function generateQuestQuestions(
             ${questions.map((q) => q.text).join("\n")}`
                 : ""
             }
+            
+            IMPORTANTE: Sua resposta DEVE seguir EXATAMENTE este formato JSON:
+            {
+              "questions": [
+                {
+                  "text": "Pergunta em português?",
+                  "alternatives": ["Alternativa A", "Alternativa B", "Alternativa C", "Alternativa D"],
+                  "correctAnswer": 0,
+                  "feedback": "Explicação detalhada em português"
+                },
+                ...
+              ]
+            }
         `;
 
-    // Generate questions
-    const { object } = await generateObject<QuestionGeneration>({
-      model: openai("gpt-3.5-turbo"),
-      schema: questionsArraySchema,
-      prompt,
-      temperature: 0.3 + currentAttempt * 0.2, // Aumenta a temperatura a cada tentativa para maior variação
-    });
+    try {
+      // Generate questions
+      const { object } = await generateObject<QuestionGeneration>({
+        model: openai("gpt-3.5-turbo"),
+        schema: questionsArraySchema,
+        prompt,
+        temperature: 0.3 + currentAttempt * 0.2, // Aumenta a temperatura a cada tentativa para maior variação
+      });
 
-    // Process new questions
-    for (const question of object.questions) {
-      const normalizedText = question.text
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, " ");
+      // Process new questions
+      for (const question of object.questions) {
+        const normalizedText = question.text
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, " ");
 
-      if (!uniqueQuestions.has(normalizedText)) {
-        uniqueQuestions.add(normalizedText);
-        questions.push({
-          id: crypto.randomUUID(),
-          text: question.text,
-          alternatives: question.alternatives,
-          correctAnswer: question.correctAnswer,
-          feedback: question.feedback,
-          status: "UNANSWERED" as QuestionStatus,
-        });
+        if (!uniqueQuestions.has(normalizedText)) {
+          uniqueQuestions.add(normalizedText);
+          questions.push({
+            id: crypto.randomUUID(),
+            text: question.text,
+            alternatives: question.alternatives,
+            correctAnswer: question.correctAnswer,
+            feedback: question.feedback,
+            status: "UNANSWERED" as QuestionStatus,
+          });
 
-        if (questions.length === questionsCount) {
-          break;
+          if (questions.length === questionsCount) {
+            break;
+          }
         }
       }
+    } catch (error) {
+      console.error(`Attempt ${currentAttempt + 1} failed:`, error);
+      // Continue to next attempt
     }
 
     currentAttempt++;

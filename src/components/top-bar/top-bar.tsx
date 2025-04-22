@@ -8,8 +8,8 @@ import { getSessionUser } from "@/api/user/get-session-user";
 
 export function TopBar() {
   return (
-    <div className="fixed top-0 left-0 w-screen bg-background">
-      <div className="w-11/12 max-w-6xl mx-auto flex justify-between items-center h-16">
+    <div className="fixed top-0 left-0 w-screen bg-background z-50">
+      <div className="w-11/12 max-w-6xl mx-auto flex justify-between items-center h-16 bg-background">
         <Link href="/">
           <Image
             src="/cogskins-logo.png"
@@ -20,16 +20,26 @@ export function TopBar() {
           />
         </Link>
 
-        <div className="flex gap-4">
+        <div className="flex gap-2">
           <div className="flex gap-2">
             <Link
-              className={buttonVariants({ variant: "ghost" })}
+              className={buttonVariants({
+                variant: "outline",
+                size: "sm",
+                className: "shadow-[#ff4b07] shadow-md text-[#ff4b07]",
+              })}
+              href="/web-summit"
+            >
+              Web Summit
+            </Link>
+            <Link
+              className={buttonVariants({ variant: "ghost", size: "sm" })}
               href="/badges"
             >
               Badges
             </Link>
             <Link
-              className={buttonVariants({ variant: "ghost" })}
+              className={buttonVariants({ variant: "ghost", size: "sm" })}
               href="/trails"
             >
               Trilhas

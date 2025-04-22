@@ -70,33 +70,34 @@ export const useTrailStore = create<TrailStore>()(
           badges: [],
         }),
 
-      updateQuest:
-        (
-          trailId: string,
-          questId: string,
-          status: QuestStatus,
-          attempts: number
-        ) =>
-        () => {
-          const trail = get().getTrail(trailId);
-          if (!trail) return;
+      updateQuest: (
+        trailId: string,
+        questId: string,
+        status: QuestStatus,
+        attempts: number
+      ) => {
+        const trail = get().getTrail(trailId);
+        if (!trail) return;
 
-          const quest = trail.quests.find((q) => q.id === questId);
-          if (!quest) return;
+        const quest = trail.quests.find((q) => q.id === questId);
+        if (!quest) return;
 
-          quest.status = status;
-          quest.attempts = attempts;
-          quest.completedAt =
-            status === QuestStatus.COMPLETED ? new Date() : null;
+        trail.quests = trail.quests.map((q) =>
+          q.id === questId
+            ? {
+                ...quest,
+                attempts,
+                status,
+                completedAt:
+                  status === QuestStatus.COMPLETED ? new Date() : null,
+              }
+            : q
+        );
 
-          trail.quests = trail.quests.map((q) =>
-            q.id === questId ? quest : q
-          );
-
-          set({
-            trails: get().trails.map((t) => (t.id === trailId ? trail : t)),
-          });
-        },
+        set({
+          trails: get().trails.map((t) => (t.id === trailId ? trail : t)),
+        });
+      },
 
       updateTrail: (trailId: string, status: TrailStatus) => () => {
         const trail = get().getTrail(trailId);

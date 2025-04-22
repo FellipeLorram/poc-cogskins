@@ -51,14 +51,15 @@ model User {
   name  String?
   image String?
 
-  email     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  trails    Trail[]
-  badges    Badge[]
+  email          String           @unique
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  trails         Trail[]
+  badges         Badge[]
+  WebSummitTrail WebSummitTrail[]
 }
 
-model Trail {
+model WebSummitTrail {
   id                String      @id @default(cuid())
   title             String
   status            TrailStatus @default(DRAFT)
@@ -67,6 +68,24 @@ model Trail {
   updatedAt         DateTime    @updatedAt
   userId            String
   user              User        @relation(fields: [userId], references: [id])
+  quests            Quest[]
+  badge             Badge?      @relation(fields: [badgeId], references: [id])
+  flag              String?
+  badgeId           String?
+
+  @@index([userId])
+}
+
+model Trail {
+  id                String      @id @default(cuid())
+  title             String
+  status            TrailStatus @default(DRAFT)
+  estimatedDuration Int // em minutos
+  description       String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  userId            String?
+  user              User?       @relation(fields: [userId], references: [id])
   inputContents     Content[]
   quests            Quest[]
   badge             Badge?
@@ -92,18 +111,20 @@ model Content {
 }
 
 model Quest {
-  id               String      @id @default(cuid())
-  difficultyLevel  Int         @default(1)
-  status           QuestStatus @default(LOCKED)
-  attempts         Int         @default(0)
+  id               String          @id @default(cuid())
+  difficultyLevel  Int             @default(1)
+  status           QuestStatus     @default(LOCKED)
+  attempts         Int             @default(0)
   generationPrompt String?
   description      String
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
   trailId          String
-  trail            Trail       @relation(fields: [trailId], references: [id], onDelete: Cascade)
+  trail            Trail           @relation(fields: [trailId], references: [id], onDelete: Cascade)
   questions        Question[]
   completedAt      DateTime?
+  WebSummitTrail   WebSummitTrail? @relation(fields: [webSummitTrailId], references: [id])
+  webSummitTrailId String?
 
   @@index([trailId])
 }
@@ -123,20 +144,28 @@ model Question {
   @@index([questId])
 }
 
+enum BadgeStatus {
+  LOCKED
+  UNLOCKED
+}
+
 model Badge {
-  id          String    @id @default(cuid())
-  url         String // URL da imagem gerada pelo DALL-E
-  title       String
-  description String
-  earnedAt    DateTime?
-  level       Int       @default(0)
-  nftData     Json? // metadados para NFT
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  trailId     String    @unique
-  trail       Trail     @relation(fields: [trailId], references: [id], onDelete: Cascade)
-  userId      String?
-  user        User?     @relation(fields: [userId], references: [id])
+  id             String           @id @default(cuid())
+  url            String // URL da imagem gerada pelo DALL-E
+  title          String
+  description    String
+  earnedAt       DateTime?
+  level          Int              @default(0)
+  nftData        Json? // metadados para NFT
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  trailId        String           @unique
+  trail          Trail            @relation(fields: [trailId], references: [id], onDelete: Cascade)
+  userId         String?
+  user           User?            @relation(fields: [userId], references: [id])
+  WebSummitTrail WebSummitTrail[]
+  unLockedAt     DateTime?
+  status         BadgeStatus      @default(LOCKED)
 
   @@index([userId])
 }

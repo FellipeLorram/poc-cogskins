@@ -33,8 +33,10 @@ export function Wrapper({ trailId, questId, children }: Props) {
     <div className="mt-16 text-left w-full">
       <GoBackDialog trailId={trailId} />
       <div className="space-y-2 pb-8 border-b border-border mb-8 mt-4">
-        <h1 className="text-3xl font-medium">{trail?.title}</h1>
-        <p className="text-muted-foreground">{quest?.description}</p>
+        <h1 className="text-2xl md:text-3xl font-medium">{trail?.title}</h1>
+        <p className="text-muted-foreground text-sm md:text-base">
+          {quest?.description}
+        </p>
       </div>
       {children}
     </div>

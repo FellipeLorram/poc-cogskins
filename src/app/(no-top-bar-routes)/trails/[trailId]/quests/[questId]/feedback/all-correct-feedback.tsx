@@ -30,19 +30,23 @@ export function IsAllCorrectFeedback({
   return (
     <div>
       <div className="flex flex-col gap-2 items-center justify-center">
-        <h1 className="text-4xl font-bold">Parabéns!</h1>
-        <p className="text-muted-foreground">Você acertou todas as questões.</p>
+        <h1 className="text-lg md:text-4xl font-bold">Parabéns!</h1>
+        <p className="text-muted-foreground text-sm md:text-base">
+          Você acertou todas as questões.
+        </p>
       </div>
 
       <div className="flex items-center justify-center gap-4 mt-4">
         <Button
           variant="outline"
           className="cursor-pointer"
+          size="sm"
           onClick={() => router.push(`/trails/${trailId}`)}
         >
           Voltar para a Trilha
         </Button>
         <Button
+          size="sm"
           className="cursor-pointer"
           onClick={() =>
             router.push(
@@ -61,7 +65,7 @@ export function IsAllCorrectFeedback({
               <CardTitle>{question.text}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>{question.feedback}</p>
+              <p className="text-sm md:text-base">{question.feedback}</p>
             </CardContent>
           </Card>
         ))}

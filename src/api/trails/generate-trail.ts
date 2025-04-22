@@ -98,25 +98,45 @@ export async function generateTrail(
   // Generate questions for each quest
   const questsWithQuestions = await Promise.all(
     object.quests.map(async (quest) => {
-      const questions = await generateQuestQuestions(
-        quest.generationPrompt,
-        quest.difficultyLevel
-      );
+      try {
+        const questions = await generateQuestQuestions(
+          quest.generationPrompt,
+          quest.difficultyLevel
+        );
 
-      const status = quest.difficultyLevel === 1 ? "AVAILABLE" : "LOCKED";
+        const status = quest.difficultyLevel === 1 ? "AVAILABLE" : "LOCKED";
 
-      return {
-        id: crypto.randomUUID(),
-        difficultyLevel: quest.difficultyLevel,
-        status: status as QuestStatus,
-        attempts: 0,
-        generationPrompt: quest.generationPrompt,
-        description: quest.description,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        trailId: "", // Will be filled when the trail is saved
-        questions: questions,
-      };
+        return {
+          id: crypto.randomUUID(),
+          difficultyLevel: quest.difficultyLevel,
+          status: status as QuestStatus,
+          attempts: 0,
+          generationPrompt: quest.generationPrompt,
+          description: quest.description,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          trailId: "", // Will be filled when the trail is saved
+          questions: questions,
+        };
+      } catch (error) {
+        console.error(
+          `Failed to generate questions for quest level ${quest.difficultyLevel}:`,
+          error
+        );
+        // Return a quest with empty questions array to allow the trail generation to continue
+        return {
+          id: crypto.randomUUID(),
+          difficultyLevel: quest.difficultyLevel,
+          status: "LOCKED" as QuestStatus,
+          attempts: 0,
+          generationPrompt: quest.generationPrompt,
+          description: quest.description,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          trailId: "", // Will be filled when the trail is saved
+          questions: [],
+        };
+      }
     })
   );
 

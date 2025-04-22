@@ -3,25 +3,12 @@
 import { Badge, badgeVariants } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { GeneratedQuest, QuestStatusMap } from "@/entities/quest";
 import { TrailStatusMap } from "@/entities/trails";
 import { useGetTrail } from "@/hooks/trails/use-get-trail";
-import { useTrailStore } from "@/stores/trail-store";
-import { QuestStatus } from "@prisma/client";
+import { BadgeStatus, QuestStatus } from "@prisma/client";
 import { VariantProps } from "class-variance-authority";
-import {
-  ChevronRight,
-  Lock,
-  Share,
-  Download,
-  RefreshCcw,
-  Eye,
-} from "lucide-react";
+import { ChevronRight, Eye, Lock, RefreshCcw } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -33,92 +20,22 @@ export function Trail({ trailId }: Props) {
   const { data: trail, isPending } = useGetTrail({
     trailId,
   });
-  const { badges } = useTrailStore();
 
   if (isPending || !trail) return <Loading />;
 
-  const isBadgeUnlocked =
-    badges.some((badgeId) => badgeId === trail?.badge?.id) ||
-    trail?.badge?.userId !== "";
-
-  const handleDownload = () => {
-    if (!trail) return;
-
-    const trailData = {
-      title: trail.title,
-      estimatedDuration: trail.estimatedDuration,
-      quests: trail.quests.map((quest) => ({
-        description: quest.description,
-        questionsCount: quest.questions.length,
-        attempts: quest.attempts,
-        questions: quest.questions.map((question) => ({
-          text: question.text,
-          alternatives: question.alternatives,
-          correctAnswer: question.correctAnswer,
-          feedback: question.feedback,
-        })),
-      })),
-    };
-
-    const jsonString = JSON.stringify(trailData, null, 2);
-
-    const blob = new Blob([jsonString], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `trail-${trail.title.toLowerCase().replace(/\s+/g, "-")}.json`;
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
+  const isBadgeUnlocked = trail.badge?.status === BadgeStatus.UNLOCKED;
 
   return (
     <div className="w-full space-y-12">
       <div className="flex items-start justify-between w-full">
         <div>
-          <h1 className="text-3xl">{trail.title}</h1>
+          <h1 className="text-2xl md:text-3xl">{trail.title}</h1>
           <div className="flex items-center w-fit gap-2 mt-1">
             <Badge variant="outline">{TrailStatusMap[trail.status]}</Badge>
             <p className="text-sm text-muted-foreground">
               Duração estimada: {trail.estimatedDuration} minutos
             </p>
           </div>
-        </div>
-
-        <div className="h-fit">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                disabled
-                className="cursor-pointer"
-                size="icon"
-              >
-                <Share className="w-4 h-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Compartilhar</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                className="cursor-pointer"
-                size="icon"
-                onClick={handleDownload}
-              >
-                <Download className="w-4 h-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Download</p>
-            </TooltipContent>
-          </Tooltip>
         </div>
       </div>
       <div className="flex flex-col gap-4">
@@ -209,10 +126,10 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
   return (
     <div
       data-locked={isLocked}
-      className="w-full flex items-center justify-between gap-2 border rounded-md px-4 h-24 shadow data-[locked=true]:opacity-70 data-[locked=true]:shadow-none"
+      className="w-full flex flex-col md:flex-row items-center justify-between gap-4 md:gap-2 border rounded-md px-4 py-4 md:py-0 md:h-24 shadow data-[locked=true]:opacity-70 data-[locked=true]:shadow-none"
     >
       <div className="flex flex-col gap-2">
-        <p>{quest.description}</p>
+        <p className="text-sm md:text-base">{quest.description}</p>
         <div className="flex items-center gap-2">
           <Badge variant={badgeVariant}>
             {QuestStatusMap[quest.status]}
@@ -255,11 +172,6 @@ function Loading() {
             <Skeleton className="w-24 h-4" />
           </div>
         </div>
-
-        <div className="h-fit flex items-center gap-2">
-          <Skeleton className="w-9 h-9" />
-          <Skeleton className="w-9 h-9" />
-        </div>
       </div>
       <div className="flex flex-col gap-4 w-full">
         {Array.from({ length: 3 }).map((_, index) => (
@@ -267,7 +179,7 @@ function Loading() {
             key={index}
             className="w-full flex flex-col gap-4 items-center justify-center"
           >
-            <div className="flex items-center justify-between gap-2 border rounded-md px-4 h-24 w-full">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-2 border rounded-md px-4 py-4 md:py-0 md:h-24 w-full">
               <div className="flex flex-col gap-2">
                 <Skeleton className="w-64 h-4" />
                 <div className="flex items-center gap-2">

@@ -15,13 +15,16 @@ export function useUpdateQuest() {
 
   return useMutation({
     mutationFn: async ({ trailId, questId, status, attempts }: Props) => {
-      const quest = await updateQuestServer({
+      const { quest } = await updateQuestServer({
         questId,
         status,
         attempts,
       });
 
-      if (!quest) updateQuest(trailId, questId, status, attempts);
+      if (!quest) {
+        console.log("Quest updated", quest);
+        updateQuest(trailId, questId, status, attempts);
+      }
     },
   });
 }

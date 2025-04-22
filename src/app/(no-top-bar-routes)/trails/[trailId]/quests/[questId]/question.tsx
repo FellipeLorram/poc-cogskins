@@ -11,11 +11,11 @@ interface QuestionProps {
 
 export function Question({ trailId, questId, questionId }: QuestionProps) {
   const {
-    currentQuestion,
+    isLoading,
     isPending,
     isLastQuestion,
+    currentQuestion,
     handleSubmit,
-    isLoading,
   } = useQuestionLogic({ trailId, questId, questionId });
 
   if (isLoading || !currentQuestion) return <Loading />;

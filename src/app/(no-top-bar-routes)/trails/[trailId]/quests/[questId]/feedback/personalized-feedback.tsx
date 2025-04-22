@@ -20,8 +20,10 @@ export function PersonalizedFeedback({ accessToken, runId }: Props) {
   return (
     <div className="py-16 border-t space-y-8">
       <div>
-        <h1 className="text-2xl">{feedback?.encouragement}</h1>
-        <p className="text-muted-foreground">{feedback?.conceptualFeedback}</p>
+        <h1 className="text-lg md:text-2xl">{feedback?.encouragement}</h1>
+        <p className="text-muted-foreground text-sm md:text-base">
+          {feedback?.conceptualFeedback}
+        </p>
       </div>
 
       <Card>
@@ -30,7 +32,11 @@ export function PersonalizedFeedback({ accessToken, runId }: Props) {
         </CardHeader>
         <CardContent>
           <ul className="list-disc list-inside">
-            {feedback?.nextStepHints.map((hint) => <li key={hint}>{hint}</li>)}
+            {feedback?.nextStepHints.map((hint) => (
+              <li className="text-sm md:text-base" key={hint}>
+                {hint}
+              </li>
+            ))}
           </ul>
         </CardContent>
       </Card>
@@ -42,8 +48,10 @@ export function PersonalizedFeedback({ accessToken, runId }: Props) {
         <CardContent className="space-y-8">
           {feedback?.improvementAreas.map((area) => (
             <div key={area.concept}>
-              <h2 className="text-lg font-medium mb-1">{area.concept}</h2>
-              <p>{area.suggestion}</p>
+              <h2 className="text-lg md:text-xl font-medium mb-1">
+                {area.concept}
+              </h2>
+              <p className="text-sm md:text-base">{area.suggestion}</p>
               <div className="space-y-2 p-4 border rounded-md mt-4 bg-accent">
                 <p className="text-sm font-medium">Recursos:</p>
                 <ul className="list-disc list-inside">

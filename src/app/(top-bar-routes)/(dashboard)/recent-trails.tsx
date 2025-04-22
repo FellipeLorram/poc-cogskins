@@ -52,7 +52,7 @@ export function RecentTrails() {
   if (isPending) return <TrailCardSkeleton />;
 
   return (
-    <div className="flex flex-col gap-6 h-32 w-full">
+    <div className="flex flex-col gap-6 md:h-32 w-full pb-8 md:pb-0">
       {showTitle && <h1 className="text-sm font-medium">Recentes</h1>}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {isGenerating && <GeneratingTrailCard />}

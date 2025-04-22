@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { QuestionFormSchema } from "./question-form";
 import { useQuestionStore } from "./question-store";
 import { useGetBadgeByTrailId } from "@/hooks/badge/use-get-badge-by-trail-id";
+import { toast } from "sonner";
 
 interface Props {
   trailId: string;
@@ -86,6 +87,24 @@ export function useQuestionLogic({ trailId, questId, questionId }: Props) {
 
   const handleSubmit = async (data: QuestionFormSchema) => {
     addAnsweredQuestion(data);
+
+    // fires a success token if the answer is correct
+    if (data.answer === currentQuestion?.correctAnswer) {
+      toast.success(currentQuestion.feedback);
+    } else {
+      toast.error("Hmmm, resposta incorreta!");
+    }
+
+    // Update quest attempts after the first question is answered
+    if (answeredQuestions.length === 0) {
+      await updateQuest({
+        trailId,
+        questId,
+        status: quest?.status || QuestStatus.IN_PROGRESS,
+        attempts: (quest?.attempts ?? 0) + 1,
+      });
+    }
+
     const { nextQuestion, isLastQuestion } = getQuestionNavigation();
 
     if (!isLastQuestion) {

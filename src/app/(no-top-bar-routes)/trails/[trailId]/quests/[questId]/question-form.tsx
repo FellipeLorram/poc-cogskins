@@ -64,7 +64,7 @@ export function QuestionForm({
           name="answer"
           render={({ field }) => (
             <FormItem className="space-y-3">
-              <FormLabel className="text-lg font-medium">
+              <FormLabel className="text-lg font-medium leading-6">
                 {question.text}
               </FormLabel>
               <FormControl>
@@ -81,7 +81,7 @@ export function QuestionForm({
                       <FormControl>
                         <RadioGroupItem value={index.toString()} />
                       </FormControl>
-                      <FormLabel className="font-normal">
+                      <FormLabel className="font-normal text-sm md:text-base">
                         {alternative}
                       </FormLabel>
                     </FormItem>

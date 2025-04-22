@@ -124,7 +124,7 @@ export function ContentForm() {
                 <div className="relative flex items-start gap-2 w-full border rounded-md p-2 shadow">
                   <Textarea
                     placeholder="Qual conteúdo vamos validar hoje?"
-                    className={`[&::-webkit-resizer]:hidden [&::-webkit-scrollbar]:hidden min-h-[40px] max-h-[200px] border-none focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none ${
+                    className={`text-sm [&::-webkit-resizer]:hidden [&::-webkit-scrollbar]:hidden min-h-[40px] max-h-[200px] border-none focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none ${
                       field.value ? "resize-y" : "resize-none"
                     }`}
                     {...field}

@@ -88,17 +88,20 @@ export function SomeIsCorrectFeedback({
         </svg>
 
         <div className="flex flex-col items-center justify-center">
-          <h1 className="text-xl">{percentage}% de acertos</h1>
-          <p className="text-muted-foreground">{message}</p>
+          <h1 className="text-lg md:text-xl">{percentage}% de acertos</h1>
+          <p className="text-muted-foreground text-sm md:text-base text-center">
+            {message}
+          </p>
         </div>
       </div>
 
       <div className="flex gap-2">
-        <Button className="cursor-pointer" onClick={handleTryAgain}>
+        <Button size="sm" className="cursor-pointer" onClick={handleTryAgain}>
           Tentar novamente
         </Button>
         <Button
           variant="outline"
+          size="sm"
           className="cursor-pointer"
           onClick={handleGoBack}
         >

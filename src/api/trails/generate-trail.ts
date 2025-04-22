@@ -142,6 +142,7 @@ export async function generateTrail(
 
   // Build trail object in the format of the schema
   const trail: GeneratedTrail = {
+    description: null,
     id: crypto.randomUUID(),
     title: object.title,
     status: "DRAFT",
@@ -177,6 +178,8 @@ export async function generateTrail(
       updatedAt: new Date(),
       trailId: "", // Will be filled when the trail is saved
       userId: "", // Will be filled when there is authentication
+      status: "LOCKED",
+      unLockedAt: null,
     },
   };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { generateTrailTaskTrigger } from "@/api/trails/generate-trail-task";
+import { useIsEarlyAdopter } from "@/hooks/auth/use-is-early-adopter";
 import { useTrailRunnerStore } from "./trail-runner-store";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,6 +48,8 @@ export function ContentForm() {
 
   const { setContents, setRunId, setAccessToken } = useTrailRunnerStore();
 
+  const { data: isEarlyAdopter } = useIsEarlyAdopter();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -72,7 +75,7 @@ export function ContentForm() {
 
   const files = form.watch("files");
   const contents = form.watch("topic");
-  const submitDisabled = !contents && !files;
+  const submitDisabled = (!contents && !files) || !isEarlyAdopter;
 
   function handleRemoveFile(file: File) {
     form.setValue(
@@ -123,6 +126,7 @@ export function ContentForm() {
               <FormControl>
                 <div className="relative flex items-start gap-2 w-full border rounded-md p-2 shadow">
                   <Textarea
+                    disabled={!isEarlyAdopter}
                     placeholder="Qual conteúdo vamos validar hoje?"
                     className={`text-sm [&::-webkit-resizer]:hidden [&::-webkit-scrollbar]:hidden min-h-[40px] max-h-[200px] border-none focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none ${
                       field.value ? "resize-y" : "resize-none"
@@ -132,6 +136,7 @@ export function ContentForm() {
 
                   <div className="flex items-center min-h-[40px]">
                     <Button
+                      disabled={!isEarlyAdopter}
                       variant="ghost"
                       size="icon"
                       type="button"

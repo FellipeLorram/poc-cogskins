@@ -54,6 +54,7 @@ model User {
   email          String           @unique
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
+  isEarlyAdopter Boolean          @default(false)
   trails         Trail[]
   badges         Badge[]
   WebSummitTrail WebSummitTrail[]

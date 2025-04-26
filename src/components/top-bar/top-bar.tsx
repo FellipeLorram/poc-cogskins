@@ -1,10 +1,10 @@
+import { getSessionUser } from "@/api/user/get-session-user";
 import { buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { UserMenu } from "./user-menu";
-import { getSessionUser } from "@/api/user/get-session-user";
 
 export function TopBar() {
   return (

@@ -8,7 +8,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Image from "next/image";
-import Link from "next/link";
 import { parseAsBoolean, useQueryState } from "nuqs";
 import { toast } from "sonner";
 
@@ -38,12 +37,6 @@ export function SignInDialog() {
               <span className="sr-only">CogSkins</span>
             </div>
             <h1 className="text-xl font-bold">Bem-vindo ao CogSkins.</h1>
-            <div className="text-center text-sm">
-              Não tem uma conta?{" "}
-              <Link href="/signup" className="underline underline-offset-4">
-                Se cadastre
-              </Link>
-            </div>
           </div>
         </div>
         <SignInForm

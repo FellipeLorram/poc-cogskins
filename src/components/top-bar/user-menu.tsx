@@ -44,6 +44,7 @@ export function UserMenu({ getUserPromise }: Props) {
       <Button
         variant="outline"
         className="w-20"
+        size="sm"
         onClick={() => setIsOpen(true)}
       >
         Entrar

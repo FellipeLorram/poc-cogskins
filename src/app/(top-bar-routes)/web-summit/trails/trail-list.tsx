@@ -30,7 +30,7 @@ function TrailCard({ trail }: { trail: GeneratedTrail }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{trail.title}</CardTitle>
+        <CardTitle>Trail: {trail.title}</CardTitle>
         <CardDescription>{trail.description}</CardDescription>
       </CardHeader>
       <CardFooter>

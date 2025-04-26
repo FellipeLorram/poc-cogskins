@@ -1,19 +1,19 @@
 import { listWebSummit2025Trails } from "@/api/web-summit-2025/list-trails";
 import { TrailList } from "./trail-list";
-import { AlphaTesterDialog } from "./alpha-tester-dialog";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CardTitle } from "@/components/ui/card";
 
 export default async function Page() {
   const trailsListPromise = listWebSummit2025Trails();
 
   return (
-    <>
-      <AlphaTesterDialog />
+    <div className="mt-20 w-full flex flex-col gap-8">
+      <CardTitle>Exclusive Web Summit 2025 Trails</CardTitle>
       <Suspense fallback={<Loading />}>
         <TrailList trailListPromise={trailsListPromise} />
       </Suspense>
-    </>
+    </div>
   );
 }
 

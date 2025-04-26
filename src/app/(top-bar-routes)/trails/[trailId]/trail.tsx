@@ -131,7 +131,7 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
       className="w-full flex flex-col md:flex-row items-center justify-between gap-4 md:gap-2 border rounded-md px-4 py-4 md:py-0 md:h-24 shadow data-[locked=true]:opacity-70 data-[locked=true]:shadow-none"
     >
       <div className="flex flex-col gap-2">
-        <p className="text-sm md:text-base">{quest.description}</p>
+        <p className="text-sm md:text-base">Quest: {quest.description}</p>
         <div className="flex items-center gap-2">
           <Badge variant={badgeVariant}>
             {QuestStatusMap[quest.status]}

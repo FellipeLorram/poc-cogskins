@@ -18,9 +18,29 @@ export default async function Page() {
 }
 
 function Loading() {
-  return Array.from({ length: 3 }).map((_, index) => (
-    <div key={index} className="flex items-center justify-center">
-      <Skeleton className="w-full h-48" />
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-2">
+        <Skeleton className="w-full h-10" />
+      </div>
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div
+            key={index}
+            className="bg-background rounded-md p-4 border shadow-sm flex flex-col gap-4 "
+          >
+            <Skeleton className="w-full h-40" />
+            <div className="flex gap-2 flex-1 justify-between">
+              <Skeleton className="w-full h-4" />
+              <Skeleton className="w-16 h-4" />
+            </div>
+            <div className="text-sm text-muted-foreground">
+              <Skeleton className="w-16 h-4" />
+              <Skeleton className="w-16 h-4 mt-2" />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
-  ));
+  );
 }

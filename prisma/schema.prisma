@@ -160,8 +160,8 @@ model Badge {
   nftData        Json? // metadados para NFT
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
-  trailId        String           @unique
-  trail          Trail            @relation(fields: [trailId], references: [id], onDelete: Cascade)
+  trailId        String?          @unique
+  trail          Trail?           @relation(fields: [trailId], references: [id], onDelete: Cascade)
   userId         String?
   user           User?            @relation(fields: [userId], references: [id])
   WebSummitTrail WebSummitTrail[]

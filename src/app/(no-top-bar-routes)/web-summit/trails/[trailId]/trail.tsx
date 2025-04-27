@@ -45,7 +45,7 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
 
     if (isCompleted) {
       return router.push(
-        `/web-summit/trails/${trailId}/quests/${quest.type}/completed`
+        `/web-summit/trails/${trailId}/${quest.type}/completed`
       );
     }
 

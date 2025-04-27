@@ -21,7 +21,7 @@ export function SignInDialog() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="sr-only">Entrar</DialogTitle>
+          <DialogTitle className="sr-only">Signin</DialogTitle>
         </DialogHeader>
 
         <div className="flex flex-col gap-6">
@@ -36,13 +36,13 @@ export function SignInDialog() {
               />
               <span className="sr-only">CogSkins</span>
             </div>
-            <h1 className="text-xl font-bold">Bem-vindo ao CogSkins.</h1>
+            <h1 className="text-xl font-bold">Welcome to CogSkins.</h1>
           </div>
         </div>
         <SignInForm
           onSuccess={() => {
             setIsOpen(false);
-            toast.success("Enviamos um link de acesso para o seu email.");
+            toast.success("We sent a login link to your email.");
           }}
         />
       </DialogContent>

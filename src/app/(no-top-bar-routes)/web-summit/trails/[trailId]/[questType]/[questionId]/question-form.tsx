@@ -24,6 +24,7 @@ interface Props {
   nextQuestion: Question | undefined;
   trailId: TrailId;
   questType: string;
+  isFirstQuestion: boolean;
 }
 
 const questionSchema = z.object({
@@ -41,9 +42,17 @@ export function QuestionForm({
   nextQuestion,
   trailId,
   questType,
+  isFirstQuestion,
 }: Props) {
   const router = useRouter();
-  const { correctAnswers, setCorrectAnswers, addCompletedQuest } = useStore();
+  const {
+    level,
+    correctAnswers,
+    setCorrectAnswers,
+    addCompletedQuest,
+    setCompletedAnyQuest,
+    setLevel,
+  } = useStore();
   const form = useForm<QuestionFormSchema>({
     resolver: zodResolver(questionSchema),
     defaultValues: {
@@ -59,16 +68,24 @@ export function QuestionForm({
     const isCorrect = question.options[data.answer] === question.correctAnswer;
     const answers = [...(correctAnswers[questType] ?? []), isCorrect];
 
-    setCorrectAnswers({
-      ...correctAnswers,
-      [questType]: answers,
-    });
+    if (isFirstQuestion) {
+      setCorrectAnswers({
+        ...correctAnswers,
+        [questType]: [isCorrect],
+      });
+    } else {
+      setCorrectAnswers({
+        ...correctAnswers,
+        [questType]: answers,
+      });
+    }
 
     if (answers.length === 5) {
       const isPerfectScore = answers.every((answer) => answer);
 
       if (isPerfectScore) {
         addCompletedQuest(questType);
+        setLevel(level + 1);
       }
     }
 
@@ -78,6 +95,7 @@ export function QuestionForm({
 
     if (!nextQuestion) {
       router.push(`/web-summit/trails/${trailId}/${questType}/completed`);
+      setCompletedAnyQuest(true);
     } else {
       router.push(
         `/web-summit/trails/${trailId}/${questType}/${nextQuestion.id}`

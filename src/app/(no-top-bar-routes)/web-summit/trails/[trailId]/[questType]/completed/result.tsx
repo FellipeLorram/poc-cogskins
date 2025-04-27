@@ -1,6 +1,9 @@
 "use client";
 import { badgeLevelMap } from "@/app/(no-top-bar-routes)/web-summit/data";
+import { dataStore } from "@/app/(no-top-bar-routes)/web-summit/data-store";
 import { useStore } from "@/app/(no-top-bar-routes)/web-summit/store";
+import { TrailId } from "@/app/(no-top-bar-routes)/web-summit/types";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,8 +13,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Image from "next/image";
+import Link from "next/link";
+
 interface Props {
-  trailId: string;
+  trailId: TrailId;
   questType: string;
 }
 
@@ -26,7 +31,8 @@ function getMessageByScore(score: number, level: number) {
 export function Result({ trailId, questType }: Props) {
   const { correctAnswers, level } = useStore();
   const correctAnswersCount = correctAnswers[questType]?.filter(Boolean).length;
-  const isPerfectScore = correctAnswersCount === 5;
+  const currentQuest = dataStore.getQuestByType(trailId, questType);
+  const isPerfectScore = correctAnswersCount === currentQuest?.questions.length;
   const currentBadge = badgeLevelMap[level];
   const nextBadge = badgeLevelMap[level + 1];
 
@@ -69,11 +75,12 @@ export function Result({ trailId, questType }: Props) {
           )}
         </CardContent>
         <CardFooter>
-          <Button>
-            <Link href={`/web-summit/trails/${trailId}/${questType}`}>
-              Next
-            </Link>
-          </Button>
+          <Link
+            className="w-full"
+            href={`/web-summit/trails/${trailId}/${questType}/completed?signin-dialog=true`}
+          >
+            <Button className="w-full">Signup to get your badge</Button>
+          </Link>
         </CardFooter>
       </Card>
     </div>

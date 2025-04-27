@@ -26,6 +26,7 @@ export default async function page({ params }: Props) {
     (q) => q.id === questionId
   );
   const nextQuestion = quest?.questions[currentQuestionIndex + 1];
+  const isFirstQuestion = currentQuestionIndex === 0;
 
   return (
     <div className="w-full flex flex-col gap-8">
@@ -35,6 +36,7 @@ export default async function page({ params }: Props) {
         nextQuestion={nextQuestion}
         trailId={trailId}
         questType={questType}
+        isFirstQuestion={isFirstQuestion}
       />
     </div>
   );

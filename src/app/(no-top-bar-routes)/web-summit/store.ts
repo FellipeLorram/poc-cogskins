@@ -24,6 +24,8 @@ interface Store {
   setTrailLevel: (trailId: TrailId, level: number) => void;
   isTrailCompleted: (trailId: TrailId) => boolean;
   isQuestLocked: (trailId: TrailId, questId: string) => boolean;
+  completedAnyQuest: boolean;
+  setCompletedAnyQuest: (completedAnyQuest: boolean) => void;
 }
 
 export const useStore = create<Store>()(
@@ -63,6 +65,9 @@ export const useStore = create<Store>()(
         })),
       isQuestCompleted: (questType: string) =>
         get().completedQuests.some((quest) => quest.questType === questType),
+      completedAnyQuest: false,
+      setCompletedAnyQuest: (completedAnyQuest: boolean) =>
+        set({ completedAnyQuest }),
     }),
     {
       name: "web-summit-store",

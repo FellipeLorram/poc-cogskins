@@ -21,7 +21,7 @@ export function MagicLinkEmail({ magicLink }: Props) {
     <Html>
       <Head />
       <Body style={main}>
-        <Preview>Clique aqui para entrar no Cogskins.</Preview>
+        <Preview>Click here to sign in to Cogskins.</Preview>
         <Container style={container}>
           <Img
             src="https://i5aee2oj19.ufs.sh/f/VNtBLK6CzQXGhNZUCcz5KQgi9dq3I24POUnMmVDfWBvclz6k"
@@ -29,15 +29,15 @@ export function MagicLinkEmail({ magicLink }: Props) {
             height="auto"
             alt="Cogskins"
           />
-          <Heading style={heading}>🪄 Seu magic link</Heading>
           <Section style={body}>
+            <Heading style={heading}>Start Game</Heading>
             <Text style={paragraph}>
               <Link style={link} href={magicLink}>
-                👉 Clique aqui para entrar no Cogskins 👈
+                👉 Click here to sign in to Cogskins 👈
               </Link>
             </Text>
             <Text style={paragraph}>
-              Se você não solicitou isso, ignore este email.
+              If you did not request this, ignore this email.
             </Text>
           </Section>
           <Text style={paragraph}>
@@ -56,8 +56,6 @@ export function MagicLinkEmail({ magicLink }: Props) {
             }}
             alt="Cogskins"
           />
-          <Text style={footer}>Cogskins</Text>
-          <Text style={footer}>Endereço para passar credibilidade</Text>
         </Container>
       </Body>
     </Html>
@@ -97,10 +95,4 @@ const link = {
 const hr = {
   borderColor: "#dddddd",
   marginTop: "48px",
-};
-
-const footer = {
-  color: "#8898aa",
-  fontSize: "12px",
-  marginLeft: "4px",
 };

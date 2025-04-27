@@ -5,7 +5,7 @@ import { useTrailStore } from "@/stores/trail-store";
 import { syncContents } from "@/api/helpers/sync-contents";
 import { toast } from "sonner";
 import { useInvalidateQuery } from "../use-invalidate-query";
-import { useStore as useWebSummitStore } from "@/app/(no-top-bar-routes)/web-summit/store";
+import { useStore as useWebSummitStore } from "@/app/app/(no-top-bar-routes)/web-summit/store";
 
 export function useSyncContents() {
   const { invalidate } = useInvalidateQuery({

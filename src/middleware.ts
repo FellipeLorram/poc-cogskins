@@ -5,7 +5,7 @@ export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
 
-const protectedRoutes = ["/trails", "/badges"];
+const protectedRoutes = ["/app/trails", "/app/badges"];
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
@@ -15,13 +15,13 @@ export default async function middleware(req: NextRequest) {
   const session = cookie.get("session")?.value;
   const sawIntro = cookie.get("sawIntro")?.value;
 
-  if (!sawIntro) {
-    return NextResponse.redirect(new URL("/web-summit", req.url));
+  if (path.includes("/app") && !sawIntro) {
+    return NextResponse.redirect(new URL("/app/web-summit", req.url));
   }
 
   // Handle intro page logic
-  if (path === "/web-summit" && sawIntro === "true") {
-    return NextResponse.redirect(new URL("/web-summit/trails", req.url));
+  if (path === "/app/web-summit" && sawIntro === "true") {
+    return NextResponse.redirect(new URL("/app/web-summit/trails", req.url));
   }
 
   if (!session && isProtectedRoute) {

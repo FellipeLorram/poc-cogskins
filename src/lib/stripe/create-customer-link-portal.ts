@@ -7,7 +7,7 @@ export async function createCustomerLinkPortal(customerId: string) {
 
   const session = await stripe.billingPortal.sessions.create({
     customer: customerId,
-    return_url: `${process.env.NEXT_PUBLIC_URL}`,
+    return_url: `${process.env.NEXT_PUBLIC_URL}/app`,
   });
 
   return session.url;

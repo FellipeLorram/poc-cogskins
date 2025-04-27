@@ -34,7 +34,6 @@ export function Result({ trailId, questType }: Props) {
   const currentQuest = dataStore.getQuestByType(trailId, questType);
   const isPerfectScore = correctAnswersCount === currentQuest?.questions.length;
   const currentBadge = badgeLevelMap[level];
-  const nextBadge = badgeLevelMap[level + 1];
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center">
@@ -49,11 +48,11 @@ export function Result({ trailId, questType }: Props) {
           {isPerfectScore ? (
             <div className="w-full flex flex-col items-center justify-center gap-4">
               <CardTitle>
-                Congratulations! You upgraded your badge to level {level + 1}!
+                Congratulations! You upgraded your badge to level {level}!
               </CardTitle>
               <Image
                 className="w-full"
-                src={nextBadge}
+                src={currentBadge}
                 alt="Badge"
                 width={1080}
                 height={1080}

@@ -13,6 +13,12 @@ export default async function middleware(req: NextRequest) {
 
   const cookie = await cookies();
   const session = cookie.get("session")?.value;
+  const sawIntro = cookie.get("sawIntro")?.value;
+
+  // Handle intro page logic
+  if (path === "/web-summit" && sawIntro === "true") {
+    return NextResponse.redirect(new URL("/web-summit/trails", req.url));
+  }
 
   if (!session && isProtectedRoute) {
     const url = new URL(req.nextUrl.origin);

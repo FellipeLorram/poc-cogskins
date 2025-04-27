@@ -41,13 +41,8 @@ export function UserMenu({ getUserPromise }: Props) {
 
   if (!user) {
     return (
-      <Button
-        variant="outline"
-        className="w-20"
-        size="sm"
-        onClick={() => setIsOpen(true)}
-      >
-        Entrar
+      <Button variant="outline" size="sm" onClick={() => setIsOpen(true)}>
+        Sign in
       </Button>
     );
   }
@@ -70,6 +65,12 @@ export function UserMenu({ getUserPromise }: Props) {
             Perfil
           </Link>
         </DropdownMenuItem>
+        <Link className="flex items-center gap-2 w-full" href="/badges">
+          Badges
+        </Link>
+        <Link className="flex items-center gap-2 w-full" href="/trails">
+          Trilhas
+        </Link>
         <DropdownMenuItem className="cursor-pointer" onClick={() => mutate()}>
           <LogOut className="w-4 h-4" />
           Sair

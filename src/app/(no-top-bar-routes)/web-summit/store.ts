@@ -26,6 +26,8 @@ interface Store {
   isQuestLocked: (trailId: TrailId, questId: string) => boolean;
   completedAnyQuest: boolean;
   setCompletedAnyQuest: (completedAnyQuest: boolean) => void;
+  sawIntro: boolean;
+  setSawIntro: (sawIntro: boolean) => void;
 }
 
 export const useStore = create<Store>()(
@@ -68,6 +70,8 @@ export const useStore = create<Store>()(
       completedAnyQuest: false,
       setCompletedAnyQuest: (completedAnyQuest: boolean) =>
         set({ completedAnyQuest }),
+      sawIntro: false,
+      setSawIntro: (sawIntro: boolean) => set({ sawIntro }),
     }),
     {
       name: "web-summit-store",

@@ -58,6 +58,12 @@ model User {
   trails         Trail[]
   badges         Badge[]
   WebSummitTrail WebSummitTrail[]
+
+  // Subscription fields
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  subscriptionStatus   String? // active, canceled, past_due, etc.
+  subscriptionEndDate  DateTime?
 }
 
 model WebSummitTrail {

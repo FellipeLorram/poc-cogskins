@@ -1,9 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { CardDescription, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
-import Link from "next/link";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
+  const cookieStore = await cookies();
+  const sawIntro = cookieStore.get("sawIntro")?.value;
+
+  if (sawIntro === "true") {
+    redirect("/web-summit/trails");
+  }
+
+  async function handleStart() {
+    "use server";
+    const cookieStore = await cookies();
+    cookieStore.set("sawIntro", "true", { path: "/" });
+    redirect("/web-summit/trails");
+  }
+
   return (
     <div className="w-full flex flex-col gap-16 justify-center items-center h-screen">
       <Image
@@ -18,9 +33,11 @@ export default async function Page() {
         <CardDescription className="text-lg">
           We have been invited to be a CogSkins Alpha Tester.
         </CardDescription>
-        <Link href="/web-summit/trails">
-          <Button>Start</Button>
-        </Link>
+        <form className="w-full" action={handleStart}>
+          <Button className="w-full" type="submit">
+            Start
+          </Button>
+        </form>
       </div>
     </div>
   );

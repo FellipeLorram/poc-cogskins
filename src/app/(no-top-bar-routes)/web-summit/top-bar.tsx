@@ -16,7 +16,7 @@ export function TopBar({ title, size = "medium" }: Props) {
           width={409}
           height={270}
           data-size={size}
-          className="w-16 absolute left-4 data-[size=small]:w-12 data-[size=medium]:w-16 data-[size=large]:w-20"
+          className="w-12 absolute left-4 top-1/2 -translate-y-1/2 data-[size=small]:w-12 data-[size=medium]:w-16 data-[size=large]:w-20"
         />
       </Link>
       <h1

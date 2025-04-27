@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { UserMenu } from "./user-menu";
+import { EarlyAdopterButton } from "./early-adopter-button";
 
 export function TopBar() {
   return (
@@ -14,37 +15,25 @@ export function TopBar() {
           <Image
             src="/cogskins-logo.png"
             alt="CogSkins Logo"
-            className="w-12 h-auto"
+            className="min-w-12 w-12 h-auto"
             width={409}
             height={270}
           />
         </Link>
 
-        <div className="flex gap-2">
-          <div className="flex gap-2">
-            <Link
-              className={buttonVariants({
-                variant: "outline",
-                size: "sm",
-                className: "shadow-[#ff4b07] shadow-md text-[#ff4b07]",
-              })}
-              href="/web-summit/trails"
-            >
-              Web Summit
-            </Link>
-            <Link
-              className={buttonVariants({ variant: "ghost", size: "sm" })}
-              href="/badges"
-            >
-              Badges
-            </Link>
-            <Link
-              className={buttonVariants({ variant: "ghost", size: "sm" })}
-              href="/trails"
-            >
-              Trilhas
-            </Link>
-          </div>
+        <div className="flex items-center justify-center gap-1 md:gap-2">
+          <Link
+            className={buttonVariants({
+              variant: "outline",
+              size: "sm",
+              className: "shadow-[#ff4b07] shadow-sm text-[#ff4b07]",
+            })}
+            href="/web-summit"
+          >
+            Web Summit
+          </Link>
+          <EarlyAdopterButton getUserPromise={getSessionUser()} />
+
           <Suspense fallback={<Skeleton className="w-20 h-9" />}>
             <UserMenu getUserPromise={getSessionUser()} />
           </Suspense>

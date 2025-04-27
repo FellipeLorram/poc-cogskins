@@ -7,24 +7,24 @@ import { z } from "zod";
 const feedbackSchema = z.object({
   encouragement: z
     .string()
-    .describe("Mensagem motivacional baseada no desempenho"),
+    .describe("Motivational message based on performance"),
   conceptualFeedback: z
     .string()
-    .describe("Feedback sobre a compreensão dos conceitos principais"),
+    .describe("Feedback about understanding of main concepts"),
   improvementAreas: z
     .array(
       z.object({
-        concept: z.string().describe("Conceito que precisa de mais atenção"),
-        suggestion: z.string().describe("Sugestão específica para melhorar"),
+        concept: z.string().describe("Concept that needs more attention"),
+        suggestion: z.string().describe("Specific suggestion for improvement"),
         resources: z
           .array(z.string())
-          .describe("Recursos adicionais para estudo"),
+          .describe("Additional resources for study"),
       })
     )
-    .describe("Áreas específicas para melhoria com sugestões"),
+    .describe("Specific areas for improvement with suggestions"),
   nextStepHints: z
     .array(z.string())
-    .describe("Dicas sobre o que focar em seguida"),
+    .describe("Hints about what to focus on next"),
 });
 
 export type PersonalizedFeedback = z.infer<typeof feedbackSchema>;
@@ -45,30 +45,30 @@ export async function generatePersonalizedFeedback({
   const performance = (correctAnswers / questionsAnswered) * 100;
 
   const prompt = `
-            Use este prompt otimizado como base de conhecimento:
+            Use this optimized prompt as knowledge base:
             ${contentPrompt}
 
-            Gere um feedback personalizado para um estudante com:
-            - Desempenho: ${performance}% (${correctAnswers}/${questionsAnswered} corretas)
-            - Nível de Dificuldade: ${difficultyLevel} (1-3)
+            Generate personalized feedback for a student with:
+            - Performance: ${performance}% (${correctAnswers}/${questionsAnswered} correct)
+            - Difficulty Level: ${difficultyLevel} (1-3)
             
-            Considere:
-            - Seja encorajador mas honesto
-            - Foque no crescimento e na melhoria
-            - Forneça sugestões específicas e acionáveis
-            - Inclua recursos relevantes para melhoria
-            - Adapte o tom e a complexidade ao nível de desempenho
-            - TODO o conteúdo DEVE ser em português do Brasil
-            - Use linguagem clara e acessível
-            - Seja específico nas sugestões de melhoria
-            - Sugira recursos em português quando possível
+            Consider:
+            - Be encouraging but honest
+            - Focus on growth and improvement
+            - Provide specific and actionable suggestions
+            - Include relevant resources for improvement
+            - Adapt tone and complexity to performance level
+            - ALL content MUST be in English
+            - Use clear and accessible language
+            - Be specific in improvement suggestions
+            - Suggest resources in English when possible
         `;
 
   const { object } = await generateObject<PersonalizedFeedback>({
     model: openai("gpt-3.5-turbo"),
     schema: feedbackSchema,
     prompt,
-    temperature: 0.5, // Balanceando consistência com personalização
+    temperature: 0.5, // Balancing consistency with personalization
   });
 
   return object;

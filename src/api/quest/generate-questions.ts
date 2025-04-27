@@ -6,7 +6,7 @@ import { generateObject } from "ai";
 import { z } from "zod";
 import { GenerationError } from "../errors/generation-error";
 
-// Schema para o array de questões
+// Schema for the questions array
 const questionsArraySchema = z.object({
   questions: z
     .array(
@@ -14,29 +14,29 @@ const questionsArraySchema = z.object({
         text: z
           .string()
           .describe(
-            "Uma pergunta clara e envolvente sobre o conteúdo em português"
+            "A clear and engaging question about the content in Portuguese"
           ),
         alternatives: z
           .array(z.string())
           .length(4)
           .describe(
-            "4 alternativas possíveis em português, sendo apenas uma correta"
+            "4 possible alternatives in Portuguese, with only one being correct"
           ),
         correctAnswer: z
           .number()
           .min(0)
           .max(3)
-          .describe("Índice da resposta correta (0-3)"),
+          .describe("Index of the correct answer (0-3)"),
         feedback: z
           .string()
           .describe(
-            "Explicação detalhada em português sobre por que a resposta correta está certa e as outras estão erradas"
+            "Detailed explanation in Portuguese about why the correct answer is right and why the others are wrong"
           ),
       })
     )
     .min(3)
     .describe(
-      "Array de questões únicas, cada uma testando diferentes aspectos do conteúdo"
+      "Array of unique questions, each testing different aspects of the content"
     ),
 });
 
@@ -65,47 +65,47 @@ export async function generateQuestQuestions(
 
   while (questions.length < questionsCount && currentAttempt < maxAttempts) {
     const prompt = `
-            Use este prompt otimizado como base de conhecimento:
+            Use this optimized prompt as knowledge base:
             ${contentPrompt}
 
-            Gere ${questionsCount - questions.length} questões ÚNICAS e DIFERENTES sobre este conteúdo com nível de dificuldade ${difficultyLevel} (1-3).
+            Generate ${questionsCount - questions.length} UNIQUE and DIFFERENT questions about this content with difficulty level ${difficultyLevel} (1-3).
             
-            Considere:
-            - TODAS as questões e respostas DEVEM ser em português do Brasil
-            - Cada questão deve ser completamente diferente das outras
-            - Evite repetir o mesmo tópico ou conceito em múltiplas questões
-            - As questões devem testar compreensão, não apenas memorização
-            - Para dificuldade 1: Compreensão básica e recordação
-            - Para dificuldade 2: Aplicação e análise
-            - Para dificuldade 3: Avaliação e síntese
-            - As questões devem seguir a Taxonomia de Bloom
-              - Cada questão deve ter 4 alternativas (A-D):
-                * 1 correta (não óbvia)
-                * 2 erradas plausíveis (erros comuns)
-                * 1 claramente incorreta
+            Consider:
+            - ALL questions and answers MUST be in English
+            - Each question must be completely different from the others
+            - Avoid repeating the same topic or concept in multiple questions
+            - Questions should test comprehension, not just memorization
+            - For difficulty 1: Basic understanding and recall
+            - For difficulty 2: Application and analysis
+            - For difficulty 3: Evaluation and synthesis
+            - Questions should follow Bloom's Taxonomy
+              - Each question should have 4 alternatives (A-D):
+                * 1 correct (not obvious)
+                * 2 plausible wrong answers (common mistakes)
+                * 1 clearly incorrect
 
-            - As alternativas devem ser plausíveis mas claramente distinguíveis
-            - O feedback deve ser educativo e explicar tanto a resposta correta quanto as incorretas
-            - Use linguagem clara e acessível (nível ensino médio)
-            - A dificuldade deve aumentar gradualmente da questão 1 (mais fácil) até a questão 5 (mais difícil)
+            - Alternatives should be plausible but clearly distinguishable
+            - Feedback should be educational and explain both the correct and incorrect answers
+            - Use clear and accessible language (high school level)
+            - Difficulty should gradually increase from question 1 (easiest) to question 5 (hardest)
             
-            - Evite questões ambíguas ou confusas
+            - Avoid ambiguous or confusing questions
             ${
               questions.length > 0
                 ? `
-            IMPORTANTE: Não gere questões similares às seguintes questões já existentes:
+            IMPORTANT: Do not generate questions similar to the following existing questions:
             ${questions.map((q) => q.text).join("\n")}`
                 : ""
             }
             
-            IMPORTANTE: Sua resposta DEVE seguir EXATAMENTE este formato JSON:
+            IMPORTANT: Your response MUST follow EXACTLY this JSON format:
             {
               "questions": [
                 {
-                  "text": "Pergunta em português?",
-                  "alternatives": ["Alternativa A", "Alternativa B", "Alternativa C", "Alternativa D"],
+                  "text": "Question in Portuguese?",
+                  "alternatives": ["Alternative A", "Alternative B", "Alternative C", "Alternative D"],
                   "correctAnswer": 0,
-                  "feedback": "Explicação detalhada em português"
+                  "feedback": "Detailed explanation in Portuguese"
                 },
                 ...
               ]
@@ -118,7 +118,7 @@ export async function generateQuestQuestions(
         model: openai("gpt-3.5-turbo"),
         schema: questionsArraySchema,
         prompt,
-        temperature: 0.3 + currentAttempt * 0.2, // Aumenta a temperatura a cada tentativa para maior variação
+        temperature: 0.3 + currentAttempt * 0.2, // Increases temperature with each attempt for more variation
       });
 
       // Process new questions
@@ -155,7 +155,7 @@ export async function generateQuestQuestions(
   // Se após todas as tentativas ainda não tivermos questões suficientes
   if (questions.length < 3)
     throw new GenerationError(
-      "Não foi possível gerar questões únicas suficientes após múltiplas tentativas. Tente novamente."
+      "Could not generate enough unique questions after multiple attempts. Please try again."
     );
 
   // Retorna as questões mesmo se não atingiu o número ideal, desde que tenha pelo menos 3

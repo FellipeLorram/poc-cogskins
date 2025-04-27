@@ -13,12 +13,12 @@ interface GenerateTrailRequest {
   contents: string[];
 }
 
-// Schemas para validação e geração via IA
+// Schemas for validation and AI generation
 const badgeSchema = z.object({
-  title: z.string().describe("Título curto e atraente para o badge"),
+  title: z.string().describe("Short and attractive title for the badge"),
   description: z
     .string()
-    .describe("Descrição que explica o que o usuário aprendeu/conquistou"),
+    .describe("Description that explains what the user learned/achieved"),
 });
 
 const questSchema = z.object({
@@ -26,14 +26,14 @@ const questSchema = z.object({
     .number()
     .min(1)
     .max(3)
-    .describe("Nível de dificuldade do quest (1, 2 ou 3)"),
+    .describe("Quest difficulty level (1, 2 or 3)"),
   generationPrompt: z
     .string()
-    .describe("Prompt otimizado para gerar as questões deste quest"),
+    .describe("Optimized prompt to generate questions for this quest"),
   description: z
     .string()
     .describe(
-      "Descrição do quest que explica sobre o que se trata o quest, remetendo ao aprendizado do usuário, não precisa incluir a palavra 'quest'"
+      "Quest description that explains what the quest is about, referring to the user's learning, doesn't need to include the word 'quest'"
     ),
 });
 
@@ -41,14 +41,14 @@ const trailGenerationSchema = z.object({
   title: z
     .string()
     .describe(
-      "Título curto e atraente para a trilha de aprendizado, não incluir a palavra 'Trilha' no título. Deve ser um título que seja fácil de entender e lembrar. Curto e direto."
+      "Short and attractive title for the learning trail, do not include the word 'Trail' in the title. Should be a title that is easy to understand and remember. Short and direct."
     ),
-  estimatedDuration: z.number().describe("Duração estimada em minutos"),
+  estimatedDuration: z.number().describe("Estimated duration in minutes"),
   badge: badgeSchema,
   quests: z
     .array(questSchema)
     .length(3)
-    .describe("Array com 3 quests de dificuldade progressiva"),
+    .describe("Array with 3 quests of progressive difficulty"),
 });
 
 type TrailGeneration = z.infer<typeof trailGenerationSchema>;
@@ -61,33 +61,33 @@ export async function generateTrail(
 
   // Generate trail based on validated content
   const prompt = `
-            Gere uma trilha de aprendizado baseada no seguinte conteúdo e tema:
+            Generate a learning trail based on the following content and theme:
 
-            Tema: ${validationResult.theme}
-            Conteúdo: ${validationResult.content}
+            Theme: ${validationResult.theme}
+            Content: ${validationResult.content}
 
-            Crie uma experiência de aprendizado envolvente com:
-            - Um título atraente que reflita o conteúdo
-            - Duração estimada em minutos
-            - 3 quests com dificuldade progressiva (1 a 3)
-            - Um badge que represente a conquista
+            Create an engaging learning experience with:
+            - An attractive title that reflects the content
+            - Estimated duration in minutes
+            - 3 quests with progressive difficulty (1 to 3)
+            - A badge that represents the achievement
             
-            Considere:
-            - TODO o conteúdo DEVE ser em português do Brasil
-            - Use linguagem clara e acessível
-            - O título deve ser cativante e descritivo
-            - A duração deve ser realista para o conteúdo
-            - Os quests devem ter complexidade crescente
-            - O badge deve ter título e descrição envolventes
-            - Os prompts de geração devem ser otimizados para gerar questões relevantes
-            - Quest precisa de uma descrição que explique sobre o que se trata o quest
+            Consider:
+            - ALL content MUST be in Brazilian Portuguese
+            - Use clear and accessible language
+            - The title should be captivating and descriptive
+            - The duration should be realistic for the content
+            - Quests should have increasing complexity
+            - The badge should have engaging title and description
+            - Generation prompts should be optimized to generate relevant questions
+            - Quest needs a description that explains what the quest is about
         `;
 
   const { object } = await generateObject<TrailGeneration>({
     model: openai("gpt-3.5-turbo"),
     schema: trailGenerationSchema,
     prompt,
-    temperature: 0.4, // Balanceando criatividade com consistência
+    temperature: 0.4, // Balancing creativity with consistency
   });
 
   // Gerar imagem do badge

@@ -20,25 +20,23 @@ interface ValidateContentResponse {
 const validationSchema = z.object({
   coherent: z
     .boolean()
-    .describe("Se os conteúdos são tematicamente relacionados"),
+    .describe("Whether the contents are thematically related"),
   theme: z
     .string()
     .nullable()
-    .describe("Tema/tópico principal se coerente, null se não"),
+    .describe("Main theme/topic if coherent, null if not"),
   reason: z
     .string()
-    .describe(
-      "Explicação detalhada do por que os conteúdos são coerentes ou não"
-    ),
+    .describe("Detailed explanation of why the contents are coherent or not"),
   unifiedContent: z
     .string()
     .describe(
-      "Uma versão unificada e organizada de todos os conteúdos, removendo redundâncias e organizando em uma sequência lógica"
+      "A unified and organized version of all contents, removing redundancies and organizing in a logical sequence"
     ),
   optimizedPrompt: z
     .string()
     .describe(
-      "Um prompt otimizado que captura a essência do conteúdo e pode ser usado para gerar questões"
+      "An optimized prompt that captures the essence of the content and can be used to generate questions"
     ),
 });
 
@@ -51,23 +49,23 @@ export async function validateContents(
     const { contents } = validateContentRequestSchema.parse(request);
 
     const prompt = `
-            Analise os seguintes conteúdos e determine se eles são tematicamente coerentes e relacionados o suficiente para criar uma trilha de aprendizado significativa:
+            Analyze the following contents and determine if they are thematically coherent and related enough to create a meaningful learning path:
 
             ${contents
-              .map((content, i) => `Conteúdo ${i + 1}:\n${content}\n`)
+              .map((content, i) => `Content ${i + 1}:\n${content}\n`)
               .join("\n")}
 
-            Considere:
-            - Os conteúdos devem compartilhar um tema comum ou estar logicamente conectados
-            - Eles devem se complementar ou construir um sobre o outro
-            - A combinação deve fazer sentido para um caminho de aprendizado
-            - Se coerente, crie uma versão unificada do conteúdo, organizando logicamente e removendo redundâncias
-            - Crie um prompt otimizado que capture a essência do conteúdo para geração de questões
-            - TODO o conteúdo DEVE ser em português do Brasil
-            - Use linguagem clara e acessível
-            - Mantenha a organização lógica do conteúdo
-            - Preserve os conceitos principais
-            - O conteúdo pode ser uma frase com uma ideia, não precisa ser um texto longo (exemplo: "Imperio Romano", "Guerra Fria", "Celeiro de Cereais")
+            Consider:
+            - The contents should share a common theme or be logically connected
+            - They should complement or build upon each other
+            - The combination should make sense for a learning path
+            - If coherent, create a unified version of the content, organizing logically and removing redundancies
+            - Create an optimized prompt that captures the essence of the content for question generation
+            - ALL content MUST be in Brazilian Portuguese
+            - Use clear and accessible language
+            - Maintain logical organization of content
+            - Preserve main concepts
+            - The content can be a phrase with an idea, doesn't need to be a long text (example: "Roman Empire", "Cold War", "Grain Belt")
         `;
 
     const { object } = await generateObject<ValidationResult>({
@@ -90,7 +88,7 @@ export async function validateContents(
     const message =
       error instanceof Error
         ? error.message
-        : "Falha ao validar conteúdos. Tente novamente.";
+        : "Failed to validate contents. Please try again.";
     throw new ContentValidationError(message);
   }
 }

@@ -36,7 +36,7 @@ export async function generateBadgeImage({
     const url = uploadResult[0].data?.ufsUrl;
 
     if (!url) {
-      throw new BadgeGenerationError("Falha ao gerar imagem");
+      throw new BadgeGenerationError("Failed to generate image");
     }
 
     return {
@@ -46,7 +46,7 @@ export async function generateBadgeImage({
     const message =
       error instanceof Error
         ? error.message
-        : "Falha ao gerar imagem. Tente novamente.";
+        : "Failed to generate image. Please try again.";
     throw new BadgeGenerationError(message);
   }
 }
@@ -58,7 +58,7 @@ function convertImageDataToFile(
   let file: File;
 
   if (typeof imageData === "string") {
-    // Se for base64, converter para blob
+    // If it's base64, convert to blob
     const base64Data = imageData.split(",")[1] || imageData;
     const binaryData = atob(base64Data);
     const bytes = new Uint8Array(binaryData.length);
@@ -68,7 +68,7 @@ function convertImageDataToFile(
     const blob = new Blob([bytes], { type: "image/png" });
     file = new File([blob], filename, { type: "image/png" });
   } else {
-    // Se for Uint8Array, criar o file diretamente
+    // If it's Uint8Array, create the file directly
     file = new File([imageData], filename, { type: "image/png" });
   }
 

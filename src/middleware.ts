@@ -15,6 +15,10 @@ export default async function middleware(req: NextRequest) {
   const session = cookie.get("session")?.value;
   const sawIntro = cookie.get("sawIntro")?.value;
 
+  if (!sawIntro) {
+    return NextResponse.redirect(new URL("/web-summit", req.url));
+  }
+
   // Handle intro page logic
   if (path === "/web-summit" && sawIntro === "true") {
     return NextResponse.redirect(new URL("/web-summit/trails", req.url));

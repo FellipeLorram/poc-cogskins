@@ -3,9 +3,9 @@ import { useRouter } from "next/navigation";
 import { useQuestionStore } from "../question-store";
 
 const ABOVE_50_PERCENTAGE_MESSAGE =
-  "UUUUUH! Passou muito perto! Mas você acertou quase todas! Tente novamente!";
+  "UUUUUH! You got close! But you got almost all of them right! Try again!";
 const BELOW_50_PERCENTAGE_MESSAGE =
-  "Hmmm... Você acertou poucas questões. Mas não desista! Tente novamente!";
+  "Hmmm... You got a few questions wrong. But don't give up! Try again!";
 
 function describeArc(percentage: number): string {
   // Convert percentage to angle (0-100% -> 0-360 degrees)
@@ -88,7 +88,9 @@ export function SomeIsCorrectFeedback({
         </svg>
 
         <div className="flex flex-col items-center justify-center">
-          <h1 className="text-lg md:text-xl">{percentage}% de acertos</h1>
+          <h1 className="text-lg md:text-xl">
+            {percentage}% of correct answers
+          </h1>
           <p className="text-muted-foreground text-sm md:text-base text-center">
             {message}
           </p>
@@ -97,7 +99,7 @@ export function SomeIsCorrectFeedback({
 
       <div className="flex gap-2">
         <Button size="sm" className="cursor-pointer" onClick={handleTryAgain}>
-          Tentar novamente
+          Try again
         </Button>
         <Button
           variant="outline"
@@ -105,7 +107,7 @@ export function SomeIsCorrectFeedback({
           className="cursor-pointer"
           onClick={handleGoBack}
         >
-          Voltar para o início
+          Back to start
         </Button>
       </div>
     </div>

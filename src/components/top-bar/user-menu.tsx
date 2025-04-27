@@ -74,13 +74,13 @@ export function UserMenu({ getUserPromise }: Props) {
           </DropdownMenuItem>
         )}
         <DropdownMenuItem>
-          <Link className="flex items-center gap-2 w-full" href="/badges">
+          <Link className="flex items-center gap-2 w-full" href="/app/badges">
             <Badge className="w-4 h-4" />
             Badges
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link className="flex items-center gap-2 w-full" href="/trails">
+          <Link className="flex items-center gap-2 w-full" href="/app/trails">
             <BookOpen className="w-4 h-4" />
             Trails
           </Link>

@@ -73,7 +73,7 @@ export async function generateTrail(
             - A badge that represents the achievement
             
             Consider:
-            - ALL content MUST be in Brazilian Portuguese
+            - ALL content MUST be in English
             - Use clear and accessible language
             - The title should be captivating and descriptive
             - The duration should be realistic for the content

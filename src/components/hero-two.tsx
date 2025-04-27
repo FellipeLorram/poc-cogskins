@@ -1,6 +1,7 @@
-import { BookOpen, Cpu, Network, Award } from "lucide-react";
+import { SendLPEmail } from "@/api/helpers/send-email";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Award, BookOpen, Cpu, Network } from "lucide-react";
 
 export default function HeroTwo() {
   return (
@@ -79,8 +80,16 @@ export default function HeroTwo() {
           <h3 className="text-xl font-medium mb-6 text-gray-900 dark:text-white">
             Claim Your Skills Now
           </h3>
-          <div className="flex w-full max-w-md space-x-2">
+          <form
+            action={async (formData) => {
+              const email = formData.get("email") as string;
+              if (!email) return;
+              await SendLPEmail(email, "Claim Your Skills Now");
+            }}
+            className="flex w-full max-w-md space-x-2"
+          >
             <Input
+              name="email"
               type="email"
               placeholder="Your best email..."
               className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white focus:border-blue-500 transition-colors"
@@ -89,7 +98,7 @@ export default function HeroTwo() {
               <span className="relative z-10">Submit</span>
               <span className="absolute inset-0 bg-blue-400 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></span>
             </Button>
-          </div>
+          </form>
         </div>
       </div>
     </section>

@@ -34,7 +34,7 @@ function TrailCard({ trail }: { trail: Trail }) {
         <CardDescription>{trail.summary}</CardDescription>
       </CardHeader>
       <CardFooter>
-        <Link href={`/web-summit/trails/${trail.id}`}>
+        <Link href={`/app/web-summit/trails/${trail.id}`}>
           <Button>Start</Button>
         </Link>
       </CardFooter>

@@ -1,17 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { CardDescription, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
 import { cookies } from "next/headers";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
-  const cookieStore = await cookies();
-  const sawIntro = cookieStore.get("sawIntro")?.value;
-
-  if (sawIntro === "true") {
-    redirect("/app/web-summit/trails");
-  }
-
   async function handleStart() {
     "use server";
     const cookieStore = await cookies();

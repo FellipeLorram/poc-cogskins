@@ -10,9 +10,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useInvalidateQuery } from "@/hooks/use-invalidate-query";
+import { createCustomerLinkPortal } from "@/lib/stripe/create-customer-link-portal";
 import { User } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
-import { LogOut, User as UserIcon } from "lucide-react";
+import { Badge, BookOpen, CreditCard, LogOut } from "lucide-react";
 import Link from "next/link";
 import { parseAsBoolean, useQueryState } from "nuqs";
 import { use } from "react";
@@ -49,6 +50,13 @@ export function UserMenu({ getUserPromise }: Props) {
 
   const fallback = user?.name ?? user?.email ?? "";
 
+  async function handleProfileClick() {
+    if (!user) return;
+
+    const url = await createCustomerLinkPortal(user.stripeCustomerId as string);
+    window.open(url, "_blank");
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -59,21 +67,28 @@ export function UserMenu({ getUserPromise }: Props) {
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
+        {user.stripeCustomerId && (
+          <DropdownMenuItem onClick={handleProfileClick}>
+            <CreditCard className="w-4 h-4" />
+            Subscription
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem>
-          <Link className="flex items-center gap-2 w-full" href="/profile">
-            <UserIcon className="w-4 h-4" />
-            Perfil
+          <Link className="flex items-center gap-2 w-full" href="/badges">
+            <Badge className="w-4 h-4" />
+            Badges
           </Link>
         </DropdownMenuItem>
-        <Link className="flex items-center gap-2 w-full" href="/badges">
-          Badges
-        </Link>
-        <Link className="flex items-center gap-2 w-full" href="/trails">
-          Trilhas
-        </Link>
+        <DropdownMenuItem>
+          <Link className="flex items-center gap-2 w-full" href="/trails">
+            <BookOpen className="w-4 h-4" />
+            Trails
+          </Link>
+        </DropdownMenuItem>
+
         <DropdownMenuItem className="cursor-pointer" onClick={() => mutate()}>
           <LogOut className="w-4 h-4" />
-          Sair
+          Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

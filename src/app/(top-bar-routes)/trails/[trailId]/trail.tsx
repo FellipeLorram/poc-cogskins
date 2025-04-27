@@ -35,7 +35,7 @@ export function Trail({ trailId, flag }: Props) {
           <div className="flex items-center w-fit gap-2 mt-1">
             <Badge variant="outline">{TrailStatusMap[trail.status]}</Badge>
             <p className="text-sm text-muted-foreground">
-              Duração estimada: {trail.estimatedDuration} minutos
+              Estimated duration: {trail.estimatedDuration} minutes
             </p>
           </div>
         </div>
@@ -58,7 +58,7 @@ export function Trail({ trailId, flag }: Props) {
           >
             {isBadgeUnlocked && (
               <p>
-                Conquistou {trail.badge?.title} nível {trail.badge?.level}
+                Conquered {trail.badge?.title} level {trail.badge?.level}
               </p>
             )}
             <Image
@@ -142,9 +142,9 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
             )}
           </Badge>
           <p className="text-sm text-muted-foreground">
-            {quest.questions.length} questões
+            {quest.questions.length} questions
           </p>
-          <p className="text-sm text-muted-foreground">{attempts} tentativas</p>
+          <p className="text-sm text-muted-foreground">{attempts} attempts</p>
         </div>
       </div>
       <div className="flex items-center gap-2">

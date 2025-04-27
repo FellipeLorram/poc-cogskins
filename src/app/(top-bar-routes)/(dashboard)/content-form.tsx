@@ -25,19 +25,19 @@ const formSchema = z
     topic: z.string().optional(),
     files: z
       .array(z.instanceof(File))
-      .max(3, "Máximo de 3 arquivos permitidos")
+      .max(3, "Maximum of 3 files allowed")
       .optional(),
   })
   .refine(
     (data) => {
-      // Pelo menos um dos campos deve estar preenchido
+      // At least one of the fields must be filled
       return (
         (!!data.topic && data.topic.trim() !== "") ||
         (data.files && data.files.length > 0)
       );
     },
     {
-      message: "É necessário fornecer um tópico ou pelo menos um arquivo",
+      message: "You must provide a topic or at least one file",
     }
   );
 
@@ -127,7 +127,7 @@ export function ContentForm() {
                 <div className="relative flex items-start gap-2 w-full border rounded-md p-2 shadow">
                   <Textarea
                     disabled={!isEarlyAdopter}
-                    placeholder="Qual conteúdo vamos validar hoje?"
+                    placeholder="What content shall we validate today?"
                     className={`text-sm [&::-webkit-resizer]:hidden [&::-webkit-scrollbar]:hidden min-h-[40px] max-h-[200px] border-none focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none ${
                       field.value ? "resize-y" : "resize-none"
                     }`}

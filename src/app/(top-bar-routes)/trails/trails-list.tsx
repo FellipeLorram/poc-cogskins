@@ -101,7 +101,7 @@ function TrailCard({ trail }: { trail: GeneratedTrail }) {
       </div>
       <div className="text-sm text-muted-foreground flex justify-between">
         <p>{trail.quests.length} Quests</p>
-        <p>{trail.estimatedDuration} minutos</p>
+        <p>{trail.estimatedDuration} minutes</p>
       </div>
     </Link>
   );

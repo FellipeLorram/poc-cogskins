@@ -62,7 +62,7 @@ export function EarlyAdopterButton({ getUserPromise }: Props) {
       className={buttonVariants({
         variant: "outline",
         size: "sm",
-        className: "shadow-[#ff4b07] shadow-sm text-[#ff4b07]",
+        className: "shadow-[#8fd18b] shadow-sm text-[#8fd18b]",
       })}
       href={webSummitUrl}
     >

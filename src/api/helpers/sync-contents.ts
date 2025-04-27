@@ -146,10 +146,10 @@ export async function syncContents({
     if (webSummitBadgeLevel !== undefined) {
       await prisma.badge.create({
         data: {
-          title: "Web Summit 2025",
+          title: "Rio Web Summit 2025",
           url: badgeLevelMap[webSummitBadgeLevel],
           userId: user.id,
-          description: "Web Summit 2025",
+          description: "Rio Web Summit 2025",
           level: webSummitBadgeLevel,
           earnedAt: new Date(),
           status: "UNLOCKED",

@@ -53,7 +53,7 @@ export function RecentTrails() {
 
   return (
     <div className="flex flex-col gap-6 md:h-32 w-full pb-8 md:pb-0">
-      {showTitle && <h1 className="text-sm font-medium">Recentes</h1>}
+      {showTitle && <h1 className="text-sm font-medium">Recent</h1>}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {isGenerating && <GeneratingTrailCard />}
         <ErrorTrailCard error={error} />
@@ -101,7 +101,7 @@ function TrailCard({ trail }: { trail: GeneratedTrail }) {
 function TrailCardSkeleton() {
   return (
     <div className="flex flex-col gap-6 w-full h-32">
-      <h1 className="text-sm font-medium">Recentes</h1>
+      <h1 className="text-sm font-medium">Recent</h1>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {Array.from({ length: 3 }).map((_, index) => (
           <div
@@ -124,7 +124,7 @@ function GeneratingTrailCard() {
   return (
     <div className="bg-accent animate-pulse flex items-center justify-center gap-2 h-24 shadow-sm relative border rounded-md p-2">
       <Loader2 className="w-4 h-4 animate-spin" />
-      <p className="text-xs w-fit">Gerando trilha...</p>
+      <p className="text-xs w-fit">Generating trail...</p>
     </div>
   );
 }
@@ -153,7 +153,7 @@ function ErrorTrailCard({ error }: { error: string | null }) {
   return (
     <div className="bg-red-500/5 border-red-300 flex flex-col items-center justify-center gap-2 h-24 shadow-sm relative border rounded-md p-2">
       <div className="flex w-full items-center justify-center gap-2">
-        <p className="text-xs w-fit">Erro ao gerar trilha</p>
+        <p className="text-xs w-fit">Error generating trail</p>
         <Tooltip>
           <TooltipTrigger>
             <Info className="w-4 h-4" />
@@ -176,7 +176,7 @@ function ErrorTrailCard({ error }: { error: string | null }) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Tentar novamente</p>
+            <p>Try again</p>
           </TooltipContent>
         </Tooltip>
         <Tooltip>
@@ -191,7 +191,7 @@ function ErrorTrailCard({ error }: { error: string | null }) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Deletar</p>
+            <p>Delete</p>
           </TooltipContent>
         </Tooltip>
       </div>

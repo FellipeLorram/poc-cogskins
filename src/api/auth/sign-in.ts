@@ -7,8 +7,8 @@ import { MagicLinkEmail } from "@/lib/react-email/magic-link";
 
 const signInSchema = z.object({
   email: z
-    .string({ required_error: "Email é obrigatório" })
-    .email({ message: "Email inválido" }),
+    .string({ required_error: "Email is required" })
+    .email({ message: "Invalid email" }),
 });
 
 type SignInSchema = z.infer<typeof signInSchema>;

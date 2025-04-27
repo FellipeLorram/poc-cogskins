@@ -75,10 +75,16 @@ export async function generateQuestQuestions(
             - Each question must be completely different from the others
             - Avoid repeating the same topic or concept in multiple questions
             - Questions should test comprehension, not just memorization
-            - For difficulty 1: Basic understanding and recall
-            - For difficulty 2: Application and analysis
-            - For difficulty 3: Evaluation and synthesis
-            - Questions should follow Bloom's Taxonomy
+            - For difficulty 1: Basic understanding and recall (Bloom's Remembering & Understanding)
+            - For difficulty 2: Application and analysis (Bloom's Applying & Analyzing)
+            - For difficulty 3: Evaluation and synthesis (Bloom's Evaluating & Creating)
+            - Questions must follow Bloom's Taxonomy levels:
+              * Remembering (Level 1): Recall facts, terms, basic concepts
+              * Understanding (Level 1): Explain ideas or concepts
+              * Applying (Level 2): Use information in new situations
+              * Analyzing (Level 2): Draw connections among ideas
+              * Evaluating (Level 3): Justify a stand or decision
+              * Creating (Level 3): Produce new or original work
               - Each question must have EXACTLY 4 alternatives (A-D):
                 * 1 correct answer (not obvious)
                 * 2 plausible wrong answers (common mistakes)

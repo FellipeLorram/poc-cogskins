@@ -111,17 +111,17 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
     );
   }
 
-  let buttonText = "Iniciar";
+  let buttonText = "Start";
   let buttonIcon = <ChevronRight className="w-4 h-4" />;
 
   if (isLocked) {
     buttonText = "";
     buttonIcon = <Lock className="w-4 h-4" />;
   } else if (isCompleted) {
-    buttonText = "Ver resultado";
+    buttonText = "View result";
     buttonIcon = <Eye className="w-4 h-4" />;
   } else if (attempts > 0) {
-    buttonText = "Tentar novamente";
+    buttonText = "Try again";
     buttonIcon = <RefreshCcw className="w-4 h-4" />;
   }
 

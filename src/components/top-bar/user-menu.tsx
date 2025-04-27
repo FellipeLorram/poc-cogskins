@@ -42,7 +42,7 @@ export function UserMenu({ getUserPromise }: Props) {
 
   if (!user) {
     return (
-      <Button variant="outline" size="sm" onClick={() => setIsOpen(true)}>
+      <Button size="sm" onClick={() => setIsOpen(true)}>
         Sign in
       </Button>
     );

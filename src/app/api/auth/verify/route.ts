@@ -44,7 +44,7 @@ export async function GET(request: Request) {
       userId: user.id,
     });
 
-    return NextResponse.redirect(new URL("/app", request.url));
+    return NextResponse.redirect("https://cogskins.com.br/app");
   } catch {
     return NextResponse.json(
       { error: "Falha ao verificar token" },

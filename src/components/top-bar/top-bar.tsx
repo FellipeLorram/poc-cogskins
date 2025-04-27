@@ -11,7 +11,7 @@ export function TopBar() {
   return (
     <div className="fixed top-0 left-0 w-screen bg-background z-50">
       <div className="w-11/12 max-w-6xl mx-auto flex justify-between items-center h-16 bg-background">
-        <Link href="/">
+        <Link href="/app">
           <Image
             src="/cogskins-logo.png"
             alt="CogSkins Logo"

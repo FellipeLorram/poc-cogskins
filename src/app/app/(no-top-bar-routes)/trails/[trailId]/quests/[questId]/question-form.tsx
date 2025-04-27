@@ -95,7 +95,7 @@ export function QuestionForm({
         <div className="flex justify-end">
           <Button type="submit" disabled={disabled || isPending}>
             {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            {isLastQuestion ? "Finalizar" : "Próxima"}
+            {isLastQuestion ? "Finish" : "Next"}
           </Button>
         </div>
       </form>

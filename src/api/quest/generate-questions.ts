@@ -18,7 +18,7 @@ const questionsArraySchema = z.object({
           ),
         alternatives: z
           .array(z.string())
-          .length(4)
+          .length(5)
           .describe(
             "4 possible alternatives in Portuguese, with only one being correct"
           ),
@@ -79,10 +79,11 @@ export async function generateQuestQuestions(
             - For difficulty 2: Application and analysis
             - For difficulty 3: Evaluation and synthesis
             - Questions should follow Bloom's Taxonomy
-              - Each question should have 4 alternatives (A-D):
-                * 1 correct (not obvious)
+              - Each question must have EXACTLY 4 alternatives (A-D):
+                * 1 correct answer (not obvious)
                 * 2 plausible wrong answers (common mistakes)
-                * 1 clearly incorrect
+                * 1 clearly incorrect answer
+                * DO NOT include "None of the above" or "All of the above" options
 
             - Alternatives should be plausible but clearly distinguishable
             - Feedback should be educational and explain both the correct and incorrect answers
@@ -115,7 +116,7 @@ export async function generateQuestQuestions(
     try {
       // Generate questions
       const { object } = await generateObject<QuestionGeneration>({
-        model: openai("gpt-3.5-turbo"),
+        model: openai("gpt-4o-mini"),
         schema: questionsArraySchema,
         prompt,
         temperature: 0.3 + currentAttempt * 0.2, // Increases temperature with each attempt for more variation

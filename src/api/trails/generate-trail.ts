@@ -84,7 +84,7 @@ export async function generateTrail(
         `;
 
   const { object } = await generateObject<TrailGeneration>({
-    model: openai("gpt-3.5-turbo"),
+    model: openai("gpt-4o-mini"),
     schema: trailGenerationSchema,
     prompt,
     temperature: 0.4, // Balancing creativity with consistency

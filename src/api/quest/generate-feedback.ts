@@ -65,7 +65,7 @@ export async function generatePersonalizedFeedback({
         `;
 
   const { object } = await generateObject<PersonalizedFeedback>({
-    model: openai("gpt-3.5-turbo"),
+    model: openai("gpt-4o-mini"),
     schema: feedbackSchema,
     prompt,
     temperature: 0.5, // Balancing consistency with personalization

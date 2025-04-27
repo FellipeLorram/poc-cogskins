@@ -28,7 +28,7 @@ export function TopBar() {
               size: "sm",
               className: "shadow-[#ff4b07] shadow-sm text-[#ff4b07]",
             })}
-            href="/web-summit"
+            href="/app/web-summit"
           >
             Web Summit
           </Link>

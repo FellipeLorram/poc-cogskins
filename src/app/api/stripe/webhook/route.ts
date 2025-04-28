@@ -114,6 +114,21 @@ export async function POST(req: Request) {
           await createSession({
             userId: user.id,
           });
+        } else {
+          const newUser = await prisma.user.create({
+            data: {
+              email: customerEmail,
+              name: (customer as Stripe.Customer).name,
+              stripeCustomerId: customerId,
+              stripeSubscriptionId: subscription.id,
+              subscriptionStatus: subscription.status,
+              isEarlyAdopter: true,
+            },
+          });
+
+          await createSession({
+            userId: newUser.id,
+          });
         }
 
         break;

@@ -57,9 +57,9 @@ export function RecentTrails() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {isGenerating && <GeneratingTrailCard />}
         <ErrorTrailCard error={error} />
-        {recentTrails?.map((trail) => (
-          <TrailCard key={trail.id} trail={trail} />
-        ))}
+        {recentTrails
+          ?.filter((trail) => trail.flag !== "web-summit-2025")
+          .map((trail) => <TrailCard key={trail.id} trail={trail} />)}
       </div>
     </div>
   );

@@ -1,13 +1,12 @@
 "use client";
 
-import { Badge, badgeVariants } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GeneratedQuest, QuestStatusMap } from "@/entities/quest";
 import { TrailStatusMap } from "@/entities/trails";
 import { useGetTrail } from "@/hooks/trails/use-get-trail";
 import { BadgeStatus, QuestStatus } from "@prisma/client";
-import { VariantProps } from "class-variance-authority";
 import { ChevronRight, Eye, Lock, RefreshCcw } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -89,13 +88,6 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
   const isLocked = quest.status === QuestStatus.LOCKED;
   const isCompleted = quest.status === QuestStatus.COMPLETED;
   const attempts = quest.attempts;
-  let badgeVariant: VariantProps<typeof badgeVariants>["variant"] = "outline";
-
-  if (quest.status === QuestStatus.IN_PROGRESS) {
-    badgeVariant = "inProgress";
-  } else if (quest.status === QuestStatus.COMPLETED) {
-    badgeVariant = "success";
-  }
 
   const firstQuestion = quest.questions[0];
 
@@ -133,14 +125,7 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
       <div className="flex flex-col gap-2">
         <p className="text-sm md:text-base">Quest: {quest.description}</p>
         <div className="flex items-center gap-2">
-          <Badge variant={badgeVariant}>
-            {QuestStatusMap[quest.status]}
-            {quest.completedAt && (
-              <span className="text-xs">
-                {quest.completedAt.toLocaleDateString()}
-              </span>
-            )}
-          </Badge>
+          <Badge variant="outline">{QuestStatusMap[quest.status]}</Badge>
           <p className="text-sm text-muted-foreground">
             {quest.questions.length} questions
           </p>

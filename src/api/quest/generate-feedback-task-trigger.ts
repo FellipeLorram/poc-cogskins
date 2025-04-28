@@ -20,6 +20,6 @@ export async function generateFeedbackTaskTrigger(
   const runId = run.id;
 
   redirect(
-    `/trails/${payload.trailId}/quests/${payload.questId}/feedback?accessToken=${accessToken}&runId=${runId}`
+    `/app/trails/${payload.trailId}/quests/${payload.questId}/feedback?accessToken=${accessToken}&runId=${runId}`
   );
 }

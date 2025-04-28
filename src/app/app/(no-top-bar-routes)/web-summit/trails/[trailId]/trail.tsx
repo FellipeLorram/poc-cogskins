@@ -81,24 +81,24 @@ function useIsQuestStatus(
   const { data: badge, isPending: isBadgePending } = useGetBadgeByFlag({
     flag: "web-summit-2025",
   });
+  const quest = dataStore.getQuestByType(trailId, questType) as Quest;
 
   const { isQuestLocked, isQuestCompleted } = useStore();
 
   if (isPending || isBadgePending) {
     return {
       isLocked: isQuestLocked(trailId, questType),
-      isCompleted: isQuestCompleted(questType),
+      isCompleted: isQuestCompleted(quest?.id ?? ""),
     };
   }
 
   if (!sessionUser || !badge) {
     return {
       isLocked: isQuestLocked(trailId, questType),
-      isCompleted: isQuestCompleted(questType),
+      isCompleted: isQuestCompleted(quest?.id ?? ""),
     };
   }
 
-  const quest = dataStore.getQuestByType(trailId, questType) as Quest;
   const isLocked = quest?.level > badge?.level;
   const isCompleted = isQuestCompleted(quest?.id ?? "");
 

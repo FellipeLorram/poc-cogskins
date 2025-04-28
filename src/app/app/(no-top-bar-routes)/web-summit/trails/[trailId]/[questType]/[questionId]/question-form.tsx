@@ -49,7 +49,7 @@ export function QuestionForm({
   const { data: badge } = useGetBadgeByTrailId({
     trailId: "cm9z6i9fz0000rxy2ygdnnss9",
   });
-  const { mutate: updateBadge } = useUpdateBadge();
+  const { mutateAsync: updateBadge } = useUpdateBadge();
 
   const router = useRouter();
   const {
@@ -71,7 +71,7 @@ export function QuestionForm({
   const answer = form.watch("answer");
   const disabled = !answer;
 
-  function onSubmit(data: QuestionFormSchema) {
+  async function onSubmit(data: QuestionFormSchema) {
     const isCorrect = question.options[data.answer] === question.correctAnswer;
     const answers = [...(correctAnswers[questType] ?? []), isCorrect];
 
@@ -103,7 +103,7 @@ export function QuestionForm({
 
     if (!nextQuestion) {
       if (badge) {
-        updateBadge({ badgeId: badge.id, level: level + 1 });
+        await updateBadge({ badgeId: badge.id, level: level + 1 });
       }
       setCompletedAnyQuest(true);
       router.push(`/app/web-summit/trails/${trailId}/${questType}/completed`);

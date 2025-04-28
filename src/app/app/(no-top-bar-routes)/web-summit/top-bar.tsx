@@ -9,7 +9,7 @@ interface Props {
 export function TopBar({ title, size = "medium" }: Props) {
   return (
     <div className="flex justify-center items-center py-4 gap-4 text-center relative w-full">
-      <Link href="/app/web-summit/trails">
+      <Link href="/app">
         <Image
           src="/cogskins-logo.png"
           alt="CogSkins Logo"

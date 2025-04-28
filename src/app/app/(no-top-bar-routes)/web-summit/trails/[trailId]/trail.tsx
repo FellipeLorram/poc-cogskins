@@ -97,7 +97,7 @@ function useIsQuestStatus(
       isCompleted: false,
     };
   }
-
+  console.log(sessionUser, badge);
   if (!sessionUser || !badge) {
     return {
       isPending: false,

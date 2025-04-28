@@ -8,7 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useSessionUser } from "@/hooks/auth/use-session-user";
+import { useGetBadgeByTrailId } from "@/hooks/badge/use-get-badge-by-trail-id";
 import { useRouter } from "next/navigation";
+import { dataStore } from "../../data-store";
 import { useStore } from "../../store";
 import { Quest, TrailId, Trail as TrailType } from "../../types";
 
@@ -32,11 +35,9 @@ interface QuestCardProps {
 }
 
 function QuestCard({ quest, trailId }: QuestCardProps) {
-  const { isQuestLocked, isQuestCompleted } = useStore();
   const router = useRouter();
 
-  const isLocked = isQuestLocked(trailId, quest.type);
-  const isCompleted = isQuestCompleted(quest.type);
+  const { isLocked, isCompleted } = useIsQuestStatus(trailId, quest.type);
 
   const firstQuestion = quest.questions[0];
 
@@ -65,4 +66,41 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
       </CardFooter>
     </Card>
   );
+}
+
+interface UseIsQuestStatusResult {
+  isLocked: boolean;
+  isCompleted: boolean;
+}
+
+function useIsQuestStatus(
+  trailId: TrailId,
+  questType: string
+): UseIsQuestStatusResult {
+  const { data: sessionUser, isPending } = useSessionUser();
+  const { data: badge, isPending: isBadgePending } = useGetBadgeByTrailId({
+    trailId: "cm9z6i9fz0000rxy2ygdnnss9",
+  });
+
+  const { isQuestLocked, isQuestCompleted } = useStore();
+
+  if (isPending || isBadgePending) {
+    return {
+      isLocked: isQuestLocked(trailId, questType),
+      isCompleted: isQuestCompleted(questType),
+    };
+  }
+
+  if (!sessionUser || !badge) {
+    return {
+      isLocked: isQuestLocked(trailId, questType),
+      isCompleted: isQuestCompleted(questType),
+    };
+  }
+
+  const quest = dataStore.getQuestByType(trailId, questType) as Quest;
+  const isLocked = quest?.level > badge?.level;
+  const isCompleted = badge?.level >= quest?.level;
+
+  return { isLocked, isCompleted };
 }

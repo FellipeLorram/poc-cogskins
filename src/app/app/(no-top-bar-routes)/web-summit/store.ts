@@ -62,7 +62,7 @@ export const useStore = create<Store>()(
         set((state) => ({
           completedQuests: [
             ...state.completedQuests,
-            { questType, completedAtLevel: state.level },
+            { questType: questType, completedAtLevel: state.level },
           ],
         })),
       isQuestCompleted: (questType: string) =>

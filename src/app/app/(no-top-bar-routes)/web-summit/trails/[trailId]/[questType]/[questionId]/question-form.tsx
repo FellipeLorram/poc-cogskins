@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useStore } from "../../../../store";
 import { Question, TrailId } from "../../../../types";
+import { dataStore } from "../../../../data-store";
 interface Props {
   question: Question;
   nextQuestion: Question | undefined;
@@ -94,8 +95,10 @@ export function QuestionForm({
     if (answers.length === 5) {
       const isPerfectScore = answers.every((answer) => answer);
 
+      const quest = dataStore.getQuestByType(trailId, questType);
+
       if (isPerfectScore) {
-        addCompletedQuest(questType);
+        addCompletedQuest(quest?.id ?? "");
         setLevel(level + 1);
       }
     }

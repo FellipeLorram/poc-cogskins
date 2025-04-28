@@ -16,6 +16,7 @@ export interface Quest {
   description: string;
   level: number;
   questions: Question[];
+  id: string;
 }
 
 export interface Trail {

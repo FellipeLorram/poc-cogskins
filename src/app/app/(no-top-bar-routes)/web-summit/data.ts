@@ -8,6 +8,7 @@ export const trails: Trail[] = [
       "Explore the synergy between human and artificial intelligence through memory, comprehension, and application quests.",
     quests: [
       {
+        id: "hybrid-intelligence-memory",
         type: "Memory",
         level: 1,
         name: "Neural Recall",
@@ -69,6 +70,7 @@ export const trails: Trail[] = [
         ],
       },
       {
+        id: "hybrid-intelligence-comprehension",
         type: "Comprehension",
         level: 2,
         name: "Synaptic Decode",
@@ -136,6 +138,7 @@ export const trails: Trail[] = [
         ],
       },
       {
+        id: "hybrid-intelligence-application",
         type: "Application",
         level: 3,
         name: "Hybrid Hacks",
@@ -211,6 +214,7 @@ export const trails: Trail[] = [
       "Explore the changes in jobs, skills, and work environments driven by automation and AI.",
     quests: [
       {
+        id: "future-of-work-memory",
         type: "Memory",
         level: 1,
         name: "Career Cache",
@@ -276,6 +280,7 @@ export const trails: Trail[] = [
         ],
       },
       {
+        id: "future-of-work-understanding",
         type: "Understanding",
         level: 2,
         name: "Skill Unpack",
@@ -341,6 +346,7 @@ export const trails: Trail[] = [
         ],
       },
       {
+        id: "future-of-work-application",
         type: "Application",
         level: 3,
         name: "Disrupt Lab",
@@ -413,6 +419,7 @@ export const trails: Trail[] = [
       "Dive into the essential concepts and innovations behind today's tech revolution.",
     quests: [
       {
+        id: "tech-industry-memory",
         type: "Memory",
         level: 1,
         name: "Binary Roots",
@@ -472,6 +479,7 @@ export const trails: Trail[] = [
         ],
       },
       {
+        id: "tech-industry-understanding",
         type: "Understanding",
         level: 2,
         name: "Cloud Logic",
@@ -536,6 +544,7 @@ export const trails: Trail[] = [
         ],
       },
       {
+        id: "tech-industry-application",
         type: "Application",
         level: 3,
         name: "Quantum Leap",

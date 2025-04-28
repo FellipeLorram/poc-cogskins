@@ -100,7 +100,7 @@ function useIsQuestStatus(
 
   const quest = dataStore.getQuestByType(trailId, questType) as Quest;
   const isLocked = quest?.level > badge?.level;
-  const isCompleted = isQuestCompleted(questType);
+  const isCompleted = isQuestCompleted(quest?.id ?? "");
 
   return { isLocked, isCompleted };
 }

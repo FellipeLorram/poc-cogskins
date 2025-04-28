@@ -103,7 +103,7 @@ export function QuestionForm({
 
     if (!nextQuestion) {
       if (badge) {
-        await updateBadge({ badgeId: badge.id, level: level + 1 });
+        await updateBadge({ badgeId: badge.id, level: badge.level + 1 });
       }
       setCompletedAnyQuest(true);
       router.push(`/app/web-summit/trails/${trailId}/${questType}/completed`);

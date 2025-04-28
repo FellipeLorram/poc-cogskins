@@ -37,7 +37,11 @@ export function RecentTrails() {
   });
 
   const recentTrails =
-    isGenerating || error ? trails?.slice(0, 5) : trails?.slice(0, 6);
+    isGenerating || error
+      ? trails?.filter((trail) => trail.flag !== "web-summit-2025")?.slice(0, 5)
+      : trails
+          ?.filter((trail) => trail.flag !== "web-summit-2025")
+          ?.slice(0, 6);
 
   const showTitle = isGenerating || error || trails?.length > 0;
 
@@ -57,9 +61,9 @@ export function RecentTrails() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {isGenerating && <GeneratingTrailCard />}
         <ErrorTrailCard error={error} />
-        {recentTrails
-          ?.filter((trail) => trail.flag !== "web-summit-2025")
-          .map((trail) => <TrailCard key={trail.id} trail={trail} />)}
+        {recentTrails.map((trail) => (
+          <TrailCard key={trail.id} trail={trail} />
+        ))}
       </div>
     </div>
   );

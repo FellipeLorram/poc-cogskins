@@ -64,6 +64,7 @@ model User {
   stripeSubscriptionId String?
   subscriptionStatus   String? // active, canceled, past_due, etc.
   subscriptionEndDate  DateTime?
+  CompletedQuest       CompletedQuest[]
 }
 
 model WebSummitTrail {
@@ -176,4 +177,12 @@ model Badge {
   flag           String?
 
   @@index([userId])
+}
+
+model CompletedQuest {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

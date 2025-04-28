@@ -23,6 +23,8 @@ import { z } from "zod";
 import { useStore } from "../../../../store";
 import { Question, TrailId } from "../../../../types";
 import { dataStore } from "../../../../data-store";
+import { addCompleteWebSummitQuest } from "@/api/quest/add-complete-websummit-quest";
+
 interface Props {
   question: Question;
   nextQuestion: Question | undefined;
@@ -100,6 +102,7 @@ export function QuestionForm({
       if (isPerfectScore) {
         addCompletedQuest(quest?.id ?? "");
         setLevel(level + 1);
+        await addCompleteWebSummitQuest(quest?.id ?? "");
       }
     }
 

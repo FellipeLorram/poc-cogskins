@@ -10,11 +10,11 @@ import {
 } from "@/components/ui/card";
 import { useSessionUser } from "@/hooks/auth/use-session-user";
 import { useGetBadgeByFlag } from "@/hooks/badge/use-get-badge-by-flag";
+import { useListCompletedWebSummitQuests } from "@/hooks/quests/use-list-completed-websummit-quests";
 import { useRouter } from "next/navigation";
 import { dataStore } from "../../data-store";
 import { useStore } from "../../store";
 import { Quest, TrailId, Trail as TrailType } from "../../types";
-
 interface Props {
   trail: TrailType;
 }
@@ -81,11 +81,13 @@ function useIsQuestStatus(
   const { data: badge, isPending: isBadgePending } = useGetBadgeByFlag({
     flag: "web-summit-2025",
   });
+  const { data: completedQuests, isPending: isCompletedQuestsPending } =
+    useListCompletedWebSummitQuests();
   const quest = dataStore.getQuestByType(trailId, questType) as Quest;
 
   const { isQuestLocked, isQuestCompleted } = useStore();
 
-  if (isPending || isBadgePending) {
+  if (isPending || isBadgePending || isCompletedQuestsPending) {
     return {
       isLocked: isQuestLocked(trailId, questType),
       isCompleted: isQuestCompleted(quest?.id ?? ""),
@@ -100,7 +102,9 @@ function useIsQuestStatus(
   }
 
   const isLocked = quest?.level > badge?.level;
-  const isCompleted = isQuestCompleted(quest?.id ?? "");
+  const hasDBCompletedQuest = completedQuests?.some(
+    (completedQuest) => completedQuest.id === quest?.id
+  );
 
-  return { isLocked, isCompleted };
+  return { isLocked, isCompleted: hasDBCompletedQuest ?? false };
 }

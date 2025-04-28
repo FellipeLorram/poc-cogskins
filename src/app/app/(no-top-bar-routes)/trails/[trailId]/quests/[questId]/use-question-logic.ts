@@ -92,7 +92,7 @@ export function useQuestionLogic({ trailId, questId, questionId }: Props) {
     if (data.answer === currentQuestion?.correctAnswer) {
       toast.success(currentQuestion.feedback);
     } else {
-      toast.error("Hmmm, resposta incorreta!");
+      toast.error("Oops! That's not quite right. Keep trying!");
     }
 
     // Update quest attempts after the first question is answered

@@ -97,8 +97,9 @@ export function QuestionForm({
     }
 
     if (isCorrect) toast.success("Correct! Great job!");
-    else
+    else {
       toast.error(`Incorrect! The correct answer is ${question.correctAnswer}`);
+    }
 
     if (!nextQuestion) {
       if (badge) {

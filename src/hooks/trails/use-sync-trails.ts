@@ -12,7 +12,7 @@ export function useSyncContents() {
     queryKey: ["trails", "badges"],
   });
   const { trails, badges, clearTrails, clearBadges } = useTrailStore();
-  const { level, setCompletedAnyQuest, completedAnyQuest } =
+  const { level, setCompletedAnyQuest, completedAnyQuest, completedQuests } =
     useWebSummitStore();
 
   return useMutation({
@@ -23,11 +23,13 @@ export function useSyncContents() {
           trails,
           badges,
           webSummitBadgeLevel: level,
+          completedQuests: completedQuests.map((quest) => quest.questType),
         });
       }
       return syncContents({
         trails,
         badges,
+        completedQuests: completedQuests.map((quest) => quest.questType),
       });
     },
     onSuccess: () => {

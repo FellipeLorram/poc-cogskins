@@ -20,6 +20,7 @@ interface Props {
   trails: GeneratedTrail[];
   badges: string[];
   webSummitBadgeLevel?: number;
+  completedQuests: string[];
 }
 
 const badgeLevelMap: Record<number, string> = {
@@ -39,6 +40,7 @@ export async function syncContents({
   trails,
   badges,
   webSummitBadgeLevel,
+  completedQuests,
 }: Props) {
   try {
     const user = await getSessionUser();
@@ -170,6 +172,12 @@ export async function syncContents({
           trailId: fakeTrail.id,
         },
       });
+
+      for (const quest of completedQuests) {
+        await prisma.completedQuest.create({
+          data: { id: quest, userId: user.id },
+        });
+      }
     }
 
     return {

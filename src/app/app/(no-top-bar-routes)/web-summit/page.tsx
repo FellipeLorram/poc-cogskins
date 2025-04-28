@@ -24,7 +24,7 @@ export default async function Page() {
       <div className="flex flex-col gap-4 items-center justify-center text-center">
         <CardTitle className="text-2xl">Welcome</CardTitle>
         <CardDescription className="text-lg">
-          We have been invited to be a CogSkins Alpha Tester.
+          You have been invited to be a CogSkins Alpha Tester.
         </CardDescription>
         <form className="w-full" action={handleStart}>
           <Button className="w-full" type="submit">

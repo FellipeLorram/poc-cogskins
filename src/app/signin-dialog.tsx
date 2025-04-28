@@ -4,10 +4,12 @@ import { SignInForm } from "@/components/forms/sign-in-form";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import Image from "next/image";
+import Link from "next/link";
 import { parseAsBoolean, useQueryState } from "nuqs";
 import { toast } from "sonner";
 
@@ -45,6 +47,27 @@ export function SignInDialog() {
             toast.success("We sent a login link to your email.");
           }}
         />
+        <DialogFooter className="flex items-center justify-center text-center">
+          <p className="text-muted-foreground text-sm">
+            By logging in, you agree to the{" "}
+            <Link
+              className="underline"
+              target="_blank"
+              href="/terms-of-service.pdf"
+            >
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link
+              className="underline"
+              target="_blank"
+              href="/privacy-policy.pdf"
+            >
+              Privacy Policy
+            </Link>
+            .
+          </p>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

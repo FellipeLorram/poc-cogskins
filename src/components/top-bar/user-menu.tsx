@@ -43,6 +43,7 @@ export function UserMenu({ getUserPromise }: Props) {
       clear();
       invalidate();
       router.push("/app");
+      window.location.reload();
     },
   });
 

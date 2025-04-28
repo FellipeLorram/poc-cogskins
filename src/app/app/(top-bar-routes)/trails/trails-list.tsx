@@ -29,6 +29,7 @@ export function TrailsList() {
   if (isPending || !trails) return <Loading />;
 
   const filteredTrails = trails
+    .filter((trail) => trail.flag !== "web-summit-2025")
     .filter((trail) => {
       return trail.title.toLowerCase().includes(filters.search.toLowerCase());
     })

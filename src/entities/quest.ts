@@ -7,8 +7,8 @@ export type GeneratedQuest = Prisma.QuestGetPayload<{
 }>;
 
 export const QuestStatusMap = {
-  [QuestStatus.LOCKED]: "Bloqueado",
-  [QuestStatus.AVAILABLE]: "Disponível",
-  [QuestStatus.IN_PROGRESS]: "Em Progresso",
-  [QuestStatus.COMPLETED]: "Completa",
+  [QuestStatus.LOCKED]: "Locked",
+  [QuestStatus.AVAILABLE]: "Available",
+  [QuestStatus.IN_PROGRESS]: "In Progress",
+  [QuestStatus.COMPLETED]: "Completed",
 };

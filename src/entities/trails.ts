@@ -13,7 +13,7 @@ export type GeneratedTrail = Prisma.TrailGetPayload<{
 }>;
 
 export const TrailStatusMap: Record<TrailStatus, string> = {
-  DRAFT: "Rascunho",
-  COMPLETED: "Concluído",
-  IN_PROGRESS: "Em andamento",
+  DRAFT: "Draft",
+  COMPLETED: "Completed",
+  IN_PROGRESS: "In Progress",
 };

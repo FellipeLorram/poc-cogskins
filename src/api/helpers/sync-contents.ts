@@ -170,6 +170,7 @@ export async function syncContents({
           earnedAt: new Date(),
           status: "UNLOCKED",
           trailId: fakeTrail.id,
+          flag: "web-summit-2025",
         },
       });
 

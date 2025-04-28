@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { dataStore } from "../../data-store";
 import { useStore } from "../../store";
 import { Quest, TrailId, Trail as TrailType } from "../../types";
+import { Skeleton } from "@/components/ui/skeleton";
 interface Props {
   trail: TrailType;
 }
@@ -53,7 +54,7 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
     );
   }
 
-  if (isPending) return null;
+  if (isPending) return <Skeleton className="w-full h-20" />;
 
   return (
     <Card>
@@ -85,6 +86,7 @@ function useIsQuestStatus(
   });
   const { data: completedQuests, isPending: isCompletedQuestsPending } =
     useListCompletedWebSummitQuests();
+
   const quest = dataStore.getQuestByType(trailId, questType) as Quest;
 
   const { isQuestCompleted } = useStore();
@@ -102,6 +104,8 @@ function useIsQuestStatus(
       isCompleted: isQuestCompleted(quest?.id ?? ""),
     };
   }
+
+  console.log(completedQuests);
 
   const hasDBCompletedQuest = completedQuests?.find(
     (completedQuest) => completedQuest.id === quest?.id

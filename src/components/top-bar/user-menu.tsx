@@ -17,17 +17,21 @@ import { Badge, BookOpen, CreditCard, LogOut } from "lucide-react";
 import Link from "next/link";
 import { parseAsBoolean, useQueryState } from "nuqs";
 import { use } from "react";
-
+import { useStore } from "@/app/app/(no-top-bar-routes)/web-summit/store";
+import { useRouter } from "next/navigation";
 interface Props {
   getUserPromise: Promise<User | null>;
 }
 
 export function UserMenu({ getUserPromise }: Props) {
+  const router = useRouter();
   const user = use(getUserPromise);
   const [, setIsOpen] = useQueryState(
     "signin-dialog",
     parseAsBoolean.withDefault(false)
   );
+
+  const { clear } = useStore();
 
   const { invalidate } = useInvalidateQuery({
     queryKey: ["session-user"],
@@ -36,7 +40,9 @@ export function UserMenu({ getUserPromise }: Props) {
   const { mutate } = useMutation({
     mutationFn: signOut,
     onSuccess: () => {
+      clear();
       invalidate();
+      router.push("/app");
     },
   });
 

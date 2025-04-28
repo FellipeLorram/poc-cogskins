@@ -28,6 +28,7 @@ interface Store {
   setCompletedAnyQuest: (completedAnyQuest: boolean) => void;
   sawIntro: boolean;
   setSawIntro: (sawIntro: boolean) => void;
+  clear: () => void;
 }
 
 export const useStore = create<Store>()(
@@ -72,6 +73,17 @@ export const useStore = create<Store>()(
         set({ completedAnyQuest }),
       sawIntro: false,
       setSawIntro: (sawIntro: boolean) => set({ sawIntro }),
+      clear: () =>
+        set({
+          level: 0,
+          completedQuests: [],
+          correctAnswers: {},
+          trailLevel: {
+            "hybrid-intelligence": 1,
+            "future-of-work": 1,
+            "tech-industry": 1,
+          },
+        }),
     }),
     {
       name: "web-summit-store",

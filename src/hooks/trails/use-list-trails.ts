@@ -1,11 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { useTrailStore } from "@/stores/trail-store";
-import { useSessionUser } from "@/hooks/auth/use-session-user";
 import { listTrails } from "@/api/trails/list-trails";
 import { GeneratedTrail } from "@/entities/trails";
+import { useTrailStore } from "@/stores/trail-store";
+import { useQuery } from "@tanstack/react-query";
 
 export function useListTrails() {
-  const { data: user, isPending: isSessionLoading } = useSessionUser();
   const { trails } = useTrailStore();
 
   const { data: dbTrails, isPending: isDbTrailsLoading } = useQuery<
@@ -13,14 +11,14 @@ export function useListTrails() {
   >({
     queryKey: ["trails"],
     queryFn: async () => {
-      if (user) return (await listTrails()) as GeneratedTrail[];
-      return trails;
+      const dbTrails = (await listTrails()) as GeneratedTrail[];
+      if (dbTrails.length === 0) return trails;
+      return dbTrails;
     },
-    enabled: !isSessionLoading,
   });
 
   return {
     data: dbTrails ?? trails,
-    isPending: isSessionLoading || isDbTrailsLoading,
+    isPending: isDbTrailsLoading,
   };
 }

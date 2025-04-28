@@ -38,14 +38,14 @@ export function TrailsList() {
     <div className="flex flex-col gap-4">
       <div className="flex gap-2">
         <Input
-          placeholder="Buscar trilha"
+          placeholder="Search for a trail"
           value={filters.search}
           onChange={(e) => setFilters({ ...filters, search: e.target.value })}
         />
       </div>
       {filteredTrails.length === 0 ? (
         <div className="text-center text-muted-foreground h-96 flex items-center justify-center">
-          Nenhuma trilha encontrada
+          No trails found
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">

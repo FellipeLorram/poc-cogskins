@@ -37,13 +37,11 @@ interface QuestCardProps {
 function QuestCard({ quest, trailId }: QuestCardProps) {
   const router = useRouter();
 
-  const { isLocked, isCompleted } = useIsQuestStatus(trailId, quest.type);
+  const { isCompleted } = useIsQuestStatus(trailId, quest.type);
 
   const firstQuestion = quest.questions[0];
 
   function handleStartQuest() {
-    if (isLocked) return;
-
     if (isCompleted) {
       return router.push(
         `/app/web-summit/trails/${trailId}/${quest.type}/completed`
@@ -62,8 +60,8 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
         <CardDescription>{quest.description}</CardDescription>
       </CardHeader>
       <CardFooter>
-        <Button disabled={isLocked} onClick={handleStartQuest}>
-          {isLocked ? "Locked" : "Start"}
+        <Button onClick={handleStartQuest}>
+          {isCompleted ? "Completed" : "Start"}
         </Button>
       </CardFooter>
     </Card>

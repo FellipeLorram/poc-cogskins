@@ -61,7 +61,6 @@ export async function validateContents(
             - The combination should make sense for a learning path
             - If coherent, create a unified version of the content, organizing logically and removing redundancies
             - Create an optimized prompt that captures the essence of the content for question generation
-            - ALL content MUST be in Brazilian Portuguese
             - Use clear and accessible language
             - Maintain logical organization of content
             - Preserve main concepts

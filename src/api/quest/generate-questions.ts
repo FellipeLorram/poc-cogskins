@@ -14,14 +14,9 @@ const questionsArraySchema = z.object({
         text: z
           .string()
           .describe(
-            "A clear and engaging question about the content in Portuguese"
+            "A clear and engaging question about the content in English"
           ),
-        alternatives: z
-          .array(z.string())
-          .length(5)
-          .describe(
-            "4 possible alternatives in Portuguese, with only one being correct"
-          ),
+        alternatives: z.array(z.string()),
         correctAnswer: z
           .number()
           .min(0)
@@ -30,7 +25,7 @@ const questionsArraySchema = z.object({
         feedback: z
           .string()
           .describe(
-            "Detailed explanation in Portuguese about why the correct answer is right and why the others are wrong"
+            "Detailed explanation in English about why the correct answer is right and why the others are wrong"
           ),
       })
     )
@@ -109,10 +104,10 @@ export async function generateQuestQuestions(
             {
               "questions": [
                 {
-                  "text": "Question in Portuguese?",
+                  "text": "Question in English?",
                   "alternatives": ["Alternative A", "Alternative B", "Alternative C", "Alternative D"],
                   "correctAnswer": 0,
-                  "feedback": "Detailed explanation in Portuguese"
+                  "feedback": "Detailed explanation in English"
                 },
                 ...
               ]

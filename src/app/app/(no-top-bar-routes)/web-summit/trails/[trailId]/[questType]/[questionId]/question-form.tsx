@@ -16,7 +16,7 @@ import { useGetBadgeByFlag } from "@/hooks/badge/use-get-badge-by-flag";
 import { useUpdateBadge } from "@/hooks/badge/use-update-bade";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -24,6 +24,7 @@ import { useStore } from "../../../../store";
 import { Question, TrailId } from "../../../../types";
 import { dataStore } from "../../../../data-store";
 import { addCompleteWebSummitQuest } from "@/api/quest/add-complete-websummit-quest";
+import { Loader2 } from "lucide-react";
 
 interface Props {
   question: Question;
@@ -50,6 +51,7 @@ export function QuestionForm({
   questType,
   isFirstQuestion,
 }: Props) {
+  const [loading, setLoading] = useState(false);
   const { data: user } = useSessionUser();
   const { data: badge } = useGetBadgeByFlag({
     flag: "web-summit-2025",
@@ -77,9 +79,14 @@ export function QuestionForm({
 
   const answer = form.watch("answer");
   const disabled =
-    !answer || isPending || isCreatingBadge || form.formState.isSubmitting;
+    !answer ||
+    isPending ||
+    isCreatingBadge ||
+    form.formState.isSubmitting ||
+    loading;
 
   async function onSubmit(data: QuestionFormSchema) {
+    setLoading(true);
     const isCorrect = question.options[data.answer] === question.correctAnswer;
     const answers = [...(correctAnswers[questType] ?? []), isCorrect];
 
@@ -119,8 +126,10 @@ export function QuestionForm({
         await createBadge(user.id);
       }
       setCompletedAnyQuest(true);
+      setLoading(false);
       router.push(`/app/web-summit/trails/${trailId}/${questType}/completed`);
     } else {
+      setLoading(false);
       router.push(
         `/app/web-summit/trails/${trailId}/${questType}/${nextQuestion.id}`
       );
@@ -172,7 +181,11 @@ export function QuestionForm({
         />
         <div className="flex justify-end">
           <Button type="submit" disabled={disabled}>
-            Next Question
+            {loading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Next Question"
+            )}
           </Button>
         </div>
       </form>

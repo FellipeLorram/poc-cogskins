@@ -49,7 +49,7 @@ export function QuestionForm({
   const { data: badge } = useGetBadgeByTrailId({
     trailId: "cm9z6i9fz0000rxy2ygdnnss9",
   });
-  const { mutateAsync: updateBadge } = useUpdateBadge();
+  const { mutateAsync: updateBadge, isPending } = useUpdateBadge();
 
   const router = useRouter();
   const {
@@ -69,7 +69,7 @@ export function QuestionForm({
   });
 
   const answer = form.watch("answer");
-  const disabled = !answer;
+  const disabled = !answer || isPending;
 
   async function onSubmit(data: QuestionFormSchema) {
     const isCorrect = question.options[data.answer] === question.correctAnswer;

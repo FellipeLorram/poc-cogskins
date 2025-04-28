@@ -42,6 +42,12 @@ export async function syncContents({
 }: Props) {
   try {
     const user = await getSessionUser();
+    const badge = await prisma.badge.findFirst({
+      where: {
+        userId: user?.id,
+        flag: "web-summit-2025",
+      },
+    });
 
     if (!user) {
       throw new Error("Usuário não encontrado");
@@ -143,7 +149,7 @@ export async function syncContents({
       });
     }
 
-    if (webSummitBadgeLevel !== undefined) {
+    if (webSummitBadgeLevel !== undefined && !badge) {
       const fakeTrail = await prisma.trail.create({
         data: {
           userId: user.id,

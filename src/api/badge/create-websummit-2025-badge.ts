@@ -21,6 +21,7 @@ export async function createWebsummit2025Badge(userId: string) {
       title: "Web Summit 2025 Badge",
       description: "Web Summit 2025 Badge",
       status: "UNLOCKED",
+      flag: "web-summit-2025",
     },
   });
 }

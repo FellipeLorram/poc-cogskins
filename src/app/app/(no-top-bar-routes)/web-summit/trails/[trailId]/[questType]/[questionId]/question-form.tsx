@@ -108,7 +108,7 @@ export function QuestionForm({
     if (!nextQuestion) {
       if (badge) {
         await updateBadge({ badgeId: badge.id, level: badge.level + 1 });
-      } else if (user && !badge) {
+      } else if (user) {
         await createBadge(user.id);
       }
       setCompletedAnyQuest(true);

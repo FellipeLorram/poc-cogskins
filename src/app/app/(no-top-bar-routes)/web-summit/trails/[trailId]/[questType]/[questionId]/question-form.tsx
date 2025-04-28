@@ -10,18 +10,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Question, TrailId } from "../../../../types";
-import { useStore } from "../../../../store";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { useGetBadgeByTrailId } from "@/hooks/badge/use-get-badge-by-trail-id";
-import { useUpdateBadge } from "@/hooks/badge/use-update-bade";
 import { useSessionUser } from "@/hooks/auth/use-session-user";
 import { useCreateWeb2025Badge } from "@/hooks/badge/use-create-web2025-badge";
+import { useGetBadgeByFlag } from "@/hooks/badge/use-get-badge-by-flag";
+import { useUpdateBadge } from "@/hooks/badge/use-update-bade";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useStore } from "../../../../store";
+import { Question, TrailId } from "../../../../types";
 interface Props {
   question: Question;
   nextQuestion: Question | undefined;
@@ -48,8 +48,8 @@ export function QuestionForm({
   isFirstQuestion,
 }: Props) {
   const { data: user } = useSessionUser();
-  const { data: badge } = useGetBadgeByTrailId({
-    trailId: "cm9z6i9fz0000rxy2ygdnnss9",
+  const { data: badge } = useGetBadgeByFlag({
+    flag: "web-summit-2025",
   });
   const { mutateAsync: updateBadge, isPending } = useUpdateBadge();
   const { mutateAsync: createBadge, isPending: isCreatingBadge } =

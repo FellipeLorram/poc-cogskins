@@ -24,6 +24,9 @@ export async function listTrails(): Promise<TrailWithRelations[]> {
   const trails = await prisma.trail.findMany({
     where: {
       userId: user.id,
+      NOT: {
+        flag: "web-summit-2025",
+      },
     },
     include: {
       badge: true,

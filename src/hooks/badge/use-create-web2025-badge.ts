@@ -8,7 +8,7 @@ export function useCreateWeb2025Badge() {
     mutationFn: createWebsummit2025Badge,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["badge", "cm9z6i9fz0000rxy2ygdnnss9"],
+        queryKey: ["badge", "web-summit-2025"],
       });
     },
   });

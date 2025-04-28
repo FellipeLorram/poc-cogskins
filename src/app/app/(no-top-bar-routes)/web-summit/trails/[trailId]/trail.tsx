@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useSessionUser } from "@/hooks/auth/use-session-user";
-import { useGetBadgeByTrailId } from "@/hooks/badge/use-get-badge-by-trail-id";
+import { useGetBadgeByFlag } from "@/hooks/badge/use-get-badge-by-flag";
 import { useRouter } from "next/navigation";
 import { dataStore } from "../../data-store";
 import { useStore } from "../../store";
@@ -78,8 +78,8 @@ function useIsQuestStatus(
   questType: string
 ): UseIsQuestStatusResult {
   const { data: sessionUser, isPending } = useSessionUser();
-  const { data: badge, isPending: isBadgePending } = useGetBadgeByTrailId({
-    trailId: "cm9z6i9fz0000rxy2ygdnnss9",
+  const { data: badge, isPending: isBadgePending } = useGetBadgeByFlag({
+    flag: "web-summit-2025",
   });
 
   const { isQuestLocked, isQuestCompleted } = useStore();

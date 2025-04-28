@@ -173,6 +173,7 @@ model Badge {
   WebSummitTrail WebSummitTrail[]
   unLockedAt     DateTime?
   status         BadgeStatus      @default(LOCKED)
+  flag           String?
 
   @@index([userId])
 }

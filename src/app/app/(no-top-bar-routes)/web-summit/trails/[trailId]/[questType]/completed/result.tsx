@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useSessionUser } from "@/hooks/auth/use-session-user";
-import { useGetBadgeByTrailId } from "@/hooks/badge/use-get-badge-by-trail-id";
+import { useGetBadgeByFlag } from "@/hooks/badge/use-get-badge-by-flag";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -26,8 +26,8 @@ export function Result({ trailId, questType }: Props) {
   const { data: sessionUser } = useSessionUser();
   const { correctAnswers, level } = useStore();
 
-  const { data: badge } = useGetBadgeByTrailId({
-    trailId: "cm9z6i9fz0000rxy2ygdnnss9",
+  const { data: badge } = useGetBadgeByFlag({
+    flag: "web-summit-2025",
   });
 
   const correctAnswersCount = correctAnswers[questType]?.filter(Boolean).length;

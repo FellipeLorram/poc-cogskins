@@ -144,6 +144,14 @@ export async function syncContents({
     }
 
     if (webSummitBadgeLevel !== undefined) {
+      const fakeTrail = await prisma.trail.create({
+        data: {
+          userId: user.id,
+          title: "Web Summit 2025 Badge",
+          estimatedDuration: 10,
+          flag: "web-summit-2025",
+        },
+      });
       await prisma.badge.create({
         data: {
           title: "Rio Web Summit 2025",
@@ -153,7 +161,7 @@ export async function syncContents({
           level: webSummitBadgeLevel,
           earnedAt: new Date(),
           status: "UNLOCKED",
-          trailId: "cm9z6i9fz0000rxy2ygdnnss9",
+          trailId: fakeTrail.id,
         },
       });
     }

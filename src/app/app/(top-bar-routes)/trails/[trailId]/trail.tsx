@@ -40,15 +40,17 @@ export function Trail({ trailId, flag }: Props) {
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        {trail.quests.map((quest) => (
-          <div
-            className="w-full flex flex-col gap-4 items-center justify-center"
-            key={quest.id}
-          >
-            <QuestCard quest={quest} trailId={trailId} />
-            <div className="h-8 border-r border-dashed" />
-          </div>
-        ))}
+        {trail.quests
+          .sort((a, b) => a.difficultyLevel - b.difficultyLevel)
+          .map((quest) => (
+            <div
+              className="w-full flex flex-col gap-4 items-center justify-center"
+              key={quest.id}
+            >
+              <QuestCard quest={quest} trailId={trailId} />
+              <div className="h-8 border-r border-dashed" />
+            </div>
+          ))}
 
         <div className="w-full flex items-center justify-center">
           <div

@@ -102,9 +102,9 @@ function useIsQuestStatus(
   }
 
   const isLocked = quest?.level > badge?.level;
-  const hasDBCompletedQuest = completedQuests?.some(
+  const hasDBCompletedQuest = completedQuests?.find(
     (completedQuest) => completedQuest.id === quest?.id
   );
 
-  return { isLocked, isCompleted: hasDBCompletedQuest ?? false };
+  return { isLocked, isCompleted: !!hasDBCompletedQuest };
 }

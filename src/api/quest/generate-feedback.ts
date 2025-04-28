@@ -17,8 +17,8 @@ const feedbackSchema = z.object({
         concept: z.string().describe("Concept that needs more attention"),
         suggestion: z.string().describe("Specific suggestion for improvement"),
         resources: z
-          .array(z.string())
-          .describe("Additional resources for study"),
+          .array(z.string().url())
+          .describe("Additional resources for study (must be valid URLs)"),
       })
     )
     .describe("Specific areas for improvement with suggestions"),
@@ -56,7 +56,7 @@ export async function generatePersonalizedFeedback({
             - Be encouraging but honest
             - Focus on growth and improvement
             - Provide specific and actionable suggestions
-            - Include relevant resources for improvement
+            - Include relevant resources for improvement (must be valid URLs)
             - Adapt tone and complexity to performance level
             - ALL content MUST be in English
             - Use clear and accessible language

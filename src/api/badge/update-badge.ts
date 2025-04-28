@@ -7,7 +7,7 @@ interface Props {
   level: number;
 }
 
-export const badgeLevelMap: Record<number, string> = {
+const badgeLevelMap: Record<number, string> = {
   0: "/badges/wsr_level0.png",
   1: "/badges/wsr_level1.png",
   2: "/badges/wsr_level2.png",

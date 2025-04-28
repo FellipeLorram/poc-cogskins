@@ -89,6 +89,7 @@ export function QuestionForm({
     setLoading(true);
     const isCorrect = question.options[data.answer] === question.correctAnswer;
     const answers = [...(correctAnswers[questType] ?? []), isCorrect];
+    const isPerfectScore = answers.every((answer) => answer);
 
     if (isFirstQuestion) {
       setCorrectAnswers({
@@ -103,8 +104,6 @@ export function QuestionForm({
     }
 
     if (answers.length === 5) {
-      const isPerfectScore = answers.every((answer) => answer);
-
       const quest = dataStore.getQuestByType(trailId, questType);
 
       if (isPerfectScore) {
@@ -121,7 +120,9 @@ export function QuestionForm({
 
     if (!nextQuestion) {
       if (badge) {
-        await updateBadge({ badgeId: badge.id, level: badge.level + 1 });
+        if (isPerfectScore) {
+          await updateBadge({ badgeId: badge.id, level: badge.level + 1 });
+        }
       } else if (user) {
         await createBadge(user.id);
       }

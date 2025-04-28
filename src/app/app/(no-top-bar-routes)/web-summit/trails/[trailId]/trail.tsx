@@ -62,7 +62,9 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
         <CardDescription>{quest.description}</CardDescription>
       </CardHeader>
       <CardFooter>
-        <Button onClick={handleStartQuest}>Start</Button>
+        <Button disabled={isLocked} onClick={handleStartQuest}>
+          {isLocked ? "Locked" : "Start"}
+        </Button>
       </CardFooter>
     </Card>
   );

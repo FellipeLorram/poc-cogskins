@@ -97,15 +97,12 @@ function useIsQuestStatus(
       isCompleted: false,
     };
   }
-  console.log(sessionUser, badge);
   if (!sessionUser || !badge) {
     return {
       isPending: false,
       isCompleted: isQuestCompleted(quest?.id ?? ""),
     };
   }
-
-  console.log(completedQuests);
 
   const hasDBCompletedQuest = completedQuests?.find(
     (completedQuest) => completedQuest.id === quest?.id

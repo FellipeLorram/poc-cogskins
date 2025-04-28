@@ -37,7 +37,7 @@ interface QuestCardProps {
 function QuestCard({ quest, trailId }: QuestCardProps) {
   const router = useRouter();
 
-  const { isCompleted } = useIsQuestStatus(trailId, quest.type);
+  const { isCompleted, isPending } = useIsQuestStatus(trailId, quest.type);
 
   const firstQuestion = quest.questions[0];
 
@@ -52,6 +52,8 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
       `/app/web-summit/trails/${trailId}/${quest.type}/${firstQuestion.id}`
     );
   }
+
+  if (isPending) return null;
 
   return (
     <Card>
@@ -69,7 +71,7 @@ function QuestCard({ quest, trailId }: QuestCardProps) {
 }
 
 interface UseIsQuestStatusResult {
-  isLocked: boolean;
+  isPending: boolean;
   isCompleted: boolean;
 }
 
@@ -85,26 +87,28 @@ function useIsQuestStatus(
     useListCompletedWebSummitQuests();
   const quest = dataStore.getQuestByType(trailId, questType) as Quest;
 
-  const { isQuestLocked, isQuestCompleted } = useStore();
+  const { isQuestCompleted } = useStore();
 
   if (isPending || isBadgePending || isCompletedQuestsPending) {
     return {
-      isLocked: isQuestLocked(trailId, questType),
-      isCompleted: isQuestCompleted(quest?.id ?? ""),
+      isPending: true,
+      isCompleted: false,
     };
   }
 
   if (!sessionUser || !badge) {
     return {
-      isLocked: isQuestLocked(trailId, questType),
+      isPending: false,
       isCompleted: isQuestCompleted(quest?.id ?? ""),
     };
   }
 
-  const isLocked = quest?.level > badge?.level;
   const hasDBCompletedQuest = completedQuests?.find(
     (completedQuest) => completedQuest.id === quest?.id
   );
 
-  return { isLocked, isCompleted: !!hasDBCompletedQuest };
+  return {
+    isPending: false,
+    isCompleted: !!hasDBCompletedQuest,
+  };
 }

@@ -58,9 +58,7 @@ export function BadgeList() {
 function BadgeCard({ badge }: { badge: PrismaBadge }) {
   return (
     <div className="relative p-6 bg-muted rounded-md w-96 max-w-full space-y-4 text-center border shadow data-[unlocked=false]:shadow-none data-[unlocked=false]:opacity-50 data-[unlocked=true]:border-green-500">
-      <Badge variant="success" className="absolute top-2 right-2">
-        nível {badge.level}
-      </Badge>
+      <Badge className="absolute top-2 right-2">nível {badge.level}</Badge>
 
       <Image
         src={badge.url ?? ""}

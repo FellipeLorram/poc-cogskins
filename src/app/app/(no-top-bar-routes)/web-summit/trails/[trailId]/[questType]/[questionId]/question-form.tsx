@@ -20,7 +20,8 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useGetBadgeByTrailId } from "@/hooks/badge/use-get-badge-by-trail-id";
 import { useUpdateBadge } from "@/hooks/badge/use-update-bade";
-
+import { useSessionUser } from "@/hooks/auth/use-session-user";
+import { useCreateWeb2025Badge } from "@/hooks/badge/use-create-web2025-badge";
 interface Props {
   question: Question;
   nextQuestion: Question | undefined;
@@ -46,10 +47,13 @@ export function QuestionForm({
   questType,
   isFirstQuestion,
 }: Props) {
+  const { data: user } = useSessionUser();
   const { data: badge } = useGetBadgeByTrailId({
     trailId: "cm9z6i9fz0000rxy2ygdnnss9",
   });
   const { mutateAsync: updateBadge, isPending } = useUpdateBadge();
+  const { mutateAsync: createBadge, isPending: isCreatingBadge } =
+    useCreateWeb2025Badge();
 
   const router = useRouter();
   const {
@@ -69,7 +73,7 @@ export function QuestionForm({
   });
 
   const answer = form.watch("answer");
-  const disabled = !answer || isPending;
+  const disabled = !answer || isPending || isCreatingBadge;
 
   async function onSubmit(data: QuestionFormSchema) {
     const isCorrect = question.options[data.answer] === question.correctAnswer;
@@ -104,6 +108,8 @@ export function QuestionForm({
     if (!nextQuestion) {
       if (badge) {
         await updateBadge({ badgeId: badge.id, level: badge.level + 1 });
+      } else if (user) {
+        await createBadge(user.id);
       }
       setCompletedAnyQuest(true);
       router.push(`/app/web-summit/trails/${trailId}/${questType}/completed`);

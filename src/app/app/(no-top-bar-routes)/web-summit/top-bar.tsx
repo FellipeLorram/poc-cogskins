@@ -13,10 +13,9 @@ export function TopBar({ title, size = "medium" }: Props) {
         <Image
           src="/cogskins-logo.png"
           alt="CogSkins Logo"
+          className="min-w-12 w-12 h-auto"
           width={409}
           height={270}
-          data-size={size}
-          className="w-12 absolute left-4 top-1/2 -translate-y-1/2 data-[size=small]:w-12 data-[size=medium]:w-16 data-[size=large]:w-20"
         />
       </Link>
       <h1

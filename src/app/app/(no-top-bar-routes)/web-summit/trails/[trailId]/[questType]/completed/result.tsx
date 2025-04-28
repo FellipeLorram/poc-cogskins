@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useSessionUser } from "@/hooks/auth/use-session-user";
+import { useGetBadgeByTrailId } from "@/hooks/badge/use-get-badge-by-trail-id";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -24,10 +25,21 @@ interface Props {
 export function Result({ trailId, questType }: Props) {
   const { data: sessionUser } = useSessionUser();
   const { correctAnswers, level } = useStore();
+
+  const { data: badge } = useGetBadgeByTrailId({
+    trailId: "cm9z6i9fz0000rxy2ygdnnss9",
+  });
+
   const correctAnswersCount = correctAnswers[questType]?.filter(Boolean).length;
   const currentQuest = dataStore.getQuestByType(trailId, questType);
   const isPerfectScore = correctAnswersCount === currentQuest?.questions.length;
-  const currentBadge = badgeLevelMap[level];
+  let badgeLevel = level;
+  let currentBadge = badgeLevelMap[level];
+
+  if (badge) {
+    currentBadge = badge.url;
+    badgeLevel = badge.level;
+  }
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center">
@@ -39,7 +51,7 @@ export function Result({ trailId, questType }: Props) {
           {isPerfectScore ? (
             <div className="w-full flex flex-col items-center justify-center gap-4">
               <CardTitle>
-                Perfect score! You upgraded your badge to level {level}!
+                Perfect score! You upgraded your badge to level {badgeLevel}!
               </CardTitle>
               <Image
                 className="w-full"
@@ -52,7 +64,8 @@ export function Result({ trailId, questType }: Props) {
           ) : (
             <div className="w-full flex flex-col items-center justify-center gap-4">
               <CardTitle>
-                Make a perfect score to upgrade your badge to level {level + 1}!
+                Make a perfect score to upgrade your badge to level{" "}
+                {badgeLevel + 1}!
               </CardTitle>
               <Image
                 className="w-full"

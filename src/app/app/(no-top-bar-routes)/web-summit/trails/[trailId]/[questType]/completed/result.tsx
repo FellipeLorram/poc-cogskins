@@ -1,4 +1,5 @@
 "use client";
+
 import { badgeLevelMap } from "@/app/app/(no-top-bar-routes)/web-summit/data";
 import { dataStore } from "@/app/app/(no-top-bar-routes)/web-summit/data-store";
 import { useStore } from "@/app/app/(no-top-bar-routes)/web-summit/store";
@@ -7,11 +8,11 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useSessionUser } from "@/hooks/auth/use-session-user";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -20,15 +21,8 @@ interface Props {
   questType: string;
 }
 
-function getMessageByScore(score: number, level: number) {
-  if (score === 5)
-    return `Perfect score! You upgraded your badge to level ${level + 1}!`;
-  if (score > 3) return "Good job! You did well.";
-
-  return "You can do better! Keep trying!";
-}
-
 export function Result({ trailId, questType }: Props) {
+  const { data: sessionUser } = useSessionUser();
   const { correctAnswers, level } = useStore();
   const correctAnswersCount = correctAnswers[questType]?.filter(Boolean).length;
   const currentQuest = dataStore.getQuestByType(trailId, questType);
@@ -37,18 +31,15 @@ export function Result({ trailId, questType }: Props) {
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center">
-      <Card className="w-full max-w-md p-4 text-center">
+      <Card className="w-full max-w-lg p-4 text-center">
         <CardHeader>
           <CardTitle>Your score: {correctAnswersCount} / 5</CardTitle>
-          <CardDescription>
-            {getMessageByScore(correctAnswersCount, level)}
-          </CardDescription>
         </CardHeader>
         <CardContent>
           {isPerfectScore ? (
             <div className="w-full flex flex-col items-center justify-center gap-4">
               <CardTitle>
-                Congratulations! You upgraded your badge to level {level}!
+                Perfect score! You upgraded your badge to level {level}!
               </CardTitle>
               <Image
                 className="w-full"
@@ -73,12 +64,19 @@ export function Result({ trailId, questType }: Props) {
             </div>
           )}
         </CardContent>
-        <CardFooter>
-          <Link
-            className="w-full"
-            href={`/app/web-summit/trails/${trailId}/${questType}/completed?signin-dialog=true`}
-          >
-            <Button className="w-full">Signup to get your badge</Button>
+        <CardFooter className="flex flex-col gap-2">
+          {!sessionUser && (
+            <Link
+              className="w-full"
+              href={`/app/web-summit/trails/${trailId}/${questType}/completed?signin-dialog=true`}
+            >
+              <Button className="w-full">Signup to get your badge</Button>
+            </Link>
+          )}
+          <Link className="w-full" href={`/app/web-summit/trails/${trailId}`}>
+            <Button variant="outline" className="w-full">
+              Back to start
+            </Button>
           </Link>
         </CardFooter>
       </Card>

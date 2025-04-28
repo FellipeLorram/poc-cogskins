@@ -18,6 +18,8 @@ import { Question, TrailId } from "../../../../types";
 import { useStore } from "../../../../store";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useGetBadgeByTrailId } from "@/hooks/badge/use-get-badge-by-trail-id";
+import { useUpdateBadge } from "@/hooks/badge/use-update-bade";
 
 interface Props {
   question: Question;
@@ -44,6 +46,11 @@ export function QuestionForm({
   questType,
   isFirstQuestion,
 }: Props) {
+  const { data: badge } = useGetBadgeByTrailId({
+    trailId: "cm9z6i9fz0000rxy2ygdnnss9",
+  });
+  const { mutate: updateBadge } = useUpdateBadge();
+
   const router = useRouter();
   const {
     level,
@@ -94,8 +101,11 @@ export function QuestionForm({
       toast.error(`Incorrect! The correct answer is ${question.correctAnswer}`);
 
     if (!nextQuestion) {
-      router.push(`/app/web-summit/trails/${trailId}/${questType}/completed`);
+      if (badge) {
+        updateBadge({ badgeId: badge.id, level: level + 1 });
+      }
       setCompletedAnyQuest(true);
+      router.push(`/app/web-summit/trails/${trailId}/${questType}/completed`);
     } else {
       router.push(
         `/app/web-summit/trails/${trailId}/${questType}/${nextQuestion.id}`

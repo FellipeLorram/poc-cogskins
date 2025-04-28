@@ -180,6 +180,7 @@ export async function generateTrail(
       userId: "", // Will be filled when there is authentication
       status: "LOCKED",
       unLockedAt: null,
+      flag: "",
     },
   };
 

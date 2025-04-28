@@ -76,7 +76,8 @@ export function QuestionForm({
   });
 
   const answer = form.watch("answer");
-  const disabled = !answer || isPending || isCreatingBadge;
+  const disabled =
+    !answer || isPending || isCreatingBadge || form.formState.isSubmitting;
 
   async function onSubmit(data: QuestionFormSchema) {
     const isCorrect = question.options[data.answer] === question.correctAnswer;

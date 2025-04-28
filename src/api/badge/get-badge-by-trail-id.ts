@@ -9,7 +9,7 @@ export async function getBadgeByTrailId(trailId: string) {
   if (!user) return null;
 
   const badge = await prisma.badge.findUnique({
-    where: { trailId },
+    where: { trailId, userId: user.id },
   });
 
   return badge;

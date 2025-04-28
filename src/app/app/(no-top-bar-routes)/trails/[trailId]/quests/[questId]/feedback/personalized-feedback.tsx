@@ -43,7 +43,7 @@ export function PersonalizedFeedback({ accessToken, runId }: Props) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Pontos de melhoria</CardTitle>
+          <CardTitle>Improvement Points</CardTitle>
         </CardHeader>
         <CardContent className="space-y-8">
           {feedback?.improvementAreas.map((area) => (
@@ -87,7 +87,7 @@ function PersonalizedFeedbackSkeleton() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Dicas para melhorar</CardTitle>
+          <CardTitle>Improvement Tips</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Skeleton className="w-1/2 h-4" />
@@ -97,7 +97,7 @@ function PersonalizedFeedbackSkeleton() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Pontos de melhoria</CardTitle>
+          <CardTitle>Improvement Points</CardTitle>
         </CardHeader>
         <CardContent className="space-y-8">
           {Array.from({ length: 3 }).map((_, index) => (

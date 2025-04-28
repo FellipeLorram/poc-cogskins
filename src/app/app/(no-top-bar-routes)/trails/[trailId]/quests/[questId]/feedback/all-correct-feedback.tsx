@@ -30,9 +30,9 @@ export function IsAllCorrectFeedback({
   return (
     <div>
       <div className="flex flex-col gap-2 items-center justify-center">
-        <h1 className="text-lg md:text-4xl font-bold">Parabéns!</h1>
+        <h1 className="text-lg md:text-4xl font-bold">Congratulations!</h1>
         <p className="text-muted-foreground text-sm md:text-base">
-          Você acertou todas as questões.
+          You answered all the questions correctly.
         </p>
       </div>
 
@@ -43,7 +43,7 @@ export function IsAllCorrectFeedback({
           size="sm"
           onClick={() => router.push(`/app/trails/${trailId}`)}
         >
-          Voltar para a Trilha
+          Back to the Trail
         </Button>
         <Button
           size="sm"
@@ -54,7 +54,7 @@ export function IsAllCorrectFeedback({
             )
           }
         >
-          Próximo Quest
+          Next Quest
         </Button>
       </div>
 

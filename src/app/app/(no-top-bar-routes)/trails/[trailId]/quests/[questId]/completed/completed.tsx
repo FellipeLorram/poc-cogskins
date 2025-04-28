@@ -14,8 +14,8 @@ export function Completed({ trailId, questId }: Props) {
   return (
     <div>
       <div className="flex flex-col gap-2 items-center justify-center">
-        <h1 className="text-4xl font-bold">Parabéns!</h1>
-        <p className="text-muted-foreground">Você finalizou este quest.</p>
+        <h1 className="text-4xl font-bold">Congratulations!</h1>
+        <p className="text-muted-foreground">You completed this quest.</p>
       </div>
 
       <div className="space-y-4 py-8 border-t mt-8">

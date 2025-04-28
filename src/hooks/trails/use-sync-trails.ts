@@ -12,8 +12,13 @@ export function useSyncContents() {
     queryKey: ["trails", "badges"],
   });
   const { trails, badges, clearTrails, clearBadges } = useTrailStore();
-  const { level, setCompletedAnyQuest, completedAnyQuest, completedQuests } =
-    useWebSummitStore();
+  const {
+    level,
+    setCompletedAnyQuest,
+    completedAnyQuest,
+    completedQuests,
+    clear,
+  } = useWebSummitStore();
 
   return useMutation({
     mutationFn: async () => {
@@ -35,6 +40,7 @@ export function useSyncContents() {
     onSuccess: () => {
       clearTrails();
       clearBadges();
+      clear();
       invalidate();
       setCompletedAnyQuest(false);
     },

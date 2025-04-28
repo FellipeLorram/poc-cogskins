@@ -82,6 +82,43 @@ export async function POST(req: Request) {
         break;
       }
 
+      case "customer.subscription.created": {
+        const subscription = await stripe.subscriptions.retrieve(
+          (data.object as Stripe.Subscription).id
+        );
+        const customerId = subscription.customer as string;
+        const customer = await stripe.customers.retrieve(customerId);
+        const customerEmail = (customer as Stripe.Customer).email;
+
+        if (!customerEmail) {
+          console.error("No user email found in Stripe customer");
+          throw new Error("No user email found");
+        }
+
+        // Find user by stripeCustomerId
+        const user = await prisma.user.findFirst({
+          where: { email: customerEmail },
+        });
+
+        if (user) {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: {
+              subscriptionStatus: subscription.status,
+              stripeSubscriptionId: subscription.id,
+              stripeCustomerId: customerId,
+              isEarlyAdopter: true,
+            },
+          });
+
+          await createSession({
+            userId: user.id,
+          });
+        }
+
+        break;
+      }
+
       case "customer.subscription.updated": {
         const subscription = await stripe.subscriptions.retrieve(
           (data.object as Stripe.Subscription).id

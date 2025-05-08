@@ -6,7 +6,7 @@ import { getSessionUser } from "../user/get-session-user";
 export async function listCompleteWebSummitQuest() {
   const user = await getSessionUser();
 
-  if (!user) return;
+  if (!user) return null;
 
   return await prisma.completedQuest.findMany({
     where: {

@@ -26,11 +26,11 @@ export function TopBar() {
             className={buttonVariants({
               variant: "outline",
               size: "sm",
-              className: "shadow-[#ff4b07] shadow-sm text-[#ff4b07]",
+              className: "shadow-[#075aff] shadow-sm text-[#075aff]",
             })}
-            href="/app/web-summit"
+            href="/app/drapper-university"
           >
-            Web Summit
+            Drapper
           </Link>
           <EarlyAdopterButton getUserPromise={getSessionUser()} />
 

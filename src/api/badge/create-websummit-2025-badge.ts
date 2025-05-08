@@ -6,9 +6,9 @@ export async function createWebsummit2025Badge(userId: string) {
   const fakeTrail = await prisma.trail.create({
     data: {
       userId,
-      title: "Web Summit 2025 Badge",
+      title: "Drapper University Badge",
       estimatedDuration: 10,
-      flag: "web-summit-2025",
+      flag: "drapper-university",
     },
   });
 
@@ -17,11 +17,11 @@ export async function createWebsummit2025Badge(userId: string) {
       userId,
       trailId: fakeTrail.id,
       level: 1,
-      url: "/badges/wsr_level1.png",
-      title: "Web Summit 2025 Badge",
-      description: "Web Summit 2025 Badge",
+      url: "/badges/drapper-level-1.png",
+      title: "Drapper University Badge",
+      description: "Drapper University Badge",
       status: "UNLOCKED",
-      flag: "web-summit-2025",
+      flag: "drapper-university",
     },
   });
 }

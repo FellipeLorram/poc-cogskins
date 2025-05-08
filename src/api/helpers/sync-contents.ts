@@ -24,16 +24,10 @@ interface Props {
 }
 
 const badgeLevelMap: Record<number, string> = {
-  0: "/badges/wsr_level0.png",
-  1: "/badges/wsr_level1.png",
-  2: "/badges/wsr_level2.png",
-  3: "/badges/wsr_level3.png",
-  4: "/badges/wsr_level4.png",
-  5: "/badges/wsr_level5.png",
-  6: "/badges/wsr_level6.png",
-  7: "/badges/wsr_level7.png",
-  8: "/badges/wsr_level8.png",
-  9: "/badges/wsr_level9.png",
+  0: "/badges/drapper-level-0.png",
+  1: "/badges/drapper-level-1.png",
+  2: "/badges/drapper-level-2.png",
+  3: "/badges/drapper-level-3.png",
 };
 
 export async function syncContents({
@@ -155,22 +149,22 @@ export async function syncContents({
       const fakeTrail = await prisma.trail.create({
         data: {
           userId: user.id,
-          title: "Web Summit 2025 Badge",
+          title: "Drapper University Badge",
           estimatedDuration: 10,
-          flag: "web-summit-2025",
+          flag: "drapper-university",
         },
       });
       await prisma.badge.create({
         data: {
-          title: "Rio Web Summit 2025",
+          title: "Drapper University Badge",
           url: badgeLevelMap[webSummitBadgeLevel],
           userId: user.id,
-          description: "Rio Web Summit 2025",
+          description: "Drapper University Badge",
           level: webSummitBadgeLevel,
           earnedAt: new Date(),
           status: "UNLOCKED",
           trailId: fakeTrail.id,
-          flag: "web-summit-2025",
+          flag: "drapper-university",
         },
       });
 

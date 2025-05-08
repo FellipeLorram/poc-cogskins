@@ -23,7 +23,6 @@ export function useSyncContents() {
   return useMutation({
     mutationFn: async () => {
       if (completedAnyQuest) {
-        console.log("completedAnyQuest", completedAnyQuest);
         return await syncContents({
           trails,
           badges,

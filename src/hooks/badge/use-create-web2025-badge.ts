@@ -8,7 +8,7 @@ export function useCreateWeb2025Badge() {
     mutationFn: createWebsummit2025Badge,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["badge", "web-summit-2025"],
+        queryKey: ["badge", "drapper-university"],
       });
     },
   });

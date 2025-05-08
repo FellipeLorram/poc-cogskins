@@ -30,7 +30,7 @@ export function TopBar() {
             })}
             href="/app/drapper-university"
           >
-            Drapper
+            Draper
           </Link>
           <EarlyAdopterButton getUserPromise={getSessionUser()} />
 

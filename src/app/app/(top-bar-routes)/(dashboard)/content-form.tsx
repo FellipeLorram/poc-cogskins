@@ -1,9 +1,14 @@
 "use client";
 
 import { generateTrailTaskTrigger } from "@/api/trails/generate-trail-task";
-import { useIsEarlyAdopter } from "@/hooks/auth/use-is-early-adopter";
-import { useTrailRunnerStore } from "./trail-runner-store";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -12,13 +17,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import { useIsEarlyAdopter } from "@/hooks/auth/use-is-early-adopter";
 import { extractContents } from "@/lib/content/extract-content";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Send, Upload, X } from "lucide-react";
-import { useRef } from "react";
+import { Lock, Send, Upload, X } from "lucide-react";
+import Link from "next/link";
+import { useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useTrailRunnerStore } from "./trail-runner-store";
+
+const webSummitUrl = process.env.NEXT_PUBLIC_STRIPE_PRODUCT_URL as string;
 
 const formSchema = z
   .object({
@@ -44,6 +54,7 @@ const formSchema = z
 type FormValues = z.infer<typeof formSchema>;
 
 export function ContentForm() {
+  const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { setContents, setRunId, setAccessToken } = useTrailRunnerStore();
@@ -118,15 +129,22 @@ export function ContentForm() {
         className="space-y-2 w-full"
         onSubmit={form.handleSubmit(handleSubmit)}
       >
+        <BecomeEarlyAdopterDialog open={open} onOpenChange={setOpen} />
         <FormField
           control={form.control}
           name="topic"
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <div className="relative flex items-start gap-2 w-full border rounded-md p-2 shadow">
+                <div
+                  onClick={() => {
+                    if (!isEarlyAdopter) {
+                      setOpen(true);
+                    }
+                  }}
+                  className="relative flex items-start gap-2 w-full border rounded-md p-2 shadow"
+                >
                   <Textarea
-                    disabled={!isEarlyAdopter}
                     placeholder="What content shall we validate today?"
                     className={`text-sm [&::-webkit-resizer]:hidden [&::-webkit-scrollbar]:hidden min-h-[40px] max-h-[200px] border-none focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none ${
                       field.value ? "resize-y" : "resize-none"
@@ -152,7 +170,7 @@ export function ContentForm() {
                       disabled={submitDisabled}
                       className="cursor-pointer"
                     >
-                      <Send />
+                      {isEarlyAdopter ? <Send /> : <Lock />}
                     </Button>
                   </div>
                 </div>
@@ -182,5 +200,39 @@ export function ContentForm() {
         </div>
       </form>
     </Form>
+  );
+}
+
+function BecomeEarlyAdopterDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Early Adopter Program</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>
+          Become an early adopter and help us shape the future of education.
+        </DialogDescription>
+        <div className="w-full flex items-center justify-center">
+          <Link
+            className={buttonVariants({
+              variant: "outline",
+
+              className:
+                "shadow-[#8fd18b] shadow-sm text-[#8fd18b] h-auto text-center",
+            })}
+            href={webSummitUrl}
+          >
+            Become an early adopter
+          </Link>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

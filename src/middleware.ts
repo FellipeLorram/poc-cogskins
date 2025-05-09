@@ -13,22 +13,6 @@ export default async function middleware(req: NextRequest) {
 
   const cookie = await cookies();
   const session = cookie.get("session")?.value;
-  const sawIntro = cookie.get("sawIntro")?.value;
-
-  if (
-    path.includes("/app") &&
-    path !== "/app/drapper-university" &&
-    !sawIntro
-  ) {
-    return NextResponse.redirect(new URL("/app/drapper-university", req.url));
-  }
-
-  // Handle intro page logic
-  if (path === "/app/drapper-university" && sawIntro === "true") {
-    return NextResponse.redirect(
-      new URL("/app/drapper-university/trails", req.url)
-    );
-  }
 
   if (!session && isProtectedRoute) {
     const url = new URL(req.nextUrl.origin);

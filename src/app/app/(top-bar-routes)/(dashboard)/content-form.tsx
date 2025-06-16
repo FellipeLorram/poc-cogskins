@@ -27,6 +27,8 @@ import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useTrailRunnerStore } from "./trail-runner-store";
+import { useSessionUser } from "@/hooks/auth/use-session-user";
+import { useListTrails } from "@/hooks/trails/use-list-trails";
 
 const webSummitUrl = process.env.NEXT_PUBLIC_STRIPE_PRODUCT_URL as string;
 
@@ -59,7 +61,11 @@ export function ContentForm() {
 
   const { setContents, setRunId, setAccessToken } = useTrailRunnerStore();
 
-  const { data: isEarlyAdopter } = useIsEarlyAdopter();
+  const { data: isEarlyAdopter, isPending: isEarlyAdopterLoading } =
+    useIsEarlyAdopter();
+  const { data: sessionUser, isPending: isSessionUserLoading } =
+    useSessionUser();
+  const { data: trails = [], isPending: isTrailsLoading } = useListTrails();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -86,7 +92,26 @@ export function ContentForm() {
 
   const files = form.watch("files");
   const contents = form.watch("topic");
-  const submitDisabled = (!contents && !files) || !isEarlyAdopter;
+
+  // Lógica de limitação
+  const isLoading =
+    isEarlyAdopterLoading || isSessionUserLoading || isTrailsLoading;
+  const isAuthenticated = !!sessionUser;
+  const isLimited = !isEarlyAdopter && trails.length >= 3;
+  const submitDisabled =
+    isLoading ||
+    !isAuthenticated ||
+    (!contents && !files) ||
+    (!isEarlyAdopter && trails.length >= 3);
+
+  // Mensagem de placeholder dinâmica
+  let placeholder = "What content shall we validate today?";
+  if (!isAuthenticated) {
+    placeholder = "Log in to generate trails";
+  } else if (isLimited) {
+    placeholder =
+      "You have reached the limit of 3 trails. Become an early adopter to create more.";
+  }
 
   function handleRemoveFile(file: File) {
     form.setValue(
@@ -138,6 +163,7 @@ export function ContentForm() {
               <FormControl>
                 <div
                   onClick={() => {
+                    if (!isAuthenticated) return;
                     if (!isEarlyAdopter) {
                       setOpen(true);
                     }
@@ -145,16 +171,17 @@ export function ContentForm() {
                   className="relative flex items-start gap-2 w-full border rounded-md p-2 shadow"
                 >
                   <Textarea
-                    placeholder="What content shall we validate today?"
+                    placeholder={placeholder}
                     className={`text-sm [&::-webkit-resizer]:hidden [&::-webkit-scrollbar]:hidden min-h-[40px] max-h-[200px] border-none focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none ${
                       field.value ? "resize-y" : "resize-none"
                     }`}
                     {...field}
+                    disabled={submitDisabled}
                   />
 
                   <div className="flex items-center min-h-[40px]">
                     <Button
-                      disabled={!isEarlyAdopter}
+                      disabled={submitDisabled}
                       variant="ghost"
                       size="icon"
                       type="button"
@@ -170,7 +197,7 @@ export function ContentForm() {
                       disabled={submitDisabled}
                       className="cursor-pointer"
                     >
-                      {isEarlyAdopter ? <Send /> : <Lock />}
+                      {isAuthenticated && isEarlyAdopter ? <Send /> : <Lock />}
                     </Button>
                   </div>
                 </div>

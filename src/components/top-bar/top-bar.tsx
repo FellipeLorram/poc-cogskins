@@ -28,9 +28,9 @@ export function TopBar() {
               size: "sm",
               className: "shadow-[#075aff] shadow-sm text-[#075aff]",
             })}
-            href="/app/drapper-university"
+            href="/app/pet"
           >
-            Draper
+            Pet, o dragão
           </Link>
           <EarlyAdopterButton getUserPromise={getSessionUser()} />
 

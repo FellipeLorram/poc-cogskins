@@ -9,7 +9,7 @@ export const trails: Trail[] = [
     quests: [
       {
         id: "pet-o-dragao-e-o-misterio-das-pegadas-1",
-        type: "Memória",
+        type: "memory",
         level: 1,
         name: "As Pegadas do Passado",
         description:

@@ -2,31 +2,24 @@
 
 import { prisma } from "@/lib/prisma-client";
 import { getSessionUser } from "../user/get-session-user";
-import { TrailStatus, Trail } from "@prisma/client";
-
-interface UpdateTrailRequest {
-  trailId: string;
-  trailStatus: TrailStatus;
-}
-
-interface UpdateTrailResponse {
-  trail: Trail | null;
-}
+import {
+  UpdateTrailRequest,
+  UpdateTrailResponse,
+} from "@/entities/trail-actions";
 
 export async function updateTrail({
-  trailId,
-  trailStatus,
+  trail,
 }: UpdateTrailRequest): Promise<UpdateTrailResponse> {
   const user = await getSessionUser();
 
   if (!user) return { trail: null };
 
-  const trail = await prisma.trail.update({
-    where: { id: trailId },
+  const updatedTrail = await prisma.trail.update({
+    where: { id: trail.id },
     data: {
-      status: trailStatus,
+      status: trail.status,
     },
   });
 
-  return { trail };
+  return { trail: updatedTrail };
 }

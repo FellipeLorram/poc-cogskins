@@ -8,7 +8,11 @@ export type GeneratedTrail = Prisma.TrailGetPayload<{
         questions: true;
       };
     };
-    badge: true;
+    badge: {
+      include: {
+        badgeUrls: true;
+      };
+    };
   };
 }>;
 

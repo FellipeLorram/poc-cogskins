@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma-client";
 import { Prisma, QuestionStatus } from "@prisma/client";
 import { verifySession } from "../auth/verify-session";
-import { GeneratedTrail } from "@/entities/trails";
+import { SaveTrailRequest, SaveTrailResponse } from "@/entities/trail-actions";
 
 type GeneratedQuest = Prisma.QuestGetPayload<{
   include: {
@@ -11,7 +11,9 @@ type GeneratedQuest = Prisma.QuestGetPayload<{
   };
 }>;
 
-export async function saveTrail(trail: GeneratedTrail) {
+export async function saveTrail({
+  trail,
+}: SaveTrailRequest): Promise<SaveTrailResponse> {
   try {
     const { userId } = await verifySession();
 
@@ -83,12 +85,16 @@ export async function saveTrail(trail: GeneratedTrail) {
     }
 
     // Return the complete trail with all relations
-    return await prisma.trail.findUnique({
+    const createdTrail = await prisma.trail.findUniqueOrThrow({
       where: {
         id: savedTrail.id,
       },
       include: {
-        badge: true,
+        badge: {
+          include: {
+            badgeUrls: true,
+          },
+        },
         inputContents: true,
         quests: {
           include: {
@@ -97,6 +103,8 @@ export async function saveTrail(trail: GeneratedTrail) {
         },
       },
     });
+
+    return { trail: createdTrail };
   } catch (error) {
     console.error("Error saving trail:", error);
     throw new Error("Falha ao salvar trilha no banco de dados");

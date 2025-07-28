@@ -1,32 +1,24 @@
 "use server";
 
 import { prisma } from "@/lib/prisma-client";
-import { Prisma } from "@prisma/client";
 import { getSessionUser } from "../user/get-session-user";
+import { ListTrailsResponse } from "@/entities/trail-actions";
 
-export type TrailWithRelations = Prisma.TrailGetPayload<{
-  include: {
-    inputContents: true;
-    quests: {
-      include: {
-        questions: true;
-      };
-    };
-    badge: true;
-  };
-}>;
-
-export async function listTrails(): Promise<TrailWithRelations[]> {
+export async function listTrails(): Promise<ListTrailsResponse> {
   const user = await getSessionUser();
 
-  if (!user) return [];
+  if (!user) return { trails: [] };
 
   const trails = await prisma.trail.findMany({
     where: {
       userId: user.id,
     },
     include: {
-      badge: true,
+      badge: {
+        include: {
+          badgeUrls: true,
+        },
+      },
       inputContents: true,
       quests: {
         include: {
@@ -39,5 +31,5 @@ export async function listTrails(): Promise<TrailWithRelations[]> {
     },
   });
 
-  return trails;
+  return { trails };
 }

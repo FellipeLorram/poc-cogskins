@@ -1,23 +1,28 @@
-import { useTrailStore } from "@/stores/trail-store";
 import { useQuery } from "@tanstack/react-query";
-import { getTrail as getTrailServer } from "@/api/trails/get-trail";
+import { useDataLayer } from "../use-data-layer/use-data-layer";
 
 interface Props {
   trailId: string;
-  flag?: string;
 }
 
-export function useGetTrail({ trailId, flag }: Props) {
-  const { getTrail } = useTrailStore();
+export function useGetTrail({ trailId }: Props) {
+  const { action, isLoading } = useDataLayer({
+    action: "getTrail",
+  });
 
-  return useQuery({
+  const { data, isPending: isLoadingGetTrail } = useQuery({
     queryKey: ["trail", trailId],
     queryFn: async () => {
-      const { trail } = await getTrailServer({ trailId, flag });
+      if (!action) return null;
 
-      if (!trail) return getTrail(trailId);
+      const { trail } = await action({ trailId });
 
       return trail;
     },
   });
+
+  return {
+    data,
+    isLoading: isLoading || isLoadingGetTrail,
+  };
 }

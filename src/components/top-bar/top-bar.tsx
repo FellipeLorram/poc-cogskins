@@ -22,15 +22,15 @@ export function TopBar() {
         </Link>
 
         <div className="flex items-center justify-center gap-1 md:gap-2">
-          <Link
+        <Link
             className={buttonVariants({
               variant: "outline",
               size: "sm",
-              className: "shadow-[#075aff] shadow-sm text-[#075aff]",
+              className: "shadow-[#ff4b07] shadow-sm text-[#ff4b07]",
             })}
-            href="/app/pet"
+            href="/app/web-summit"
           >
-            Pet, o dragão
+            Web Summit
           </Link>
           <EarlyAdopterButton getUserPromise={getSessionUser()} />
 

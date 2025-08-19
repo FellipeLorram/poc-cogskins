@@ -6,7 +6,7 @@ interface Props {
   url: string;
 }
 
-export async function updateBadgeLevel({ badgeId, level, url }: Props) {
+export async function levelUpBadgeLevel({ badgeId, level, url }: Props) {
   await prisma.badge.update({
     where: { id: badgeId },
     data: { level, url, badgeUrls: { create: { url } } },

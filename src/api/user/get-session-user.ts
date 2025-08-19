@@ -1,20 +1,16 @@
 "use server";
 
-import { prisma } from "@/lib/prisma-client";
-import { getSession } from "../auth/get-session";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { syncKindeUser } from "./sync-kinde-user";
 
 export async function getSessionUser() {
-  const session = await getSession();
+  const { getUser } = getKindeServerSession();
+  const kindeUser = await getUser();
 
-  if (!session || !session.userId) {
-    return null;
-  }
+  if (!kindeUser) return null;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.userId,
-    },
-  });
+  // Sync user from Kinde to database (creates if doesn't exist, updates if exists)
+  const user = await syncKindeUser();
 
   return user;
 }

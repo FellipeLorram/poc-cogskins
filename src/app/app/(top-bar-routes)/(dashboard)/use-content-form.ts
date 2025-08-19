@@ -45,7 +45,7 @@ export function useContentForm() {
     useIsEarlyAdopter();
   const { data: sessionUser, isPending: isSessionUserLoading } =
     useSessionUser();
-  const { data: trails = [], isPending: isTrailsLoading } = useListTrails();
+  const { data: trailsData, isPending: isTrailsLoading } = useListTrails();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -73,21 +73,21 @@ export function useContentForm() {
   const files = form.watch("files");
   const contents = form.watch("topic");
 
-  // Lógica de limitação
+  // Get trails array from response
+  const trails = trailsData?.trails || [];
+
+  // Authentication and limitation logic
   const isLoading =
     isEarlyAdopterLoading || isSessionUserLoading || isTrailsLoading;
   const isAuthenticated = !!sessionUser;
   const isLimited = !isEarlyAdopter && trails.length >= 3;
   const submitDisabled =
-    isLoading ||
-    !isAuthenticated ||
-    (!contents && !files) ||
-    (!isEarlyAdopter && trails.length >= 3);
+    isLoading || !isAuthenticated || (!contents && !files) || isLimited;
 
-  // Mensagem de placeholder dinâmica
+  // Dynamic placeholder message
   let placeholder = "What content shall we validate today?";
   if (!isAuthenticated) {
-    placeholder = "Log in to generate trails";
+    placeholder = "Click to log in and generate trails";
   } else if (isLimited) {
     placeholder =
       "You have reached the limit of 3 trails. Become an early adopter to create more.";
@@ -128,6 +128,19 @@ export function useContentForm() {
     setRunId(runId);
   }
 
+  function handleInputClick() {
+    if (!isAuthenticated) {
+      // Redirect to Kinde login
+      window.location.href = "/api/auth/login";
+      return;
+    }
+
+    if (isLimited) {
+      setOpen(true);
+      return;
+    }
+  }
+
   return {
     open,
     form,
@@ -141,5 +154,6 @@ export function useContentForm() {
     getInputProps,
     submit: handleSubmit,
     removeFile: handleRemoveFile,
+    handleInputClick,
   };
 }

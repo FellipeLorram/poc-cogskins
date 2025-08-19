@@ -36,6 +36,7 @@ export function ContentForm() {
     getInputProps,
     submit,
     removeFile,
+    handleInputClick,
   } = useContentForm();
 
   return (
@@ -49,13 +50,8 @@ export function ContentForm() {
             <FormItem>
               <FormControl>
                 <div
-                  onClick={() => {
-                    if (!isAuthenticated) return;
-                    if (!isLimited) {
-                      setOpen(true);
-                    }
-                  }}
-                  className="relative flex items-start gap-2 w-full border rounded-md p-2 shadow"
+                  onClick={handleInputClick}
+                  className="relative flex items-start gap-2 w-full border rounded-md p-2 shadow cursor-pointer"
                 >
                   <Textarea
                     placeholder={placeholder}
@@ -63,7 +59,17 @@ export function ContentForm() {
                       field.value ? "resize-y" : "resize-none"
                     }`}
                     {...field}
-                    disabled={submitDisabled}
+                    disabled={!isAuthenticated || isLimited}
+                    readOnly={!isAuthenticated}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        if (!submitDisabled) {
+                          form.handleSubmit(submit)();
+                        }
+                      }
+                      // Shift+Enter allows default behavior (new line)
+                    }}
                   />
 
                   <div className="flex items-center min-h-[40px]">
@@ -84,7 +90,7 @@ export function ContentForm() {
                       disabled={submitDisabled}
                       className="cursor-pointer"
                     >
-                      {isAuthenticated && isLimited ? <Send /> : <Lock />}
+                      {!isAuthenticated || isLimited ? <Lock /> : <Send />}
                     </Button>
                   </div>
                 </div>

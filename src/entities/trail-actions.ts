@@ -1,17 +1,12 @@
 import { Trail } from "@prisma/client";
 import { GeneratedTrail } from "./trails";
 
-// Request/Response types for each action
 export interface GetTrailRequest {
   trailId: string;
 }
 
 export interface GetTrailResponse {
   trail: GeneratedTrail | null;
-}
-
-export interface ListTrailsRequest {
-  userId: string;
 }
 
 export interface ListTrailsResponse {
@@ -27,7 +22,8 @@ export interface SaveTrailResponse {
 }
 
 export interface UpdateTrailRequest {
-  trail: Trail;
+  trailId: string;
+  data: Partial<Trail>;
 }
 
 export interface UpdateTrailResponse {
@@ -37,7 +33,7 @@ export interface UpdateTrailResponse {
 // Main actions interface
 export interface TrailActions {
   getTrail: (request: GetTrailRequest) => Promise<GetTrailResponse>;
-  listTrails: (request: ListTrailsRequest) => Promise<ListTrailsResponse>;
+  listTrails: () => Promise<ListTrailsResponse>;
   saveTrail: (request: SaveTrailRequest) => Promise<SaveTrailResponse>;
   updateTrail: (request: UpdateTrailRequest) => Promise<UpdateTrailResponse>;
 }

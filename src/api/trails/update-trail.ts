@@ -8,16 +8,26 @@ import {
 } from "@/entities/trail-actions";
 
 export async function updateTrail({
-  trail,
+  trailId,
+  data,
 }: UpdateTrailRequest): Promise<UpdateTrailResponse> {
-  const user = await getSessionUser();
-
-  if (!user) return { trail: null };
+  await getSessionUser();
 
   const updatedTrail = await prisma.trail.update({
-    where: { id: trail.id },
-    data: {
-      status: trail.status,
+    where: { id: trailId },
+    data,
+    include: {
+      inputContents: true,
+      quests: {
+        include: {
+          questions: true,
+        },
+      },
+      badge: {
+        include: {
+          badgeUrls: true,
+        },
+      },
     },
   });
 

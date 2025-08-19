@@ -6,7 +6,7 @@ import { getBadgeByTrailId } from "../badge/get-badge-by-trail-id";
 import { BadgeNotFoundError } from "../../errors/badge-not-found-error";
 import { updateTrail } from "../trails/update-trail";
 import { updateQuest } from "./update-quest";
-import { updateBadgeLevel } from "../badge/update-badge-level";
+import { levelUpBadgeLevel } from "../badge/level-up-badge-level";
 
 interface CompleteQuestRequest {
   trailId: string;
@@ -31,7 +31,9 @@ export async function completeQuest({
 
   await updateTrail({
     trailId,
-    trailStatus: isLastQuest ? TrailStatus.COMPLETED : TrailStatus.IN_PROGRESS,
+    data: {
+      status: isLastQuest ? TrailStatus.COMPLETED : TrailStatus.IN_PROGRESS,
+    },
   });
 
   if (isLastQuest && isAllCorrect) {
@@ -50,7 +52,7 @@ export async function completeQuest({
       },
     });
 
-    await updateBadgeLevel({
+    await levelUpBadgeLevel({
       badgeId: badge.id,
       level: badge.level + 1,
       url: newBadge.url,

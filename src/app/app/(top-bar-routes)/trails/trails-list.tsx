@@ -24,7 +24,9 @@ export function TrailsList() {
     level: 0,
     status: "IN_PROGRESS",
   });
-  const { data: trails, isPending } = useListTrails();
+  const { data, isPending } = useListTrails();
+
+  const { trails } = data ?? {};
 
   if (isPending || !trails) return <Loading />;
 

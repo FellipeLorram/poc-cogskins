@@ -4,7 +4,6 @@ import {
   TrailActions,
   GetTrailRequest,
   GetTrailResponse,
-  ListTrailsRequest,
   ListTrailsResponse,
   SaveTrailRequest,
   SaveTrailResponse,
@@ -20,7 +19,7 @@ interface TrailActionsState {
 
   // Actions that implement TrailActions interface
   getTrail: (request: GetTrailRequest) => Promise<GetTrailResponse>;
-  listTrails: (request: ListTrailsRequest) => Promise<ListTrailsResponse>;
+  listTrails: () => Promise<ListTrailsResponse>;
   saveTrail: (request: SaveTrailRequest) => Promise<SaveTrailResponse>;
   updateTrail: (request: UpdateTrailRequest) => Promise<UpdateTrailResponse>;
 }
@@ -38,7 +37,7 @@ export const useTrailActionsStore = create<TrailActionsState>()(
         return { trail };
       },
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      listTrails: async (_request) => {
+      listTrails: async () => {
         return { trails: get().trails };
       },
       saveTrail: async (request) => {
@@ -50,13 +49,13 @@ export const useTrailActionsStore = create<TrailActionsState>()(
       updateTrail: async (request) => {
         const currentTrails = get().trails;
         const updatedTrails = currentTrails.map((t) =>
-          t.id === request.trail.id
-            ? ({ ...t, ...request.trail } as GeneratedTrail)
+          t.id === request.trailId
+            ? ({ ...t, ...request.data } as GeneratedTrail)
             : t
         );
         set({ trails: updatedTrails });
         const updatedTrail = updatedTrails.find(
-          (t) => t.id === request.trail.id
+          (t) => t.id === request.trailId
         )!;
         return { trail: updatedTrail };
       },

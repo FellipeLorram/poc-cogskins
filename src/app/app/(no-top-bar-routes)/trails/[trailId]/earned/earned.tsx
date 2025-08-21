@@ -11,11 +11,11 @@ interface Props {
 }
 
 export function Earned({ trailId }: Props) {
-  const { data: trail, isPending } = useGetTrail({
+  const { data: trail, isLoading } = useGetTrail({
     trailId,
   });
 
-  if (isPending || !trail) return <Loading />;
+  if (isLoading || !trail) return <Loading />;
 
   return (
     <div className="mt-16 text-center w-full flex flex-col items-center gap-8 justify-center">

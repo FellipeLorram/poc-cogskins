@@ -13,16 +13,14 @@ import { useRouter } from "next/navigation";
 
 interface Props {
   trailId: string;
-  flag?: string;
 }
 
-export function Trail({ trailId, flag }: Props) {
-  const { data: trail, isPending } = useGetTrail({
+export function Trail({ trailId }: Props) {
+  const { data: trail, isLoading } = useGetTrail({
     trailId,
-    flag,
   });
 
-  if (isPending || !trail) return <Loading />;
+  if (isLoading || !trail) return <Loading />;
 
   const isBadgeUnlocked = trail.badge?.status === BadgeStatus.UNLOCKED;
 

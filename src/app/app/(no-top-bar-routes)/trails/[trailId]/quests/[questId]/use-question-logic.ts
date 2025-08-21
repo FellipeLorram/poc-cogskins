@@ -3,13 +3,13 @@ import { useEarnBadge } from "@/hooks/badge/use-add-badge";
 import { useGetQuest } from "@/hooks/quests/use-get-quest";
 import { useGetQuestByDifficulty } from "@/hooks/quests/use-get-quest-by-difficulty";
 import { useUpdateQuest } from "@/hooks/quests/use-update-quest";
-import { useUpdateTrail } from "@/hooks/trails/use-update-trail";
-import { QuestStatus, TrailStatus } from "@prisma/client";
+import { QuestStatus } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { QuestionFormSchema } from "./question-form";
 import { useQuestionStore } from "./question-store";
 import { useGetBadgeByTrailId } from "@/hooks/badge/use-get-badge-by-trail-id";
 import { toast } from "sonner";
+import { completeQuest } from "@/api/quest/complete-quest";
 
 interface Props {
   trailId: string;
@@ -21,7 +21,6 @@ export function useQuestionLogic({ trailId, questId, questionId }: Props) {
   const router = useRouter();
 
   // data fetch hooks
-  const { mutate: updateTrail, isPending: isUpdatingTrail } = useUpdateTrail();
   const { mutate: updateQuest, isPending: isUpdatingQuest } = useUpdateQuest();
   const { data: quest, isPending: isPendingQuest } = useGetQuest({
     trailId,
@@ -67,19 +66,12 @@ export function useQuestionLogic({ trailId, questId, questionId }: Props) {
   const handleQuestCompletion = async (isAllCorrect: boolean) => {
     const isLastQuest = !nextQuest;
 
-    await updateQuest({
+    await completeQuest({
       trailId,
       questId,
-      status: isAllCorrect ? QuestStatus.COMPLETED : QuestStatus.IN_PROGRESS,
-      attempts: (quest?.attempts ?? 0) + 1,
-    });
-
-    await updateTrail({
-      trailId,
-      status:
-        isLastQuest && isAllCorrect
-          ? TrailStatus.COMPLETED
-          : TrailStatus.IN_PROGRESS,
+      isAllCorrect,
+      attempts: quest?.attempts ?? 0,
+      isLastQuest,
     });
 
     return isLastQuest;
@@ -150,8 +142,7 @@ export function useQuestionLogic({ trailId, questId, questionId }: Props) {
 
   return {
     currentQuestion: currentQuestion,
-    isPending:
-      isPendingQuest || isUpdatingQuest || isUpdatingTrail || isEarningBadge,
+    isPending: isPendingQuest || isUpdatingQuest || isEarningBadge,
     isLastQuestion: getQuestionNavigation().isLastQuestion ?? false,
     handleSubmit,
     isLoading: !currentQuestion || !questions,

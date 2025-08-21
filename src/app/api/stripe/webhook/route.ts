@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma-client";
-import { createSession, deleteSession } from "@/api/auth/session";
+import { sendWelcomeEmail } from "@/api/helpers/send-welcome-email";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-03-31.basil",
@@ -44,15 +44,17 @@ export async function POST(req: Request) {
           throw new Error("No user email found");
         }
 
+        // Find or create user
         let user = await prisma.user.findUnique({
           where: { email: customerEmail },
         });
 
         if (!user) {
+          // Create user if they don't exist (they might subscribe before signing up)
           user = await prisma.user.create({
             data: {
               email: customerEmail,
-              name: (customer as Stripe.Customer).name,
+              name: (customer as Stripe.Customer).name || customerEmail,
               stripeCustomerId: customerId,
               stripeSubscriptionId: session.subscription as string,
               subscriptionStatus: "active",
@@ -60,11 +62,14 @@ export async function POST(req: Request) {
             },
           });
 
-          await createSession({
-            userId: user.id,
+          // Send welcome email with login instructions
+          await sendWelcomeEmail({
+            email: customerEmail,
+            name: (customer as Stripe.Customer).name || undefined,
           });
         } else {
-          user = await prisma.user.update({
+          // Update existing user
+          await prisma.user.update({
             where: { email: customerEmail },
             data: {
               stripeCustomerId: customerId,
@@ -72,10 +77,6 @@ export async function POST(req: Request) {
               subscriptionStatus: "active",
               isEarlyAdopter: true,
             },
-          });
-
-          await createSession({
-            userId: user.id,
           });
         }
 
@@ -95,12 +96,31 @@ export async function POST(req: Request) {
           throw new Error("No user email found");
         }
 
-        // Find user by stripeCustomerId
-        const user = await prisma.user.findFirst({
+        // Find or create user
+        let user = await prisma.user.findFirst({
           where: { email: customerEmail },
         });
 
-        if (user) {
+        if (!user) {
+          // Create user if they don't exist
+          user = await prisma.user.create({
+            data: {
+              email: customerEmail,
+              name: (customer as Stripe.Customer).name || customerEmail,
+              stripeCustomerId: customerId,
+              stripeSubscriptionId: subscription.id,
+              subscriptionStatus: subscription.status,
+              isEarlyAdopter: true,
+            },
+          });
+
+          // Send welcome email with login instructions
+          await sendWelcomeEmail({
+            email: customerEmail,
+            name: (customer as Stripe.Customer).name || undefined,
+          });
+        } else {
+          // Update existing user
           await prisma.user.update({
             where: { id: user.id },
             data: {
@@ -109,25 +129,6 @@ export async function POST(req: Request) {
               stripeCustomerId: customerId,
               isEarlyAdopter: true,
             },
-          });
-
-          await createSession({
-            userId: user.id,
-          });
-        } else {
-          const newUser = await prisma.user.create({
-            data: {
-              email: customerEmail,
-              name: (customer as Stripe.Customer).name,
-              stripeCustomerId: customerId,
-              stripeSubscriptionId: subscription.id,
-              subscriptionStatus: subscription.status,
-              isEarlyAdopter: true,
-            },
-          });
-
-          await createSession({
-            userId: newUser.id,
           });
         }
 
@@ -153,9 +154,7 @@ export async function POST(req: Request) {
             },
           });
 
-          await createSession({
-            userId: user.id,
-          });
+          // Session is managed by Kinde, no need to create manually
         }
 
         break;
@@ -181,7 +180,7 @@ export async function POST(req: Request) {
             },
           });
 
-          await deleteSession();
+          // Session is managed by Kinde, no need to delete manually
         }
 
         break;

@@ -31,7 +31,7 @@ export async function TopBar() {
             })}
             href="/app/web-summit"
           >
-            Web Summit
+            Disrupt
           </Link>
           <EarlyAdopterButton getUserPromise={getSessionUser()} />
 

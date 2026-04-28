@@ -66,7 +66,7 @@ function GoBackDialog({ trailId }: { trailId: string }) {
         className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer hover:text-primary duration-200 h-6"
       >
         <ChevronLeft className="w-4 h-4" />
-        Voltar
+        Back
       </button>
     );
 
@@ -85,16 +85,16 @@ function GoBackDialog({ trailId }: { trailId: string }) {
           className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer hover:text-primary duration-200 h-6"
         >
           <ChevronLeft className="w-4 h-4" />
-          Voltar
+          Back
         </button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Voltar</DialogTitle>
+          <DialogTitle>Go back</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Você já respondeu algumas questões. Deseja voltar mesmo assim? <br />
-          Seu progresso será perdido.
+          You've already answered some questions. Go back anyway? <br />
+          Your progress will be lost.
         </DialogDescription>
         <DialogFooter>
           <Button
@@ -102,10 +102,10 @@ function GoBackDialog({ trailId }: { trailId: string }) {
             className="cursor-pointer"
             onClick={handleGoBack}
           >
-            Voltar e perder o progresso
+            Go back and lose progress
           </Button>
           <Button className="cursor-pointer" onClick={() => setIsOpen(false)}>
-            Continuar e finalizar
+            Continue and finish
           </Button>
         </DialogFooter>
       </DialogContent>

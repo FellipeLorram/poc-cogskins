@@ -44,7 +44,7 @@ export function useSyncContents() {
       setCompletedAnyQuest(false);
     },
     onError: (error) => {
-      toast.error(`Falha na sincronização: ${error.message}`);
+      toast.error(`Sync failed: ${error.message}`);
     },
   });
 }

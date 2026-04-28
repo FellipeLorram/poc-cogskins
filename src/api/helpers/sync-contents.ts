@@ -46,7 +46,7 @@ export async function syncContents({
     });
 
     if (!user) {
-      throw new Error("Usuário não encontrado");
+      throw new Error("User not found");
     }
 
     const results = [];
@@ -177,14 +177,14 @@ export async function syncContents({
 
     return {
       success: true,
-      message: `${results.length} trilhas sincronizadas com sucesso.`,
+      message: `${results.length} trails synced successfully.`,
     };
   } catch (error) {
-    console.error("Erro ao sincronizar trilhas:", error);
+    console.error("Error syncing trails:", error);
     return {
       success: false,
       error:
-        error instanceof Error ? error.message : "Falha ao sincronizar trilhas",
+        error instanceof Error ? error.message : "Failed to sync trails",
     };
   }
 }

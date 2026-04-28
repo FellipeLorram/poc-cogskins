@@ -25,8 +25,8 @@ interface Props {
 const questionSchema = z.object({
   questionId: z.string(),
   answer: z.coerce.number({
-    required_error: "Resposta é obrigatória",
-    invalid_type_error: "Resposta é obrigatória",
+    required_error: "Answer is required",
+    invalid_type_error: "Answer is required",
   }),
 });
 

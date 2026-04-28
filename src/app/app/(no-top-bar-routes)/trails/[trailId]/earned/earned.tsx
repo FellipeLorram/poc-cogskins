@@ -21,7 +21,7 @@ export function Earned({ trailId }: Props) {
     <div className="mt-16 text-center w-full flex flex-col items-center gap-8 justify-center">
       <div className="space-y-2">
         <h1 className="text-2xl">
-          Parabéns, você completou a trilha e conquistou o badge{" "}
+          Congratulations, you completed the trail and earned the badge{" "}
           <span className="font-bold">{`${trail?.badge?.title} ${trail?.badge?.level}`}</span>
         </h1>
         <p className="text-muted-foreground">{trail?.badge?.description}</p>
@@ -37,9 +37,9 @@ export function Earned({ trailId }: Props) {
 
       <div className="flex justify-center items-center gap-2">
         <Button variant="outline" asChild>
-          <Link href={`/app/trails/${trailId}`}>Voltar para a trilha</Link>
+          <Link href={`/app/trails/${trailId}`}>Back to trail</Link>
         </Button>
-        <Button disabled>Gerar mais Quests e aumentar o nível do badge</Button>
+        <Button disabled>Generate more quests and increase badge level</Button>
       </div>
     </div>
   );

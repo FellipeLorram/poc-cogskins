@@ -10,7 +10,7 @@ export async function GET(request: Request) {
 
     if (!token) {
       return NextResponse.json(
-        { error: "Token não fornecido" },
+        { error: "Token not provided" },
         { status: 400 }
       );
     }
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
 
     if (expired || !payload?.email) {
       return NextResponse.json(
-        { error: "Token inválido ou expirado" },
+        { error: "Invalid or expired token" },
         { status: 401 }
       );
     }
@@ -47,7 +47,7 @@ export async function GET(request: Request) {
     return NextResponse.redirect("https://cogskins.com.br/app");
   } catch {
     return NextResponse.json(
-      { error: "Falha ao verificar token" },
+      { error: "Failed to verify token" },
       { status: 500 }
     );
   }

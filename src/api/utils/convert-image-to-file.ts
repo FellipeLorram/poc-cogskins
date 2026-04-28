@@ -15,8 +15,8 @@ export function convertImageDataToFile(
     const blob = new Blob([bytes], { type: "image/png" });
     file = new File([blob], filename, { type: "image/png" });
   } else {
-    // If it's Uint8Array, create the file directly
-    file = new File([imageData], filename, { type: "image/png" });
+    const bytes = new Uint8Array(imageData);
+    file = new File([bytes], filename, { type: "image/png" });
   }
 
   return { file };

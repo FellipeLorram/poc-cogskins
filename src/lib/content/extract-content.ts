@@ -1,11 +1,4 @@
 import * as mammoth from "mammoth";
-import * as pdfjsLib from "pdfjs-dist";
-
-// Configure o worker do pdf.js
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
 
 export type SupportedFileType = "pdf" | "doc" | "docx" | "md" | "txt";
 
@@ -100,7 +93,12 @@ async function extractPdfContent(
   buffer: Buffer
 ): Promise<ExtractContentResult> {
   try {
-    // Carrega o documento PDF usando pdf.js
+    const pdfjsLib = await import("pdfjs-dist");
+    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+      "pdfjs-dist/build/pdf.worker.min.mjs",
+      import.meta.url
+    ).toString();
+
     const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
     let fullText = "";
 

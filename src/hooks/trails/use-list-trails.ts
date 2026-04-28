@@ -1,24 +1,25 @@
-import { listTrails } from "@/api/trails/list-trails";
-import { GeneratedTrail } from "@/entities/trails";
-import { useTrailStore } from "@/stores/trail-store";
+import { ListTrailsResponse } from "@/entities/trail-actions";
 import { useQuery } from "@tanstack/react-query";
+import { useDataLayer } from "../use-data-layer/use-data-layer";
 
 export function useListTrails() {
-  const { trails } = useTrailStore();
+  const { action, isLoading } = useDataLayer({
+    action: "listTrails",
+  });
 
-  const { data: dbTrails, isPending: isDbTrailsLoading } = useQuery<
-    GeneratedTrail[]
-  >({
+  const { data, isPending: isDbTrailsLoading } = useQuery<ListTrailsResponse>({
     queryKey: ["trails"],
     queryFn: async () => {
-      const dbTrails = (await listTrails()) as GeneratedTrail[];
-      if (dbTrails.length === 0) return trails;
-      return dbTrails;
+      if (!action) return { trails: [] };
+
+      const trails = await action();
+
+      return trails;
     },
   });
 
   return {
-    data: dbTrails ?? trails,
-    isPending: isDbTrailsLoading,
+    data,
+    isPending: isDbTrailsLoading || isLoading,
   };
 }

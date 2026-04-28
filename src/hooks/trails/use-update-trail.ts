@@ -1,7 +1,6 @@
-import { updateTrail as updateTrailServer } from "@/api/trails/update-trail";
-import { useTrailStore } from "@/stores/trail-store";
 import { TrailStatus } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
+import { useDataLayer } from "../use-data-layer/use-data-layer";
 
 interface Props {
   trailId: string;
@@ -9,16 +8,27 @@ interface Props {
 }
 
 export function useUpdateTrail() {
-  const { updateTrail } = useTrailStore();
+  const { action, isLoading } = useDataLayer({
+    action: "updateTrail",
+  });
 
-  return useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: async ({ trailId, status }: Props) => {
-      const trail = await updateTrailServer({
+      if (!action) return;
+
+      const trail = await action({
         trailId,
-        trailStatus: status,
+        data: {
+          status,
+        },
       });
 
-      if (!trail) updateTrail(trailId, status);
+      return trail;
     },
   });
+
+  return {
+    mutate,
+    isPending: isLoading || isPending,
+  };
 }

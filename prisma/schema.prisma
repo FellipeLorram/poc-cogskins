@@ -158,23 +158,25 @@ enum BadgeStatus {
 }
 
 model Badge {
-  id             String           @id @default(cuid())
-  url            String // URL da imagem gerada pelo DALL-E
-  title          String
-  description    String
-  earnedAt       DateTime?
-  level          Int              @default(0)
-  nftData        Json? // metadados para NFT
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  trailId        String?          @unique
-  trail          Trail?           @relation(fields: [trailId], references: [id], onDelete: Cascade)
-  userId         String?
-  user           User?            @relation(fields: [userId], references: [id])
-  WebSummitTrail WebSummitTrail[]
-  unLockedAt     DateTime?
-  status         BadgeStatus      @default(LOCKED)
-  flag           String?
+  id               String           @id @default(cuid())
+  url              String // URL da imagem gerada pelo DALL-E
+  title            String
+  description      String
+  earnedAt         DateTime?
+  level            Int              @default(0)
+  generationPrompt String?
+  nftData          Json? // metadados para NFT
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  trailId          String?          @unique
+  trail            Trail?           @relation(fields: [trailId], references: [id], onDelete: Cascade)
+  userId           String?
+  user             User?            @relation(fields: [userId], references: [id])
+  WebSummitTrail   WebSummitTrail[]
+  badgeUrls        BadgeUrl[]
+  unLockedAt       DateTime?
+  status           BadgeStatus      @default(LOCKED)
+  flag             String?
 
   @@index([userId])
 }
@@ -185,4 +187,13 @@ model CompletedQuest {
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model BadgeUrl {
+  id        String   @id @default(cuid())
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Badge     Badge?   @relation(fields: [badgeId], references: [id])
+  badgeId   String?
 }

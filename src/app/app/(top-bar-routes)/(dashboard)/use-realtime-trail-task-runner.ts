@@ -30,10 +30,7 @@ export function useRealtimeTrailTaskRunner({
     };
   }
 
-  const isGenerating =
-    run?.status === "EXECUTING" ||
-    run?.status === "QUEUED" ||
-    run?.status === "REATTEMPTING";
+  const isGenerating = run?.status === "EXECUTING" || run?.status === "QUEUED";
 
   return {
     isGenerating,

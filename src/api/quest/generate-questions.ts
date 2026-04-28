@@ -4,7 +4,7 @@ import { openai } from "@ai-sdk/openai";
 import { Prisma, QuestionStatus } from "@prisma/client";
 import { generateObject } from "ai";
 import { z } from "zod";
-import { GenerationError } from "../errors/generation-error";
+import { GenerationError } from "../../errors/generation-error";
 
 // Schema for the questions array
 const questionsArraySchema = z.object({
@@ -55,7 +55,7 @@ export async function generateQuestQuestions(
 ): Promise<GeneratedQuestion[]> {
   const uniqueQuestions = new Set<string>();
   const questions: GeneratedQuestion[] = [];
-  const maxAttempts = 3; // Limite de tentativas para evitar loop infinito
+  const maxAttempts = 3;
   let currentAttempt = 0;
 
   while (questions.length < questionsCount && currentAttempt < maxAttempts) {

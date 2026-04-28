@@ -24,10 +24,10 @@ interface Props {
 }
 
 export function Wrapper({ trailId, questId, children }: Props) {
-  const { data: trail, isPending: isPendingTrail } = useGetTrail({ trailId });
+  const { data: trail, isLoading: isLoadingTrail } = useGetTrail({ trailId });
   const quest = trail?.quests.find((quest) => quest.id === questId);
 
-  if (isPendingTrail) return <Loading>{children}</Loading>;
+  if (isLoadingTrail) return <Loading>{children}</Loading>;
 
   return (
     <div className="mt-16 text-left w-full">

@@ -19,8 +19,16 @@ import { useEffect } from "react";
 import { useTrailRunnerStore } from "./trail-runner-store";
 import { useRealtimeTrailTaskRunner } from "./use-realtime-trail-task-runner";
 
+const MAX_RECENT_TRAILS = 6;
+
+function getRecentTrails(trails: GeneratedTrail[]) {
+  return trails
+    .filter((trail) => trail.flag !== "web-summit-2025")
+    .slice(0, MAX_RECENT_TRAILS);
+}
+
 export function RecentTrails() {
-  const { data: trails, isPending } = useListTrails();
+  const { data: trailList, isPending } = useListTrails();
   const { runId, accessToken, setRunId, setAccessToken } =
     useTrailRunnerStore();
 
@@ -36,14 +44,9 @@ export function RecentTrails() {
     },
   });
 
-  const recentTrails =
-    isGenerating || error
-      ? trails?.filter((trail) => trail.flag !== "web-summit-2025")?.slice(0, 5)
-      : trails
-          ?.filter((trail) => trail.flag !== "web-summit-2025")
-          ?.slice(0, 6);
+  const recentTrails = getRecentTrails(trailList?.trails ?? []);
 
-  const showTitle = isGenerating || error || trails?.length > 0;
+  const showTitle = isGenerating || error || recentTrails?.length > 0;
 
   useEffect(() => {
     if (error) return;

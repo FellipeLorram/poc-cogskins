@@ -33,7 +33,7 @@ export function useRealtimeFeedbackTaskRunner({
   const isGenerating =
     run?.status === "EXECUTING" ||
     run?.status === "QUEUED" ||
-    run?.status === "REATTEMPTING";
+    run?.status === "WAITING";
 
   return {
     isGenerating,

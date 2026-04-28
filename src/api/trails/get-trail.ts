@@ -1,16 +1,7 @@
 "use server";
 
-import { GeneratedTrail } from "@/entities/trails";
+import { GetTrailRequest, GetTrailResponse } from "@/entities/trail-actions";
 import { prisma } from "@/lib/prisma-client";
-
-interface GetTrailRequest {
-  trailId: string;
-  flag?: string;
-}
-
-interface GetTrailResponse {
-  trail: GeneratedTrail | null;
-}
 
 export async function getTrail({
   trailId,
@@ -24,7 +15,11 @@ export async function getTrail({
           questions: true,
         },
       },
-      badge: true,
+      badge: {
+        include: {
+          badgeUrls: true,
+        },
+      },
     },
   });
 
